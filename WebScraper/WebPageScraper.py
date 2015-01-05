@@ -6,16 +6,21 @@ Created on Jan 5, 2015
 import requests
 from bs4 import BeautifulSoup
 
-url = "http://sudutpandangpupil.blogspot.com"
-page = requests.get(url)
-soup = BeautifulSoup(page.text)
-[x.extract() for x in soup.find_all('script')]
-[x.extract() for x in soup.find_all('style')]
-pageText = soup.body.get_text()
-linedPageText = pageText.splitlines()
-line2 = ""
-for line in linedPageText:
-    if len(line) == 0:
-        pass
-    else:
-        line2 = line2 + line + "\n"
+class WebPageScraper:
+    'Default class to scrape for random webpage'
+    def __init__(self, url):
+        self.url = url
+        self.request = requests.get(url)
+        self.soup = BeautifulSoup(self.request.text)
+
+    def getTextBody(self):
+        'method to remove javascript and css from html body and return only text body'
+        [x.extract() for x in self.soup.find_all('script')]
+        [x.extract() for x in self.soup.find_all('style')]
+        pageText = self.soup.body.get_text()
+        linedPageText = pageText.splitlines()
+        line2 = ""
+        for line in linedPageText:
+            if len(line) != 0:
+                line2 = line2 + line + "\n"
+        return line2
