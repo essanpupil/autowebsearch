@@ -1,0 +1,45 @@
+{% extends 'operation/index.html' %}
+{% block pagetitle %}View manual search result | ScamSearcher{% endblock %}
+{% block content %}
+<h3>Search result from: {{ keyword }}</h3>
+<table>
+    <tr>
+        <th rowspan="2" valign="center">No.</th>
+        <th rowspan="2" valign="center">URL</th>
+        <th rowspan="2" valign="center">Domain</th>
+        <th rowspan="2" valign="center">Event</th>
+        <th colspan="4" halign="center">Status</th>
+        <th rowspan="2" valign="center">Actions</th>
+    </tr>
+    <tr>
+        <th>Inspect</th>
+        <th>Scam</th>
+        <th>Report</th>
+        <th>Access</th>
+    </tr>
+{% for web in webs %}
+    <tr>
+        <td>{{ forloop.counter }}</td>
+        <td><a href="{{ web.url }}" target="_blank">{{ web.url }}</a></td>
+        <td>{{ web.domain }}</td>
+        <td>{{ web.event }}</td>
+        <td>{{ web.inspectStatus }}</td>
+        <td>{{ web.scamStatus }}</td>
+        <td>{{ web.reportStatus }}</td>
+        <td>{{ web.accessStatus }}</td>
+        <td>
+            report <br />
+            <a href="{% url 'operation:get_web_source' web.id %}">fetch</a>
+        </td>
+    </tr>
+{% empty %}
+Token database is empty
+{% endfor %}
+</table>
+{% endblock %}
+{% block navigation %}
+<ul>
+<li><a href="{% url 'operation:view_all_tokens' %}">View all tokens</a></li>
+<li><a href="{% url 'operation:add_new_token' %}">Add token</a></li>
+</ul>
+{% endblock %}

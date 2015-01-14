@@ -1,0 +1,42 @@
+{% load staticfiles %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-GB">
+<head>
+	<title>Phising Hunter</title>
+	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+	<meta name="description" content="Automatically search and monitor internet for scam." />
+	<meta name="keywords" content="Automatically search and monitor internet for scam." />
+	<meta name="robots" content="index, follow" />
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+	<link rel="stylesheet" type="text/css" href="{% static 'operation/screen.css' %}" media="screen" />
+</head>
+<body>
+
+<div id="header">
+	<h1>Scam Searcher</h1>
+	<h2>Application to automaticaly search and monitor the internet from scam website.</h2>
+</div>
+<div class="colmask leftmenu">
+	<div class="colleft">
+		<div class="col1">
+			<!-- Column 1 start -->
+			Login Form
+            <form method="post" action="{% url 'operation:login' %}">
+            {% csrf_token %}
+
+            </form>
+
+			<!-- Column 1 end -->
+		</div>
+		<div class="col2">
+			<!-- Column 2 start -->
+			Please login to operate this application
+			<!-- Column 2 end -->
+		</div>
+	</div>
+</div>
+<div id="footer">
+Copyright pupil 2015
+</div>
+</body>
+</html>

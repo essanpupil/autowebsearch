@@ -1,0 +1,18 @@
+{% extends 'operation/webpages/webpages.html' %}
+{% block pagetitle %}View detail of saved web | ScamSearcher{% endblock %}
+{% block content %}
+<table>
+    <tr>
+        <th>URL</th>
+        <td>{{ web.url }}</td>
+    </tr>
+    <tr>
+        <th>Domain</th>
+        <td>{{ web.domain }}</td>
+    </tr>
+    <tr>
+        <th>Text Body</th>
+        <td>{{ web.textBody }}</td>
+    </tr>
+</table>
+{% endblock %}

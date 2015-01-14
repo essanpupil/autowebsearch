@@ -1,0 +1,26 @@
+{% extends 'operation/index.html' %}
+{% block pagetitle %}View and manage tokens | ScamSearcher{% endblock %}
+{% block content %}
+<h3>View all tokens saved in the database.</h3>
+<table>
+    <tr><th>No.</th><th>Token</th><th>Web page user(s)</th><th>Event</th><th>Creator</th><th>Actions</th></tr>
+{% for word in keyword %}
+    <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ word.words }}</td>
+        <td>number of webpage users</td>
+        <td>created from event</td>
+        <td>creator</td>
+        <td><a href="{% url 'operation:manual_search' word.id %}">Search now</a></td>
+    </tr>
+{% empty %}
+Token database is empty
+{% endfor %}
+</table>
+{% endblock %}
+{% block navigation %}
+<ul>
+<li><a href="{% url 'operation:view_all_tokens' %}">View all tokens</a></li>
+<li><a href="{% url 'operation:add_new_token' %}">Add token</a></li>
+</ul>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'operation/index.html' %}
+{% block pagetitle %}View and manage web pages | ScamSearcher{% endblock %}
+{% block content %}
+{% for page in webpages %}
+{{ page }} <br />
+{% empty %}
+Web page database is empty
+{% endfor %}
+{% endblock %}
+{% block navigation %}
+<ul>
+<li><a href="{% url 'operation:view_all_webpages' %}">View all web pages</a></li>
+<li><a href="{% url 'operation:add_new_webpage' %}">Add web page manualy</a></li>
+</ul>
+{% endblock %}

@@ -3,28 +3,42 @@ Created on Jan 2, 2015
 
 @author: pupil
 '''
-import unittest
-from WebScraper import WebSearch
+from WebSearch import GoogleSearch
+from WebPageScraper import WebPageScraper
+
+keyword = "pemenang indosat poin plus plus"
+googling = GoogleSearch(keyword)
+googling.startSearch()
+print len(googling.searchResult)
+for hasil in googling.searchResult:
+    print hasil
+page = WebPageScraper(googling.searchResult[2])
+print page.getTextBody()
 
 
-class Test(unittest.TestCase):
 
-
-    def setUp(self):
-        self.googleSearch = WebSearch.GoogleSearch
-
-    def zeroArgumentGoogleSearch(self):
-        self.googleSearch()
-        self.assertEqual(len(self.googleSearch.searchResult), 0)
-
-    def tearDown(self):
-        pass
-
-
-    def testName(self):
-        pass
-
-
-if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
-    unittest.main()
+# import unittest
+# from WebScraper import WebSearch
+#
+#
+# class Test(unittest.TestCase):
+#
+#
+#     def setUp(self):
+#         self.googleSearch = WebSearch.GoogleSearch
+#
+#     def zeroArgumentGoogleSearch(self):
+#         self.googleSearch()
+#         self.assertEqual(len(self.googleSearch.searchResult), 0)
+#
+#     def tearDown(self):
+#         pass
+#
+#
+#     def testName(self):
+#         pass
+#
+#
+# if __name__ == "__main__":
+#     #import sys;sys.argv = ['', 'Test.testName']
+#     unittest.main()

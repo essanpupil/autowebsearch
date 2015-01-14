@@ -24,3 +24,5 @@ class WebPageScraper:
             if len(line) != 0:
                 line2 = line2 + line + "\n"
         return line2
+
+#todo: make class for specific free web domain hosting
