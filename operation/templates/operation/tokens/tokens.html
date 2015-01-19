@@ -3,24 +3,33 @@
 {% block content %}
 <h3>View all tokens saved in the database.</h3>
 <table>
-    <tr><th>No.</th><th>Token</th><th>Web page user(s)</th><th>Event</th><th>Creator</th><th>Actions</th></tr>
-{% for word in keyword %}
+    <tr><th>No.</th><th>Token</th><th>Actions</th></tr>
+{% for token in tokens %}
     <tr>
         <td>{{ forloop.counter }}</td>
-        <td>{{ word.words }}</td>
-        <td>number of webpage users</td>
-        <td>created from event</td>
-        <td>creator</td>
-        <td><a href="{% url 'operation:manual_search' word.id %}">Search now</a></td>
+        <td><p title="{{ token.sentence }}">{{ token.sentence|truncatechars:100 }}</p></td>
+        <td><a href="{% url 'operation:manual_search_webpages' token.id %}">Search now</a></td>
     </tr>
 {% empty %}
 Token database is empty
 {% endfor %}
 </table>
+<div class="pagination">
+    <span class="step-links">
+        {% if tokens.has_previous %}
+            <a href="?page={{ tokens.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ tokens.number }} of {{ tokens.paginator.num_pages }}.
+        </span>
+
+        {% if tokens.has_next %}
+            <a href="?page={{ tokens.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
 {% endblock %}
 {% block navigation %}
-<ul>
-<li><a href="{% url 'operation:view_all_tokens' %}">View all tokens</a></li>
-<li><a href="{% url 'operation:add_new_token' %}">Add token</a></li>
-</ul>
+<h4>Navigation</h4>
 {% endblock %}

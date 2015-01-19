@@ -2,38 +2,48 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-GB">
 <head>
-	<title>Phising Hunter</title>
-	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
-	<meta name="description" content="Automatically search and monitor internet for scam." />
-	<meta name="keywords" content="Automatically search and monitor internet for scam." />
-	<meta name="robots" content="index, follow" />
-	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-	<link rel="stylesheet" type="text/css" href="{% static 'operation/screen.css' %}" media="screen" />
+    <title>Phising Hunter</title>
+    <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+    <meta name="description" content="Automatically search and monitor internet for scam." />
+    <meta name="keywords" content="Automatically search and monitor internet for scam." />
+    <meta name="robots" content="index, follow" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" type="text/css" href="{% static 'operation/screen.css' %}" media="screen" />
 </head>
 <body>
 
 <div id="header">
-	<h1>Scam Searcher</h1>
-	<h2>Application to automaticaly search and monitor the internet from scam website.</h2>
+    <h1>Scam Searcher</h1>
+    <h2>Search for scam website, automatically</h2>
 </div>
 <div class="colmask leftmenu">
-	<div class="colleft">
-		<div class="col1">
-			<!-- Column 1 start -->
-			Login Form
-            <form method="post" action="{% url 'operation:login' %}">
-            {% csrf_token %}
-
+    <div class="colleft">
+        <div class="col1">
+            <!-- Column 1 start -->
+            <h3>Login page</h3>
+            {{ error_message }}
+            <form method="post" action="{% url 'operation:process_login' %}">
+                {% csrf_token %}
+                <table>
+                <tr><td colspan="2">Please insert username and password</td></tr>
+                <tr><th>Username</th><td><input type="text" name="username"></td></tr>
+                <tr><th>Password</th><td><input type="password" name="password"></td></tr>
+                <tr>
+                    <td colspan="2">
+                        <input type="submit" value="Log In">&nbsp &nbsp &nbsp &nbsp
+                        <input type="reset" value="Clear All">
+                    </td>
+                </tr>
+                </table>
             </form>
-
-			<!-- Column 1 end -->
-		</div>
-		<div class="col2">
-			<!-- Column 2 start -->
-			Please login to operate this application
-			<!-- Column 2 end -->
-		</div>
-	</div>
+            <!-- Column 1 end -->
+        </div>
+        <div class="col2">
+            <!-- Column 2 start -->
+            Please login to operate this application
+            <!-- Column 2 end -->
+        </div>
+    </div>
 </div>
 <div id="footer">
 Copyright pupil 2015

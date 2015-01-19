@@ -1,0 +1,25 @@
+{% extends 'operation/index.html' %}
+{% block pagetitle %}View and manage operator's detail | ScamSearcher{% endblock %}
+{% block content %}
+<h3>Operator: {{ user }}</h3>
+<table>
+  <tr>
+    <th align="left">Username</th>
+    <td>{{ user }}</td>
+  </tr>
+  <tr>
+    <th align="left">Full name</th>
+    <td>{{ user.full_name }}</td>
+  </tr>
+  <tr>
+    <th align="left">Level</th>
+    <td>{{ operator.level }}</td>
+  </tr>
+</table>
+{% endblock %}
+{% block navigation %}
+<h4>Navigation</h4>
+<ul>
+    <li><a href="{% url 'operation:change_password_operator' %}">Change password</a></li>
+</ul>
+{% endblock %}

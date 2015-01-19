@@ -1,18 +1,65 @@
 {% extends 'operation/webpages/webpages.html' %}
 {% block pagetitle %}View detail of saved web | ScamSearcher{% endblock %}
 {% block content %}
+<h3>Web detail</h3>
 <table>
     <tr>
         <th>URL</th>
-        <td>{{ web.url }}</td>
+        <td><a href="{{ web.url }}" target="_blank">{{ web.url }}</a></td>
     </tr>
     <tr>
         <th>Domain</th>
         <td>{{ web.domain }}</td>
     </tr>
     <tr>
-        <th>Text Body</th>
-        <td>{{ web.textBody }}</td>
+    <th>Status</th>
+    <td>
+        <form method="post" action={% url 'operation:process_saving_inspection' %}>
+            {% csrf_token %}
+            <input type="hidden" value="{{ web.id }}" name="web_id" />
+            <table border="">
+                <tr>
+                    <td>Inspection</td>
+                    <td><input type="radio" name="inspection" value="True" {% if web.inspectStatus == True %} checked="checked" {% endif %} />YES</td>
+                    <td><input type="radio" name="inspection" value="False"{% if web.inspectStatus == False %} checked="checked" {% endif %} />NO</td>
+                </tr>
+                <tr>
+                    <td>Scam</td>
+                    <td><input type="radio" name="scam" value="True" {% if web.scamStatus == True %} checked="checked" {% endif %} />YES</td>
+                    <td><input type="radio" name="scam" value="False"{% if web.scamStatus == False %} checked="checked" {% endif %} />NO</td>
+                </tr>
+                <tr>
+                    <td>Report</td>
+                    <td><input type="radio" name="report" value="True" {% if web.reportStatus == True %} checked="checked" {% endif %} />YES</td>
+                    <td><input type="radio" name="report" value="False"{% if web.reportStatus == False %} checked="checked" {% endif %} />NO</td>
+                </tr>
+                <tr>
+                    <td>Access</td>
+                    <td><input type="radio" name="access" value="True" {% if web.accessStatus == True %} checked="checked" {% endif %} />YES</td>
+                    <td><input type="radio" name="access" value="False"{% if web.accessStatus == False %} checked="checked" {% endif %} />NO</td>
+                </tr>
+                <tr>
+                    <td colspan="3" align="center"><input type="submit" value="Save Edit" /></td>
+                </tr>
+            </table>
+        </form>
+    </tr>
+    <tr>
+        <th>Tokens</th>
+        <td>
+            {% for token in tokens %}
+                <p title="{{ token }}">{{ token|truncatechars:100 }}</p>
+            {% endfor %}
+        </td>
     </tr>
 </table>
+{% endblock %}
+{% block subnavigation %}
+<h4>Sub navigation</h4>
+<ul>
+    <li><a href="{% url 'operation:fetch_html_source' web.id %}">Fetch html source</a></li>
+    <li><a href="{% url 'operation:full_webpage_tokens' web.id %}">View full tokens</a></li>
+    <li><a href="{% url 'operation:report_website' web.id %}">Report website</a></li>
+    <li><a href="{% url 'operation:view_web_detail' web.id %}">View web detail</a></li>
+</ul>
 {% endblock %}

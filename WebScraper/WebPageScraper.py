@@ -14,15 +14,15 @@ class WebPageScraper:
         self.soup = BeautifulSoup(self.request.text)
 
     def getTextBody(self):
-        'method to remove javascript and css from html body and return only text body'
+        'method to remove javascript and css from html body and return only text body inside a list'
         [x.extract() for x in self.soup.find_all('script')]
         [x.extract() for x in self.soup.find_all('style')]
         pageText = self.soup.body.get_text()
         linedPageText = pageText.splitlines()
-        line2 = ""
+        line2 = []
         for line in linedPageText:
             if len(line) != 0:
-                line2 = line2 + line + "\n"
+                line2.append(line)
         return line2
 
 #todo: make class for specific free web domain hosting

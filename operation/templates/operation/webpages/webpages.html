@@ -1,15 +1,56 @@
 {% extends 'operation/index.html' %}
 {% block pagetitle %}View and manage web pages | ScamSearcher{% endblock %}
 {% block content %}
-{% for page in webpages %}
-{{ page }} <br />
+<h3>Webpages</h3>
+<table>
+    <tr>
+        <th rowspan="2" valign="center">No.</th>
+        <th rowspan="2" valign="center">URL</th>
+        <th rowspan="2" valign="center">Domain</th>
+        <th colspan="4" halign="center">Status</th>
+        <th rowspan="2" valign="center">Actions</th>
+    </tr>
+    <tr>
+        <th>Inspect</th>
+        <th>Scam</th>
+        <th>Report</th>
+        <th>Access</th>
+    </tr>
+{% for web in webs %}
+    <tr>
+        <td>{{ forloop.counter }}</td>
+        <td><a href="{{ web.url }}" target="_blank" title="{{ web.url }}">{{ web.url|truncatechars:70 }}</a></td>
+        <td>{{ web.domain }}</td>
+        <td>{{ web.inspectStatus }}</td>
+        <td>{{ web.scamStatus }}</td>
+        <td>{{ web.reportStatus }}</td>
+        <td>{{ web.accessStatus }}</td>
+        <td><a href="{% url 'operation:view_web_detail' web.id %}">detail</a></td>
+    </tr>
 {% empty %}
-Web page database is empty
+Website database is empty
 {% endfor %}
+</table>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if webs.has_previous %}
+            <a href="?page={{ webs.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ webs.number }} of {{ webs.paginator.num_pages }}.
+        </span>
+
+        {% if webs.has_next %}
+            <a href="?page={{ webs.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
 {% endblock %}
 {% block navigation %}
+<h4>Navigation</h4>
 <ul>
-<li><a href="{% url 'operation:view_all_webpages' %}">View all web pages</a></li>
-<li><a href="{% url 'operation:add_new_webpage' %}">Add web page manualy</a></li>
+    <li><a href="{% url 'operation:add_new_webpage' %}">Add web page manualy</a></li>
 </ul>
 {% endblock %}

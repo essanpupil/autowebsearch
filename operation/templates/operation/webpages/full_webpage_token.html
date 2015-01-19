@@ -1,0 +1,28 @@
+{% extends 'operation/webpages/webpages.html' %}
+{% block pagetitle %}View full tokens of {{ web.url }} | ScamSearcher{% endblock %}
+{% block content %}
+<h3>Web detail</h3>
+<table>
+    <tr>
+        <th>URL</th>
+        <td><a href="{{ web.url }}" target="_blank">{{ web.url }}</a></td>
+    </tr>
+    <tr>
+        <th valign="top">Tokens</th>
+        <td>
+            {% for token in tokens %}
+                <p title="{{ token }}">{{ token|truncatechars:100 }}</p>
+            {% endfor %}
+        </td>
+    </tr>
+</table>
+{% endblock %}
+{% block subnavigation %}
+<h4>Sub navigation</h4>
+<ul>
+    <li><a href="{% url 'operation:fetch_html_source' web.id %}">Fetch html source</a></li>
+    <li><a href="{% url 'operation:full_webpage_tokens' web.id %}">View full webpage token</a></li>
+    <li><a href="{% url 'operation:report_website' web.id %}">Report website</a></li>
+    <li><a href="{% url 'operation:view_web_detail' web.id %}">View web detail</a></li>
+</ul>
+{% endblock %}

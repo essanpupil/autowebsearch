@@ -6,14 +6,15 @@ Created on Jan 2, 2015
 from WebSearch import GoogleSearch
 from WebPageScraper import WebPageScraper
 
-keyword = "pemenang indosat poin plus plus"
-googling = GoogleSearch(keyword)
-googling.startSearch()
-print len(googling.searchResult)
-for hasil in googling.searchResult:
-    print hasil
-page = WebPageScraper(googling.searchResult[2])
-print page.getTextBody()
+# keyword = "pemenang indosat poin plus plus"
+# googling = GoogleSearch(keyword)
+# googling.startSearch()
+# print len(googling.searchResult)
+# for hasil in googling.searchResult:
+#     print hasil
+page = WebPageScraper("http://bri-1.weebly.com/info-pemenang.html")
+for linestr in page.getTextBody():
+    print linestr
 
 
 
