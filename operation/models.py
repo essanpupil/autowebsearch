@@ -22,6 +22,7 @@ class Webpage(models.Model):
     url = models.URLField(max_length=250, blank=False, unique=True)
     domain = models.CharField(max_length=250, blank=True)
     htmlPage = models.TextField(blank=True)
+    textBody = models.TextField(blank=True)
     inspectStatus = models.BooleanField(default=False)
     scamStatus = models.BooleanField(default=False)
     reportStatus = models.BooleanField(default=False)

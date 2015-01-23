@@ -3,8 +3,8 @@ Created on Jan 2, 2015
 
 @author: pupil
 '''
-from WebSearch import GoogleSearch
-from WebPageScraper import WebPageScraper
+#from WebSearch import GoogleSearch
+# from WebPageScraper import PageScraper
 
 # keyword = "pemenang indosat poin plus plus"
 # googling = GoogleSearch(keyword)
@@ -12,9 +12,15 @@ from WebPageScraper import WebPageScraper
 # print len(googling.searchResult)
 # for hasil in googling.searchResult:
 #     print hasil
-page = WebPageScraper("http://bri-1.weebly.com/info-pemenang.html")
-for linestr in page.getTextBody():
-    print linestr
+# page = PageScraper()
+# page.fetch_webpage("http://bri-1.weebly.com/info-pemenang.html")
+# plain_str = page.getTextBody()
+# plain_str.strip()
+# plain_str.lower()
+# print len(plain_str)
+# print type(plain_str)
+#for linestr in page.getTextBody():
+#print linestr
 
 
 

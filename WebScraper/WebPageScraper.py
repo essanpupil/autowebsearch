@@ -6,15 +6,24 @@ Created on Jan 5, 2015
 import requests
 from bs4 import BeautifulSoup
 
-class WebPageScraper:
+class PageScraper:
     'Default class to scrape for random webpage'
-    def __init__(self, url):
-        self.url = url
-        self.request = requests.get(url)
-        self.soup = BeautifulSoup(self.request.text)
+    def __init__(self):
+        self.url = None
+        self.html = None
 
-    def getTextBody(self):
+    def fetch_webpage(self, url):
+        'start fetching webpage'
+        self.url = url
+        req = requests.get(self.url)
+        self.html = req.text
+
+    def getTextBody(self, html=None):
         'method to remove javascript and css from html body and return only text body inside a list'
+        if html == None:
+            self.soup = BeautifulSoup(self.html)
+        else:
+            self.soup = BeautifulSoup(html)
         [x.extract() for x in self.soup.find_all('script')]
         [x.extract() for x in self.soup.find_all('style')]
         pageText = self.soup.body.get_text()
@@ -22,7 +31,7 @@ class WebPageScraper:
         line2 = []
         for line in linedPageText:
             if len(line) != 0:
-                line2.append(line)
-        return line2
+                line2.append(line.encode('ascii', 'ignore'))
+        return "\n".join(line2)
 
 #todo: make class for specific free web domain hosting

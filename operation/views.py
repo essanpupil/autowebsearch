@@ -1,4 +1,4 @@
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
@@ -10,7 +10,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.exceptions import ObjectDoesNotExist
 
 from WebScraper.WebSearch import GoogleSearch
-from WebScraper.WebPageScraper import WebPageScraper
+from WebScraper.WebPageScraper import PageScraper
 from models import Keyword, Operator, Webpage, Tokens
 from SSlib.tokens import Tokenizer
 from django.db import IntegrityError
@@ -63,7 +63,7 @@ def keywords(request):
         kwords = paginator.page(1)
     except EmptyPage:
         kwords = paginator.page(paginator.num_pages)
-    return render_to_response('operation/keywords/keywords.html', {'keywords':kwords})
+    return render (request, 'operation/keywords/keywords.html', {'keywords':kwords})
 
 @login_required(login_url="/")
 def add_new_keyword(request):
@@ -92,8 +92,7 @@ def tokens(request):
         token = paginator.page(1)
     except EmptyPage:
         token = paginator.page(paginator.num_pages)
-    return render_to_response(template, {'tokens':token})
-    #return render(request, template,{'tokens':token})
+    return render(request, template, {'tokens':token})
 
 @login_required(login_url="/")
 def view_all_tokens(request):
@@ -142,8 +141,10 @@ def fetch_html_source(request, web_id):
     "fetch the web's html source"
     web = Webpage.objects.get(id=web_id)
     if len(web.htmlPage) is 0:
-        page_scraper = WebPageScraper(web.url)
-        web.htmlPage = page_scraper.request
+        page_scraper = PageScraper()
+        page_scraper.fetch_webpage(web.url)
+        web.htmlPage = page_scraper.html
+        web.textbody = page_scraper.getTextBody()
         web.save()
         token = Tokenizer(page_scraper.getTextBody())
         for item in token.sentence_tokens():
@@ -234,7 +235,7 @@ def webpages(request, inspect=all, scam=all, report=all, access=all):
         webs = paginator.page(1)
     except EmptyPage:
         webs = paginator.page(paginator.num_pages)
-    return render_to_response('operation/webpages/webpages.html', {'webs':webs})
+    return render(request, 'operation/webpages/webpages.html', {'webs':webs})
 
 @login_required(login_url="/")
 def add_new_webpage(request):
