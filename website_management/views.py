@@ -1,3 +1,5 @@
 from django.shortcuts import render
 
-# Create your views here.
+def website_dashboard(request):
+    "display info summary about saved webpages, homepage, & domain"
+    
