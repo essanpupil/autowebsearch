@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block subnavigation %}
+{% include 'website_management/web_detail_subnav.html' %}
+{% endblock %}
+{% block content %}
+<h3>Webpage detail</h3>
+<table>
+    <tr><th align="left">URL</th><td><a href="{{ web.url }}" target="_blank">{{ web.url }}</a></td></tr>
+    <tr><th align="left">Date added</th><td>{{ web.added }}</td></tr>
+    <tr><th align="left">Homepage</th><td><a href="{% url 'website_management:homepage_detail' web.idhp %}">{{ web.hp }}</a></td></tr>
+    <tr><th align="left">Domain</th><td><a href="{% url 'website_management:domain_detail' web.iddom %}">{{ web.dom }}</a></td></tr>
+    <tr><th align="left">HTML page</th><td>{{ web.html_page|yesno:"Downloaded, Empty" }}</td></tr>
+</table>
+{% endblock %}

@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from django.http import Http404, HttpResponse, HttpResponseNotFound
 
 from website_management.models import Webpage, Domain, Homepage
 
@@ -23,6 +24,21 @@ def website_dashboard(request):
 
 def webpage_detail(request, web_id):
     "display detail info of selected webpage"
+    web = get_object_or_404(Webpage, id=web_id)
+    web_data = {'url': web.url,
+                'hp': web.homepage.name,
+                'idhp': web.homepage.id,
+                'iddom': web.homepage.domain.id,
+                'dom': web.homepage.domain.name,
+                'added': web.date_added,
+                'html_page': bool(web.html_page),
+                'id': web.id,}
+    return render(request,
+                    'website_management/web_detail.html',
+                    {'web': web_data})
+
+def fetch_html_page(request, web_id):
+    'downloading html source code of webpage'
     pass
     
 def homepage_detail(request, hp_id):
