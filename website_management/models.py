@@ -25,5 +25,7 @@ class Webpage(models.Model):
     homepage = models.ForeignKey(Homepage, blank=True, null=True)
     html_page = models.TextField(blank=True, null=True)
     date_added = models.DateField(auto_now=True)
+    last_response = models.CharField(max_length=3, blank=True, null=True)
+    last_response_check = models.DateField(auto_now=True)
     def __unicode__(self):
         return self.url
