@@ -7,5 +7,3 @@ I divide this project into several application and package:
 3. website_analyzer, python package to analize website. The main objective is to determine if the websites are scam or not. The decision is made based-on certain rules. 
 4. operation, django app that give interface to control all the above package & apps. 
 5. administrative, django app to manage user that can operate this project. And also manage client that uses this project to protect their interest.
-    I reset this project in order to make a more clean and proper django project. I'll start working on the number 1 now
-
