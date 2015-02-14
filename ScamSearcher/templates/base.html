@@ -3,12 +3,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-GB">
 <head>
     <title>{% block pagetitle %}Scam Searcher{% endblock %}</title>
-    <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
-    <meta name="description" content="Automatically search and monitor internet for scam." />
-    <meta name="keywords" content="Automatically search and monitor internet for scam." />
+    <meta http-equiv="Content-Type"
+        content="application/xhtml+xml; charset=utf-8" />
+    <meta name="description"
+        content="Automatically search and monitor internet for scam." />
+    <meta name="keywords"
+        content="Automatically search and monitor internet for scam." />
     <meta name="robots" content="index, follow" />
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-    <link rel="stylesheet" type="text/css" href="{% static 'screen.css' %}" media="screen" />
+    <link rel="stylesheet"
+        type="text/css" href="{% static 'screen.css' %}" media="screen" />
 </head>
 <body>
 
@@ -17,6 +21,11 @@
     <h2>Search for scam website, automatically</h2>
     <ul>
     {% block mainmenu %}
+        <li>
+            <a href="{% url 'website_management:website_dashboard' %}">
+                Website
+            </a>
+        </li>
     {% endblock %}
     </ul>
 </div>
