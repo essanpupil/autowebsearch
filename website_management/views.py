@@ -10,17 +10,18 @@ from .forms import AddWebpageForm, SearchWebpageForm
 from webscraper.pagescraper import PageScraper
 from search_extractor.google_search import GoogleSearch
 
+
 def website_dashboard(request):
     "display info summary about saved webpages, homepage, & domain"
     webs = Webpage.objects.all()
     homepages = Homepage.objects.all()
     domains = Domain.objects.all()
     context = {'web_count': webs.count(),
-                'hp_count': homepages.count(),
-                'dom_count': domains.count(),
-                'newest_5_web': [],
-                'newest_5_dom': [],
-                'newest_5_hp': []}
+               'hp_count': homepages.count(),
+               'dom_count': domains.count(),
+               'newest_5_web': [],
+               'newest_5_dom': [],
+               'newest_5_hp': []}
     for web in webs.order_by('id').reverse()[0:5]:
         context['newest_5_web'].append({'url': web.url, 'id': web.id})
     for hp in homepages.order_by('id').reverse()[0:5]:
