@@ -39,4 +39,20 @@
         </tr>
     {% endfor %}
 </table>
+<br />
+<div class="pagination">
+    <span class="step-links">
+        {% if webs.has_previous %}
+            <a href="?page={{ webs.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ webs.number }} of {{ webs.paginator.num_pages }}.
+        </span>
+
+        {% if webs.has_next %}
+            <a href="?page={{ webs.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
 {% endblock %}

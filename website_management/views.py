@@ -4,6 +4,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import Http404, HttpResponse, HttpResponseNotFound
 from django.db import IntegrityError
 from django.core.urlresolvers import reverse
+from django.core.paginator import Paginator, PageNotAnInteger
 
 from .models import Webpage, Domain, Homepage
 from .forms import AddWebpageForm, SearchWebpageForm
@@ -121,6 +122,14 @@ def view_all_webpages(request):
             'last_response': item.last_response,
             'last_response_check': item.last_response_check,
             'id': item.id})
+    paginator = Paginator(context['webs'], 10)
+    page = request.GET.get('page')
+    try:
+        context['webs'] = paginator.page(page)
+    except PageNotAnInteger:
+        context['webs'] = paginator.page(1)
+    except EmptyPage:
+        context['webs'] = paginator.page(paginator.num_pages)
     return render(request,
         'website_management/view_all_webpages.html', context)
         
