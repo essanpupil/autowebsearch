@@ -94,7 +94,7 @@ def tokens(request):
         token = paginator.page(paginator.num_pages)
     return render(request, template, {'tokens':token})
 
-@login_required(login_url="/")
+@swlogin_required(login_url="/")
 def view_all_tokens(request):
     'display all tokens in database'
     template = 'operation/tokens/tokens.html'

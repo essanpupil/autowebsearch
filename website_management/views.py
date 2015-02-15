@@ -6,7 +6,9 @@ from django.db import IntegrityError
 from django.core.urlresolvers import reverse
 
 from .models import Webpage, Domain, Homepage
-from .forms import AddWebpageForm
+from .forms import AddWebpageForm, SearchWebpageForm
+from webscraper.pagescraper import PageScraper
+from search_extractor.google_search import GoogleSearch
 
 def website_dashboard(request):
     "display info summary about saved webpages, homepage, & domain"
@@ -40,31 +42,53 @@ def webpage_detail(request, web_id):
                 'last_check': web.last_response_check,
                 'html_page': bool(web.html_page),
                 'id': web.id,}
-    if web.homepage != None:
+    if web.homepage == None:
+        web_data['hp'] = None
+        web_data['idhp'] = None        
+        web_data['iddom'] = None        
+        web_data['dom'] = None
+    else:
         web_data['hp'] = web.homepage.name
         web_data['idhp'] = web.homepage.id
         web_data['iddom'] = web.homepage.domain.id
         web_data['dom'] = web.homepage.domain.name
-    else:
-        web_data['hp'] = None
-        web_data['idhp'] = None        
-        web_data['iddom'] = None        
-        web_data['dom'] = None        
     return render(request,
                     'website_management/web_detail.html',
                     {'web': web_data})
 
 def fetch_html_page(request, web_id):
     'downloading html source code of webpage'
-    pass
+    web = Webpage.objects.get(id=web_id)
+    if web.html_page is None:
+        page_scraper = PageScraper()
+        page_scraper.fetch_webpage(web.url)
+        web.html_page = page_scraper.html
+        web.save()
+    return redirect('website_management:webpage_detail', web_id = web.id)
     
 def homepage_detail(request, hp_id):
     "display detail info of selected homepage"
-    pass
+    hp = get_object_or_404(Homepage, id=hp_id)
+    context = {'hpname': hp.name,
+                'hpid': hp.id,
+                'hpadded': hp.date_added,
+                'hpdomain': hp.domain.name,
+                'iddom': hp.domain.id,
+                'hpweb': []}
+    for item in hp.webpage_set.all():
+        context['hpweb'].append({'url': item.url, 'id': item.id})
+    return render(request, 'website_management/homepage_detail.html', context)
 
 def domain_detail(request, dom_id):
     "display detail info of selected domain"
-    pass
+    dom = get_object_or_404(Domain, id=dom_id)
+    context = {'domname': dom.name,
+                'domid': dom.id,
+                'domadded': dom.date_added,
+                'domhp': []}
+    for item in dom.homepage_set.all():
+        context['domhp'].append({'name': item.name, 'id': item.id})
+    return render(request, 'website_management/domain_detail.html', context)
 
 def add_new_webpage(request):
     "Display form to add new webpage"
@@ -87,7 +111,7 @@ def add_new_webpage(request):
 
 def view_all_webpages(request):
     "display all webpage"
-    webs = Webpage.objects.all()
+    webs = Webpage.objects.all().order_by('id').reverse()
     context = {'webs': []}
     for item in webs:
         context['webs'].append({
@@ -114,4 +138,36 @@ def view_all_homepages(request):
     
 def view_all_domains(request):
     "display all domain"
-    pass
+    doms = Domain.objects.all()
+    context = {'doms': []}
+    for item in doms:
+        context['doms'].append({
+            'name': item.name,
+            'date_added': item.date_added,
+            'id': item.id})
+    return render(request,
+        'website_management/view_all_domains.html', context)
+
+def search_webpage(request):
+    "display text input to start searching website in internet"
+    if request.method == 'POST':
+        # create form instance and populate with data from the request
+        form = SearchWebpageForm(request.POST)
+        # check the form is valid or not
+        if form.is_valid():
+            # start saving new webpage url
+            search = GoogleSearch(form.cleaned_data['keyword'])
+            search.start_search(max_page=form.cleaned_data['page'])
+            for item in search.search_result:
+                try:
+                    Webpage.objects.create(url=item)
+                except IntegrityError:
+                    continue
+            return redirect('website_management:view_all_webpages')
+        #~ else:
+            #~ return redirect('website_management:add_new_webpage')
+    else:
+        form = SearchWebpageForm()
+    return render(request,
+                    'website_management/search_webpage.html',
+                    {'form': form})

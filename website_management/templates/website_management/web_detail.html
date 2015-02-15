@@ -23,7 +23,7 @@
     <tr>
         <th align="left">Homepage</th>
         <td>
-        {% if web.hp == 'None' %}
+        {% if web.hp != None %}
             <a href="{% url 'website_management:homepage_detail' web.idhp %}">
                 {{ web.hp }}
             </a>
@@ -35,7 +35,7 @@
     <tr>
         <th align="left">Domain</th>
         <td>
-        {% if web.hp == 'None' %}
+        {% if web.hp != None %}
             <a href="{% url 'website_management:domain_detail' web.iddom %}">
                 {{ web.dom }}
             </a>

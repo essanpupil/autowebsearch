@@ -26,6 +26,6 @@ class Webpage(models.Model):
     html_page = models.TextField(blank=True, null=True)
     date_added = models.DateField(auto_now=True)
     last_response = models.CharField(max_length=3, blank=True, null=True)
-    last_response_check = models.DateField(auto_now=True)
+    last_response_check = models.DateField(blank=True, null=True)
     def __unicode__(self):
         return self.url
