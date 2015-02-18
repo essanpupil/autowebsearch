@@ -1,5 +1,7 @@
 from django.shortcuts import render
 
+from .models import ExtendHomepage
+
 
 def analyze_website(request):
     "Display page to analyze website, the last analysist result is displayed"
@@ -8,7 +10,11 @@ def analyze_website(request):
 
 def analyst_dashboard(request):
     "Display summary info of analyzed website."
-    return render(request, 'website_analyzer/dashboard.html')
+    exthp = ExtendHomepage.objects.all()
+    context = {'scam_count': exthp.filter(scam=True).count(),
+               'whitelist_count': exthp.filter(whitelist=True).count(),
+               'hp_count': exthp.count()}    
+    return render(request, 'website_analyzer/dashboard.html', context)
 
 
 def display_pages(request, hp_id):

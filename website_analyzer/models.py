@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 from website_management.models import Webpage, Homepage, Domain
 
@@ -47,10 +48,12 @@ class ExtendHomepage(models.Model):
     def save(self, *args, **kwargs):
         if self.scam == False:
             self.whitelist = True
+            super(ExtendHomepage, self).save(*args, **kwargs)
         elif self.scam == True:
             self.whitelist = False
+            super(ExtendHomepage, self).save(*args, **kwargs)
         else:
-            super(Extend, self).save(*args, **kwargs)
+            super(ExtendHomepage, self).save(*args, **kwargs)
 
 
 class ExtendWebpage(models.Model):
