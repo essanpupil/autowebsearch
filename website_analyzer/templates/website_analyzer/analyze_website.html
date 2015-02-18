@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block navigation %}
+    {% include 'website_analyzer/website_analyzer_nav.html' %}
+{% endblock %}
+{% block content %}
+<h3>Analyze website</h3>
+<table>
+    <th align="left">Homepage analysist</th><td>{{ hp_analysist }}</td>
+    <th align="left">Sequence analysist</th><td>{{ seq_analysist }}</td>
+</table>
+{% endblock %}
