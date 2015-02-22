@@ -1,4 +1,5 @@
 from urlparse import urlparse
+import tldextract
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import Http404, HttpResponse, HttpResponseNotFound
@@ -60,13 +61,32 @@ def webpage_detail(request, web_id):
 
 def fetch_html_page(request, web_id):
     'downloading html source code of webpage'
-    web = Webpage.objects.get(id=web_id)
+    web = get_object_or_404(Webpage, id=web_id)
+    ext = tldextract.extract(web.url)
+    dom, created = Domain.objects.get_or_create(name=".".join(ext[1:]))
+    hp, created2 = Homepage.objects.get_or_create(name=".".join(ext),
+                                                  domain=dom)
+    web.homepage = hp
+    web.save()
     if web.html_page is None:
         page_scraper = PageScraper()
         page_scraper.fetch_webpage(web.url)
         web.html_page = page_scraper.html
         web.save()
     return redirect('website_management:webpage_detail', web_id = web.id)
+
+
+def get_domain_homepage(request, web_id):
+    "extract domain and homepage from webpage's url"
+    web = get_object_or_404(Webpage, id=web_id)
+    ext = tldextract.extract(web.url)
+    dom, created = Domain.objects.get_or_create(name=".".join(ext[1:]))
+    hp, created2 = Homepage.objects.get_or_create(name=".".join(ext),
+                                                  domain=dom)
+    web.homepage = hp
+    web.save()
+    return redirect('website_management:webpage_detail', web_id = web.id)
+    
     
 def homepage_detail(request, hp_id):
     "display detail info of selected homepage"
@@ -169,10 +189,12 @@ def search_webpage(request):
             search = GoogleSearch(form.cleaned_data['keyword'])
             search.start_search(max_page=form.cleaned_data['page'])
             for item in search.search_result:
-                try:
-                    Webpage.objects.create(url=item)
-                except IntegrityError:
-                    continue
+                Webpage.objects.create(url=item)
+                ext = tldextract.extract(web.url)
+                dom, created = Domain.objects.get_or_create(name=".".join(ext[1:]))
+                hp, created2 = Homepage.objects.get_or_create(name=".".join(ext), domain=dom)
+                web.homepage = hp
+                web.save()
             return redirect('website_management:view_all_webpages')
         #~ else:
             #~ return redirect('website_management:add_new_webpage')

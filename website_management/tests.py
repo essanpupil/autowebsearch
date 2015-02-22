@@ -113,9 +113,9 @@ class HomepageDetailViewsTestcase(TestCase):
                                 kwargs={'hp_id': hp.id})
         resp = self.client.get(url_test)
         self.assertEqual(resp.status_code, 200)
+        self.assertEqual('pupil.com', str(hp.domain.name))
         self.assertIn(hp.name, resp.content)
         self.assertIn(str(int(hp.id)), resp.content)
-        self.assertIn(hp.domain.name, resp.content)
         self.assertIn(str(int(hp.domain.id)), resp.content)
         
 class DomainDetailViewsTestcase(TestCase):

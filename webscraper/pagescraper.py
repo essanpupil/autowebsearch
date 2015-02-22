@@ -11,6 +11,8 @@ class PageScraper:
     def __init__(self):
         self.url = None
         self.html = None
+        self.response = None
+        self.redirect_url = None
 
     def fetch_webpage(self, url):
         'start fetching webpage'

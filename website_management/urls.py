@@ -23,4 +23,6 @@ urlpatterns = patterns('',
                                             name='view_all_domains'),
     url(r'^fetch_html_page/(?P<web_id>\d+)/$', views.fetch_html_page,
                                             name='fetch_html_page'),
+    url(r'^get_domain_homepage/(?P<web_id>\d+)/$', views.get_domain_homepage,
+                                            name='get_domain_homepage'),
     )

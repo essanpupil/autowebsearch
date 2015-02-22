@@ -1,4 +1,13 @@
-<h3>Sub navigation</h3>
+<h3>Webpage detail navigation</h3>
 <ul>
-    <li><a href="{% url 'website_management:fetch_html_page' web.id %}">Fetch html page</a></li>
+    <li>
+        <a href="{% url 'website_management:fetch_html_page' web.id %}">
+            Fetch html page
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'website_management:get_domain_homepage' web.id %}">
+            Get domain homepage
+        </a>
+    </li>
 </ul>

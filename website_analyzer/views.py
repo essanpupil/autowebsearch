@@ -1,11 +1,25 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
-from .models import ExtendHomepage
+from .models import ExtendHomepage, sequence
+from website_management.models import Homepage
 
 
-def analyze_website(request):
+def analyze_website(request, hp_id):
     "Display page to analyze website, the last analysist result is displayed"
-    return render(request, 'website_analyzer/analyze_website.html')
+    hp = get_object_or_404(Homepage, id=hp_id)
+    exthp, created = ExtendHomepage.objects.get_or_create(homepage=hp)
+    context = {'hpname': hp.name,
+               'hpadded': hp.date_added,
+               'hpscam': hp.extendhomepage.scam,
+               'hpinspection': hp.extendhomepage.inspected,
+               'hpreport': hp.extendhomepage.reported,
+               'hpaccess': hp.extendhomepage.access,
+               'hpwhitelist': hp.extendhomepage.whitelist,
+               'hppages': [],
+               'hpseqs': []}
+    #for item in sequence.objects.filter(webpage__in=hp.webpage_set.all())
+        
+    return render(request, 'website_analyzer/analyze_website.html', context)
 
 
 def analyst_dashboard(request):
@@ -13,7 +27,7 @@ def analyst_dashboard(request):
     exthp = ExtendHomepage.objects.all()
     context = {'scam_count': exthp.filter(scam=True).count(),
                'whitelist_count': exthp.filter(whitelist=True).count(),
-               'hp_count': exthp.count()}    
+               'hp_count': exthp.count()}
     return render(request, 'website_analyzer/dashboard.html', context)
 
 
@@ -47,7 +61,7 @@ def add_scam_website(request):
     pass
 
 
-def view_scam_website(request):
+def view_websites(request):
     "display scam website"
     pass
 

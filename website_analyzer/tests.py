@@ -7,6 +7,36 @@ from .models import ExtendDomain, ExtendHomepage, ExtendWebpage
 from website_management.models import Homepage
 
 
+def analye_website_setup():
+    "prepare data for AnalyzeWebsiteViewTest"
+    dom = Domain.objects.create(name='pupil.com')
+    hp = Homepage.objects.create(name='www.pupil.com')
+    Webpage.objects.create(url='http://www.pupil.com', homepage=hp)
+    Webpage.objects.create(url='http://www.pupil.com/me', homepage=hp)
+    web = Webpage.objects.create(url='http://www.pupil.com/scam', homepage=hp)
+    Webpage.objects.create(url='http://www.pupil.com/one', homepage=hp)
+    Webpage.objects.create(url='http://www.pupil.com/two', homepage=hp)
+    Webpage.objects.create(url='http://www.pupil.com/three', homepage=hp)
+    tkn0 = Token.objects.create(name='halaman', webpage=web)
+    tkn1 = Token.objects.create(name='ini', webpage=web)
+    tkn2 = Token.objects.create(name='adalah', webpage=web)
+    tkn3 = Token.objects.create(name='scam', webpage=web)
+    tkn4 = Token.objects.create(name='yang', webpage=web)
+    tkn5 = Token.objects.create(name='disengaja', webpage=web)
+    seq0 = Sequence.objects.create(token=tkn1,
+                                   webpage=web,
+                                   number=1,
+                                   description='test scam sequence')
+    seq1 = Sequence.objects.create(token=tkn2,
+                                   webpage=web,
+                                   number=2,
+                                   description='test scam sequence')
+    seq2 = Sequence.objects.create(token=tkn3,
+                                   webpage=web,
+                                   number=3,
+                                   description='test scam sequence')
+    
+
 class ExtendDomainModelTest(TestCase):
     "Testing custom save() & clean() in model ExtendHomepage"
     def setUp(self):
@@ -69,14 +99,15 @@ class AnalystDashboardViewTest(TestCase):
         self.assertEqual(resp.context['scam_count'], 1)
         self.assertTrue('whitelist_count' in resp.context.keys())
         self.assertEqual(resp.context['whitelist_count'], 4)
-        #self.assertTrue('newest_5_scam' in resp.context)
-        #self.assertTrue('newest_5_whitelist' in resp.context)
 
-    #~ def test_rendered_template_dashboard_view(self):
-        #~ resp = self.client.get(reverse('website_analyzer:analyst_dashboard'))
-        #~ self.assertContains(resp, 'www.pupil.com', count=1, html=True)
-        #~ self.assertContains(resp, 'www.facebook.com', count=1, html=True)
-        #~ self.assertContains(resp, 'www.detik.com', count=1, html=True)
-        #~ self.assertContains(resp, 'www.kompas.com', count=1, html=True)
-        #~ self.assertContains(resp, 'www.twitter.com', count=1, html=True)
-        #~ self.asertNotContains(resp, 'www.republika.co.id', html=True)
+
+class AnalyzeWebsiteViewTest(TestCase):
+    def test_view_website_does_not_exist(self):
+        resp = self.client.get(reverse('website_analyzer:analyze_website',
+                                        kwargs={'hp_id': 40}))
+        self.assertEqual(resp.status_code, 404)
+    def test_analyze_website_find_sequence(self):
+        hp = Homepage.objects.get(name='www.pupil.com')
+        webs = hp.webpage_set.all()
+        seqs = Sequence.objects.filter(webpage__in=webs)
+        

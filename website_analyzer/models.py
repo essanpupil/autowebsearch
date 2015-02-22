@@ -65,19 +65,19 @@ class Token(models.Model):
     """ store tokens used in webpages. tokens used to create keyword search
     and analisis parameter """
     id = models.AutoField(primary_key=True)
-    webpage = models.ManyToManyField(Webpage)
+    webpage = models.ManyToManyField(Webpage, null=True, blank=True)
     name = models.CharField(max_length=20, unique=True)
     def __unicode__(self):
         return self.name
 
 
-class sequence(models.Model):
+class Sequence(models.Model):
     "store sequence token, use as parameter for analyzing website"
     id = models.AutoField(primary_key=True)
     token = models.ForeignKey(Token)
 
     # webpages using this sequence
-    webpage = models.ForeignKey(Webpage)
+    webpage = models.ForeignKey(Webpage, blank=True, null=True)
 
     # token's number on a certain sequence.
     number = models.IntegerField()
@@ -88,7 +88,7 @@ class sequence(models.Model):
         return self.description
 
 
-class searching(models.Model):
+class Searching(models.Model):
     'information on each searching activity'
     id = models.AutoField(primary_key=True)
     keyword = models.CharField(max_length=255)

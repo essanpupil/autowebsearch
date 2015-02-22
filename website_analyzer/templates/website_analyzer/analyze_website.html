@@ -5,7 +5,49 @@
 {% block content %}
 <h3>Analyze website</h3>
 <table>
-    <th align="left">Homepage analysist</th><td>{{ hp_analysist }}</td>
-    <th align="left">Sequence analysist</th><td>{{ seq_analysist }}</td>
+    <tr>
+        <th align="left">Homepage name</th><td>{{ hpname }}</td>
+    </tr>
+    <tr>
+        <th align="left">Date added</th><td>{{ hpadded }}</td>
+    </tr>
+    <tr>
+        <th align="left">Scam status</th><td>{{ hpscam }}</td>
+    </tr>
+    <tr>
+        <th align="left">Inspection status</th><td>{{ hpinspection }}</td>
+    </tr>
+    <tr>
+        <th align="left">Report status</th><td>{{ hpreport }}</td>
+    </tr>
+    <tr>
+        <th align="left">Access status</th><td>{{ hpaccess }}</td>
+    </tr>
+    <tr>
+        <th align="left">Whitelist status</th><td>{{ hpwhitelist }}</td>
+    </tr>
+    <tr>
+        <th align="left">List of webpages</th>
+        <td>
+            {% for web in hppages %}
+                <a href="{% url 'website_management:webpage_detail' web.id %}">
+                    {{ web.url }}
+                </a>
+            {% empty %}
+                This website does not have webpages
+            {% endfor %}
+        </td>
+    </tr>
+    <tr>
+        <th align="left">List of sequence</th>
+        <td>
+            {% for seq in hpseqs %}
+                <p>{{ seq.words }}</p>
+                <p>{{ seq.web }}</p>
+            {% empty %}
+                This website does not have matching sequence
+            {% endfor %}
+        </td>
+    </tr>
 </table>
 {% endblock %}
