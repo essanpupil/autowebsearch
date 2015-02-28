@@ -10,22 +10,22 @@ from .forms import AddWebpageForm
 class WebsiteDashboardViewsTestCase(TestCase):
     def setUp(self):
         Webpage.objects.create(url="http://www.pupil.com/profil/")
-        Webpage.objects.create(url="http://www.facebook.com/essanpupil/")
+        Webpage.objects.create(url="http://www.facebok.com/essanpupil/")
         Webpage.objects.create(url="http://www.detik.com/sepakbola/")
         Webpage.objects.create(url="http://www.kompas.com/news/")
-        Webpage.objects.create(url="http://www.twitter.com/setting/")
+        Webpage.objects.create(url="http://www.twiter.com/setting/")
         Webpage.objects.create(url="http://www.republika.co.id/islam/")
         Domain.objects.create(name="pupil.com")
-        Domain.objects.create(name="blogspot.com")
-        Domain.objects.create(name="facebook.com")
+        Domain.objects.create(name="kompas.com")
+        Domain.objects.create(name="facebok.com")
         Domain.objects.create(name="detik.com")
-        Domain.objects.create(name="twitter.com")
+        Domain.objects.create(name="twiter.com")
         Domain.objects.create(name="republika.co.id")
         Homepage.objects.create(name="www.pupil.com")
-        Homepage.objects.create(name="www.facebook.com")
+        Homepage.objects.create(name="www.facebok.com")
         Homepage.objects.create(name="www.detik.com")
         Homepage.objects.create(name="www.kompas.com")
-        Homepage.objects.create(name="www.twitter.com")
+        Homepage.objects.create(name="www.twiter.com")
         Homepage.objects.create(name="www.republika.co.id")
         web = Webpage.objects.get(url="http://www.pupil.com/profil/")
         dom = Domain.objects.get(name="pupil.com")
@@ -47,25 +47,36 @@ class WebsiteDashboardViewsTestCase(TestCase):
         self.assertEqual(resp.context['web_count'], 6)
         self.assertEqual(resp.context['hp_count'], 6)
         self.assertEqual(resp.context['dom_count'], 6)
-        self.assertIn("http://www.facebook.com/essanpupil/", resp.content)
-        self.assertIn("http://www.detik.com/sepakbola/", resp.content)
-        self.assertIn("http://www.kompas.com/news/", resp.content)
-        self.assertIn("http://www.twitter.com/setting/", resp.content)
-        self.assertIn("http://www.republika.co.id/islam/", resp.content)
-        self.assertFalse(
-            "www.pupil.com" in resp.context['newest_5_hp'][0].values())
-        self.assertFalse("http://www.pupil.com/profil/" in
-                            resp.context['newest_5_web'][0].values())
-        self.assertFalse(
-            "blogspot.com" in resp.context['newest_5_dom'][0].values())
+
+    def test_filled_website_dashboard_html_render(self):
+        resp = self.client.get(reverse('website_management:website_dashboard'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp,
+                            'http://www.facebok.com/essanpupil/', 1)
+        self.assertContains(resp,
+                            'http://www.detik.com/sepakbola/', 1)
+        self.assertContains(resp,
+                            'http://www.kompas.com/news/', 1)
+        self.assertContains(resp,
+                            'http://www.twiter.com/setting/', 1)
+        self.assertContains(resp,
+                            'http://www.republika.co.id/islam/', 1)
+        self.assertContains(resp, 'facebok.com', 3)
+        self.assertContains(resp, 'detik.com', 3)
+        self.assertContains(resp, 'kompas.com', 3)
+        self.assertContains(resp, 'twiter.com', 3)
+        self.assertContains(resp, 'republika.co.id', 3)
+        self.assertNotContains(resp,'www.pupil.com')
+        self.assertNotContains(resp, 'http://www.pupil.com/profil/')
+        self.assertNotContains(resp, 'blogspot.com')
+
 
 class WebpageDetailViewsTestcase(TestCase):
     def setUp(self):
         dom = Domain.objects.create(name="pupil.com")
         hp = Homepage.objects.create(name="www.pupil.com", domain=dom)
         web = Webpage.objects.create(url="http://www.pupil.com/profil/",
-                                        homepage=hp)
-        
+                                     homepage=hp)
 
     def test_webpage_does_not_exist(self):
         # test for web_id not exist in Webpage models
@@ -81,7 +92,7 @@ class WebpageDetailViewsTestcase(TestCase):
         # test web detail based-on setup() above
         web = Webpage.objects.get(url="http://www.pupil.com/profil/")
         url_test = reverse('website_management:webpage_detail',
-                                kwargs={'web_id':web.id})
+                           kwargs={'web_id': web.id})
         resp = self.client.get(url_test)
         self.assertEqual(resp.status_code, 200)
         self.assertIn(web.url, resp.content)
@@ -90,6 +101,7 @@ class WebpageDetailViewsTestcase(TestCase):
         self.assertIn(str(int(web.homepage.domain.id)), resp.content)
         self.assertIn(web.homepage.name, resp.content)
         self.assertIn(web.homepage.domain.name, resp.content)
+
 
 class HomepageDetailViewsTestcase(TestCase):
     def setUp(self):
@@ -110,17 +122,18 @@ class HomepageDetailViewsTestcase(TestCase):
         # test web detail based-on setup() above
         hp = Homepage.objects.get(name="www.pupil.com")
         url_test = reverse('website_management:homepage_detail',
-                                kwargs={'hp_id': hp.id})
+                           kwargs={'hp_id': hp.id})
         resp = self.client.get(url_test)
         self.assertEqual(resp.status_code, 200)
         self.assertEqual('pupil.com', str(hp.domain.name))
         self.assertIn(hp.name, resp.content)
         self.assertIn(str(int(hp.id)), resp.content)
         self.assertIn(str(int(hp.domain.id)), resp.content)
-        
+
+
 class DomainDetailViewsTestcase(TestCase):
     def setUp(self):
-        dom = Domain.objects.create(name="pupil.com")        
+        dom = Domain.objects.create(name="pupil.com")
 
     def test_domain_does_not_exist(self):
         # test for web_id not exist in Webpage models
@@ -136,12 +149,13 @@ class DomainDetailViewsTestcase(TestCase):
         # test web detail based-on setup() above
         dom = Domain.objects.get(name="pupil.com")
         url_test = reverse('website_management:domain_detail',
-                                kwargs={'dom_id': dom.id})
+                           kwargs={'dom_id': dom.id})
         resp = self.client.get(url_test)
         self.assertEqual(resp.status_code, 200)
         self.assertIn(dom.name, resp.content)
         self.assertIn(str(int(dom.id)), resp.content)
-        
+
+
 class AddNewWebpageWebTest(WebTest):
     def test_insert_valid_url(self):
         form = self.app.get(reverse('website_management:add_new_webpage')).form
@@ -149,6 +163,7 @@ class AddNewWebpageWebTest(WebTest):
         response = form.submit().follow()
         self.assertIn(
             'http://sudutpandangpupil.blogspot.com/', response.content)
+
 
 class ViewAllWebpagesTestCase(TestCase):
     def setUp(self):
@@ -170,10 +185,11 @@ class ViewAllWebpagesTestCase(TestCase):
         self.assertTrue(resp.status_code, 200)
         self.assertIn('webs', resp.context.keys())
         self.assertTrue(len(resp.context['webs']),
-                            Webpage.objects.all().count())
+                        Webpage.objects.all().count())
         self.assertEqual(resp.context['webs'][0].keys().sort(),
-                            ['url', 'date_added', 'last_response',
-                            'last_response_check', 'id'].sort())
+                         ['url', 'date_added', 'last_response',
+                         'last_response_check', 'id'].sort())
+
 
 class ViewAllHomepagesTestCase(TestCase):
     def setUp(self):
@@ -202,9 +218,10 @@ class ViewAllHomepagesTestCase(TestCase):
         self.assertTrue(resp.status_code, 200)
         self.assertIn('homes', resp.context.keys())
         self.assertTrue(len(resp.context['homes']),
-                            Homepage.objects.all().count())
+                        Homepage.objects.all().count())
         self.assertEqual(resp.context['homes'][0].keys().sort(),
-                            ['name', 'date_added', 'domain', 'id'].sort())
+                         ['name', 'date_added', 'domain', 'id'].sort())
+
 
 class ViewAllDomainsTestCase(TestCase):
     def setUp(self):
@@ -227,7 +244,6 @@ class ViewAllDomainsTestCase(TestCase):
         self.assertTrue(resp.status_code, 200)
         self.assertIn('doms', resp.context.keys())
         self.assertTrue(len(resp.context['doms']),
-                            Homepage.objects.all().count())
+                        Homepage.objects.all().count())
         self.assertEqual(resp.context['doms'][0].keys().sort(),
-                            ['name', 'date_added', 'id'].sort())
-
+                         ['name', 'date_added', 'id'].sort())

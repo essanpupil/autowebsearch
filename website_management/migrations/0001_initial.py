@@ -37,9 +37,12 @@ class Migration(migrations.Migration):
             name='Webpage',
             fields=[
                 ('id', models.AutoField(serialize=False, primary_key=True)),
-                ('url', models.URLField(unique=True, max_length=250, blank=True)),
+                ('url', models.URLField(unique=True, max_length=250)),
                 ('html_page', models.TextField(null=True, blank=True)),
                 ('date_added', models.DateField(auto_now=True)),
+                ('last_response', models.CharField(max_length=3, null=True, blank=True)),
+                ('last_response_check', models.DateField(null=True, blank=True)),
+                ('redirect_url', models.URLField(null=True, blank=True)),
                 ('homepage', models.ForeignKey(blank=True, to='website_management.Homepage', null=True)),
             ],
             options={

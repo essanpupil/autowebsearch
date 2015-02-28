@@ -1,25 +1,35 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+import tldextract
 
-from .models import ExtendHomepage, sequence
-from website_management.models import Homepage
+from .models import ExtendHomepage, Sequence
+from website_management.models import Homepage, Webpage
+from .analyzer_lib import string_analyst, add_list_url_to_webpage
+from .analyzer_lib import add_url_to_webpage
+from webscraper.pagescraper import PageScraper
 
 
 def analyze_website(request, hp_id):
     "Display page to analyze website, the last analysist result is displayed"
     hp = get_object_or_404(Homepage, id=hp_id)
     exthp, created = ExtendHomepage.objects.get_or_create(homepage=hp)
-    context = {'hpname': hp.name,
-               'hpadded': hp.date_added,
-               'hpscam': hp.extendhomepage.scam,
-               'hpinspection': hp.extendhomepage.inspected,
-               'hpreport': hp.extendhomepage.reported,
-               'hpaccess': hp.extendhomepage.access,
-               'hpwhitelist': hp.extendhomepage.whitelist,
-               'hppages': [],
-               'hpseqs': []}
-    #for item in sequence.objects.filter(webpage__in=hp.webpage_set.all())
-        
+    context = {'name': hp.name,
+               'domain': hp.domain.name,
+               'date_added': hp.date_added,
+               'scam': hp.extendhomepage.scam,
+               'inspection': hp.extendhomepage.inspected,
+               'report': hp.extendhomepage.reported,
+               'access': hp.extendhomepage.access,
+               'whitelist': hp.extendhomepage.whitelist,
+               'webpages': [],
+               'params': []}
+    for web in hp.webpage_set.all():
+        context['webpages'].append({'id': web.id, 'url':web.url})
     return render(request, 'website_analyzer/analyze_website.html', context)
+
+def start_analyze(request, hp_id):
+    "execute analyze process"
+    string_analyst(hp_id)
+    return redirect('website_analyzer:analyze_website', hp_id= hp_id)
 
 
 def analyst_dashboard(request):
@@ -53,7 +63,11 @@ def view_tokens(requesst, web_id):
 
 def extract_links(request, web_id):
     "extract links from the current webpage. filter ideal links only"
-    pass
+    web = get_object_or_404(Webpage, id=web_id)
+    ps = PageScraper()
+    links = ps.ideal_urls(web.html_page)
+    add_list_url_to_webpage(links)
+    return redirect('website_management:view_all_webpages')
 
 
 def add_scam_website(request):

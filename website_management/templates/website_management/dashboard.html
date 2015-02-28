@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% block mainmenu %}<li>Websites</li>{% endblock %}
 {% block navigation %}
 {% include 'website_management/website_nav.html' %}
 {% endblock %}
@@ -20,9 +19,15 @@
 <table>
     <tr><th>Latest added webpage</th></tr>
     {% for web in newest_5_web %}
-        <tr><td><a href="{% url 'website_management:webpage_detail' web.id %}">{{ web.url }}</a></td></tr>
+    <tr>
+        <td>
+            <a href="{% url 'website_management:webpage_detail' web.id %}">
+                {{ web.url }}
+            </a>
+        </td>
+    </tr>
     {% empty %}
-        <tr><td>Webpage database empty</td></tr>
+    <tr><td>Webpage database empty</td></tr>
     {% endfor %}
 </table>
 
@@ -30,9 +35,15 @@
 <table>
     <tr><th>Latest added homepage</th></tr>
     {% for hp in newest_5_hp %}
-        <tr><td><a href="{% url 'website_management:homepage_detail' hp.id %}">{{ web.url }}</a></td></tr>
+    <tr>
+        <td>
+            <a href="{% url 'website_management:homepage_detail' hp.id %}">
+                {{ hp.name }}
+            </a>
+        </td>
+    </tr>
     {% empty %}
-        <tr><td>Homepage database empty</td></tr>
+    <tr><td>Homepage database empty</td></tr>
     {% endfor %}
 </table>
 
@@ -40,9 +51,15 @@
 <table>
     <tr><th>Latest added domain</th></tr>
     {% for dom in newest_5_dom %}
-        <tr><td><a href="{% url 'website_management:domain_detail' dom.id %}">{{ web.url }}</a></td></tr>
+    <tr>
+        <td>
+            <a href="{% url 'website_management:domain_detail' dom.id %}">
+                {{ dom.name }}
+            </a>
+        </td>
+    </tr>
     {% empty %}
-        <tr><td>Domain database empty</td></tr>
+    <tr><td>Domain database empty</td></tr>
     {% endfor %}
 </table>
 {% endblock %}

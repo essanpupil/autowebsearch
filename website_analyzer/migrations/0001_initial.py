@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('website_management', '0004_auto_20150216_0043'),
+        ('website_management', '0001_initial'),
     ]
 
     operations = [
@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
             name='ExtendHomepage',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('scam', models.NullBooleanField(max_length=10)),
+                ('scam', models.NullBooleanField()),
                 ('inspected', models.BooleanField(default=False)),
                 ('reported', models.NullBooleanField()),
                 ('access', models.BooleanField(default=True)),
@@ -41,6 +41,7 @@ class Migration(migrations.Migration):
             name='ExtendWebpage',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('text_body', models.TextField(null=True, blank=True)),
                 ('webpage', models.OneToOneField(to='website_management.Webpage')),
             ],
             options={
@@ -48,7 +49,17 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='searching',
+            name='Pieces',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('number', models.IntegerField()),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Searching',
             fields=[
                 ('id', models.AutoField(serialize=False, primary_key=True)),
                 ('keyword', models.CharField(max_length=255)),
@@ -60,11 +71,42 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='sequence',
+            name='Sequence',
             fields=[
                 ('id', models.AutoField(serialize=False, primary_key=True)),
                 ('number', models.IntegerField()),
-                ('description', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='SequenceDescription',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='StringAnalysist',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('time', models.DateTimeField(auto_now=True)),
+                ('find', models.BooleanField(default=False)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='StringParameter',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+                ('level', models.CharField(default=b'0', max_length=1)),
             ],
             options={
             },
@@ -75,11 +117,28 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(serialize=False, primary_key=True)),
                 ('name', models.CharField(unique=True, max_length=20)),
-                ('webpage', models.ManyToManyField(to='website_management.Webpage')),
             ],
             options={
             },
             bases=(models.Model,),
+        ),
+        migrations.AddField(
+            model_name='stringanalysist',
+            name='parameter',
+            field=models.ForeignKey(to='website_analyzer.StringParameter'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='stringanalysist',
+            name='webpage',
+            field=models.ForeignKey(to='website_management.Webpage'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='sequence',
+            name='description',
+            field=models.ForeignKey(to='website_analyzer.SequenceDescription'),
+            preserve_default=True,
         ),
         migrations.AddField(
             model_name='sequence',
@@ -89,6 +148,18 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='sequence',
+            name='webpage',
+            field=models.ForeignKey(blank=True, to='website_management.Webpage', null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='pieces',
+            name='token',
+            field=models.ForeignKey(to='website_analyzer.Token'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='pieces',
             name='webpage',
             field=models.ForeignKey(to='website_management.Webpage'),
             preserve_default=True,

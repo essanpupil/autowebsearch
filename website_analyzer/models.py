@@ -59,17 +59,42 @@ class ExtendHomepage(models.Model):
 class ExtendWebpage(models.Model):
     " extending the Webpage model for additional info require for analisis"
     webpage = models.OneToOneField(Webpage)
+    text_body = models.TextField(blank=True, null=True)
 
 
 class Token(models.Model):
     """ store tokens used in webpages. tokens used to create keyword search
     and analisis parameter """
     id = models.AutoField(primary_key=True)
-    webpage = models.ManyToManyField(Webpage, null=True, blank=True)
     name = models.CharField(max_length=20, unique=True)
     def __unicode__(self):
         return self.name
 
+
+class Pieces(models.Model):
+    "Token sequence number on webpage"
+    webpage = models.ForeignKey(Webpage)
+    token = models.ForeignKey(Token)
+    number = models.IntegerField()
+
+
+class SequenceDescription(models.Model):
+    "store the description of each sequence"
+    name = models.CharField(max_length=255, unique=True)
+
+
+class StringParameter(models.Model):
+    "Store string parameter to be search during analysist"
+    name = models.CharField(unique=True, max_length=255)
+    level = models.CharField(max_length=1, default="0")
+
+
+class StringAnalysist(models.Model):
+    "Store analisyst result of webpage's"
+    webpage = models.ForeignKey(Webpage)
+    parameter = models.ForeignKey(StringParameter)
+    time = models.DateTimeField(auto_now=True)
+    find = models.BooleanField(default=False)
 
 class Sequence(models.Model):
     "store sequence token, use as parameter for analyzing website"
@@ -83,7 +108,7 @@ class Sequence(models.Model):
     number = models.IntegerField()
 
     # short description about the sequence.
-    description = models.CharField(max_length=255, unique=True)
+    description = models.ForeignKey(SequenceDescription)
     def __unicode__(self):
         return self.description
 

@@ -6,30 +6,33 @@
 <h3>Analyze website</h3>
 <table>
     <tr>
-        <th align="left">Homepage name</th><td>{{ hpname }}</td>
+        <th align="left">Homepage name</th><td>{{ name }}</td>
     </tr>
     <tr>
-        <th align="left">Date added</th><td>{{ hpadded }}</td>
+        <th align="left">Domain name</th><td>{{ domain }}</td>
     </tr>
     <tr>
-        <th align="left">Scam status</th><td>{{ hpscam }}</td>
+        <th align="left">Date added</th><td>{{ date_added|date:"d M Y" }}</td>
     </tr>
     <tr>
-        <th align="left">Inspection status</th><td>{{ hpinspection }}</td>
+        <th align="left">Inspection status</th><td>{{ inspection }}</td>
     </tr>
     <tr>
-        <th align="left">Report status</th><td>{{ hpreport }}</td>
+        <th align="left">Scam status</th><td>{{ scam }}</td>
     </tr>
     <tr>
-        <th align="left">Access status</th><td>{{ hpaccess }}</td>
+        <th align="left">Report status</th><td>{{ report }}</td>
     </tr>
     <tr>
-        <th align="left">Whitelist status</th><td>{{ hpwhitelist }}</td>
+        <th align="left">Access status</th><td>{{ access }}</td>
+    </tr>
+    <tr>
+        <th align="left">Whitelist status</th><td>{{ whitelist }}</td>
     </tr>
     <tr>
         <th align="left">List of webpages</th>
         <td>
-            {% for web in hppages %}
+            {% for web in webpages %}
                 <a href="{% url 'website_management:webpage_detail' web.id %}">
                     {{ web.url }}
                 </a>
@@ -41,8 +44,8 @@
     <tr>
         <th align="left">List of sequence</th>
         <td>
-            {% for seq in hpseqs %}
-                <p>{{ seq.words }}</p>
+            {% for seq in params %}
+                <p>{{ seq.parameter }}</p>
                 <p>{{ seq.web }}</p>
             {% empty %}
                 This website does not have matching sequence
