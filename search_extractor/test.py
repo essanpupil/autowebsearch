@@ -1,11 +1,18 @@
-#~ from google_search import GoogleSearch
-#~ 
-#~ 
-#~ search = GoogleSearch("unsada")
-#~ search.start_search(max_page=2)
-#~ for index in range(0, len(search.search_result)):
-    #~ print "%d: %s" % (index, search.search_result[index])
-#~ 
-#~ search.more_search(more_page=2)
-#~ for index in range(0, len(search.search_result)):
-    #~ print "%d: %s" % (index, search.search_result[index])
+from urlparse import urlparse
+import unittest
+
+from .google_search import GoogleSearch
+
+
+class GoogleSearchTestCase(unittest.TestCase):
+    def online_testcase(self):
+        # this test is intended to not run on every project test.
+        # If you want to run the test, you should specifically run this method
+        gs = GoogleSearch('essanpupil')
+        gs.start_search()
+        for item in gs.search_result:
+            url = urlparse(item)
+            if url.scheme is not None:
+                self.assertIn('http', url.scheme)
+            else:
+                fail('Parsing failed!')

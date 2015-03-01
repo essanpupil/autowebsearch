@@ -18,7 +18,7 @@ class GoogleSearch:
         # hint: 10 result per page for google
         for page in range(1, (max_page + 1)):
             start = "start=%s" % str((page - 1) * 10)
-            url = "%s%s%s" % (self.google, self.query, start)
+            url = "%s%s&%s" % (self.google, self.query, start)
             self._execute_search_request(url)
             self.current_page = self.current_page + 1
 
@@ -30,7 +30,7 @@ class GoogleSearch:
         top_page = more_page + self.current_page
         for page in range(next_page, (top_page + 1)):
             start = "start=%s" % str((page - 1) * 10)
-            url = "%s%s%s" % (self.google, self.query, start)
+            url = "%s%s&%s" % (self.google, self.query, start)
             self._execute_search_request(url)
             self.current_page = self.current_page + 1
 
