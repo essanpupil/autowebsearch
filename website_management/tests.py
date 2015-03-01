@@ -1,3 +1,5 @@
+import datetime
+
 from django.test import TestCase
 from django_webtest import WebTest
 from django.core.urlresolvers import reverse
@@ -234,6 +236,7 @@ class ViewAllDomainsTestCase(TestCase):
 
     def test_view_all_homepages_(self):
         resp = self.client.get(reverse('website_management:view_all_domains'))
+        now = datetime.datetime.now()
         self.assertIn("pupil.com", resp.content)
         self.assertIn("facebook.com", resp.content)
         self.assertIn("detik.com", resp.content)
@@ -244,8 +247,10 @@ class ViewAllDomainsTestCase(TestCase):
         self.assertIn('doms', resp.context.keys())
         self.assertTrue(len(resp.context['doms']),
                         Homepage.objects.all().count())
-        self.assertEqual(resp.context['doms'][0].keys().sort(),
-                         ['name', 'date_added', 'id'].sort())
+        self.assertIn('name', resp.context['doms'][0].keys())
+        self.assertIn('date_added', resp.context['doms'][0].keys())
+        self.assertIn('id', resp.context['doms'][0].keys())
+        self.assertEqual(resp.context['doms'][0]['date_added'], now.date())
 
 
 class SearchWebpagesTestCase(WebTest):
@@ -254,7 +259,7 @@ class SearchWebpagesTestCase(WebTest):
         This test method is NOT meant tobe run on project test. You should run
         this one specific method test. when the keyword is queried to google,
         the result in 1 page will be save to database. this method search
-        url that contain the keyword, which means, is exist, the search is
+        url that contain the keyword, which means, if exist, the search is
         success and saved.
         """
         form = self.app.get(reverse('website_management:search_webpage')).form

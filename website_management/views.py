@@ -172,10 +172,9 @@ def view_all_domains(request):
     doms = Domain.objects.all()
     context = {'doms': []}
     for item in doms:
-        context['doms'].append({
-            'name': item.name,
-            'date_added': item.date_added,
-            'id': item.id})
+        context['doms'].append({'name': item.name,
+                                'date_added': item.date_added,
+                                'id': item.id})
     return render(request,
         'website_management/view_all_domains.html', context)
 
