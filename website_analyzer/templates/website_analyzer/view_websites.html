@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block navigation %}
+    {% include 'website_analyzer/analyst_nav.html' %}
+{% endblock %}
+{% block content %}
+<h3>View Websites</h3>
+<table>
+    <tr>
+        <th>No</th>
+        <th>Name</th>
+        <th>Date Added</th>
+        <th>Domain</th>
+        <th>Scam Status</th>
+        <th>Inspection Status</th>
+        <th>Report Status</th>
+        <th>Access Status</th>
+        <th>Webpage Count</th>
+    </tr>
+    {% for web in websites %}
+    <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ web.name }}</td>
+        <td>{{ web.date_added }}</td>
+        <td>{{ web.domain }}</td>
+        <td>{{ web.scam }}</td>
+        <td>{{ web.inspection }}</td>
+        <td>{{ web.report }}</td>
+        <td>{{ web.access }}</td>
+        <td>{{ web.web_count }}</td>
+    </tr>
+    {% empty %}
+        Website database is empty
+    {% endfor %}
+</table>
+<div class="pagination">
+    <span class="step-links">
+        {% if websites.has_previous %}
+            <a href="?page={{ websites.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ websites.number }} of {{ websites.paginator.num_pages }}.
+        </span>
+
+        {% if websites.has_next %}
+            <a href="?page={{ websites.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}

@@ -4,6 +4,7 @@ from django.test import TestCase
 from django_webtest import WebTest
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
+from django.db import IntegrityError, transaction
 
 from .models import ExtendDomain, ExtendHomepage, ExtendWebpage, Token, Pieces
 from .models import Sequence, StringParameter
@@ -46,6 +47,54 @@ def analye_website_setup():
     web2.save()
     StringParameter.objects.create(name='this is scam', level="1")
 
+
+def view_all_website_setup():
+    'prepare data for test view all website'
+    urls = ['http://www.ppl.com/profile/',
+            'http://www.ppl.com/setting/',
+            'http://www.pupil.com/profile/',
+            'http://www.pupil.com/profile/',
+            'http://www.essanpupil.com/profile/']
+    add_list_url_to_webpage(urls)
+
+
+class ViewAllWebsiteTestCase(TestCase):
+    def test_view_for_empty_database_view_all_websites_testcase(self):
+        'test all context throwed from view when the database is empty'
+        resp = self.client.get(reverse('website_analyzer:view_websites'))
+        self.assertEqual(resp.status_code, 200)
+        
+        # display notification of empty website data
+        self.assertIn('Website database is empty', resp.content)
+
+    def test_view_for_filled_database_view_all_website_testcase(self):
+        'test all context throwed from view when the database is filled'
+        view_all_website_setup()
+        resp = self.client.get(reverse('website_analyzer:view_websites'))
+        self.assertEqual(resp.status_code, 200)
+        
+        # based-on setup method, we should have 3 websites
+        self.assertEqual(len(resp.context['websites']), 3)
+        
+        # testing dictionary key for each list item of website
+        self.assertIn('name', resp.context['websites'][0].keys())
+        self.assertIn('scam', resp.context['websites'][0].keys())
+        self.assertIn('inspection', resp.context['websites'][0].keys())
+        self.assertIn('report', resp.context['websites'][0].keys())
+        self.assertIn('access', resp.context['websites'][0].keys())
+        self.assertIn('web_count', resp.context['websites'][0].keys())
+        self.assertIn('date_added', resp.context['websites'][0].keys())
+        self.assertIn('domain', resp.context['websites'][0].keys())
+        self.assertIn('id', resp.context['websites'][0].keys())
+
+    def test_rendered_html_view_all_websites(self):
+        'testing the rendered template variable'
+        view_all_website_setup()
+        resp = self.client.get(reverse('website_analyzer:view_websites'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'www.pupil.com', 1)
+        self.assertContains(resp, 'www.ppl.com', 1)
+        self.assertContains(resp, 'www.essanpupil.com', 1)
 
 class ExtendDomainModelTest(TestCase):
     "Testing custom save() & clean() in model ExtendHomepage"

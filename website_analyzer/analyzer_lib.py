@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import tldextract
 
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from website_management.models import Homepage, Webpage, Domain
 from .models import ExtendHomepage, StringParameter, StringAnalysist
 from .models import ExtendWebpage
@@ -34,8 +34,9 @@ def add_url_to_webpage(url):
     hp, crtd2 = Homepage.objects.get_or_create(name = '.'.join(ext),
                                                domain = dom)
     try:
-        web = Webpage.objects.create(url=url, homepage=hp)
-        ExtendWebpage.objects.create(webpage=web)
+        with transaction.atomic():
+            web = Webpage.objects.create(url=url, homepage=hp)
+            ExtendWebpage.objects.create(webpage=web)
     except IntegrityError:
         raise IntegrityError
 

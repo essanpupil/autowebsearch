@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.core.paginator import Paginator, PageNotAnInteger
 import tldextract
 
 from .models import ExtendHomepage, Sequence
@@ -77,7 +78,39 @@ def add_scam_website(request):
 
 def view_websites(request):
     "display scam website"
-    pass
+    websites = Homepage.objects.all()
+    context = {'websites': []}
+    for hp in websites:
+        try:
+            exthp = ExtendHomepage.objects.get(homepage=hp)
+            context['websites'].append({'id': hp.id,
+                                        'name': hp.name,
+                                        'scam': exthp.scam,
+                                        'inspection': exthp.inspected,
+                                        'report': exthp.report,
+                                        'access': exthp.access,
+                                        'web_count': hp.webpage_set.all().count(),
+                                        'date_added': hp.date_added,
+                                        'domain': hp.domain.name})
+        except ExtendHomepage.DoesNotExist:
+            context['websites'].append({'id': hp.id,
+                                        'name': hp.name,
+                                        'scam': 'n/a',
+                                        'inspection': 'n/a',
+                                        'report': 'n/a',
+                                        'access': 'n/a',
+                                        'web_count': hp.webpage_set.all().count(),
+                                        'date_added': hp.date_added,
+                                        'domain': hp.domain.name})
+    paginator = Paginator(context['websites'], 10)
+    page = request.GET.get('page')
+    try:
+        context['websites'] = paginator.page(page)
+    except PageNotAnInteger:
+        context['websites'] = paginator.page(1)
+    except EmptyPage:
+        context['websites'] = paginator.page(paginator.num_pages)
+    return render(request, 'website_analyzer/view_websites.html', context)
 
 
 def view_sequence(request):

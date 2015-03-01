@@ -1,4 +1,4 @@
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 import tldextract
 
 from .models import Webpage, Homepage, Domain
@@ -11,7 +11,8 @@ def add_url_to_webpage(url):
     hp, crtd2 = Homepage.objects.get_or_create(name = '.'.join(ext),
                                                domain = dom)
     try:
-        web = Webpage.objects.create(url=url, homepage=hp)
+        with transaction.atomic():
+            web = Webpage.objects.create(url=url, homepage=hp)
     except IntegrityError:
         raise IntegrityError
 
