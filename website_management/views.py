@@ -9,6 +9,7 @@ from django.core.paginator import Paginator, PageNotAnInteger
 
 from .models import Webpage, Domain, Homepage
 from .forms import AddWebpageForm, SearchWebpageForm
+from .management_lib import add_list_url_to_webpage, add_url_to_webpage
 from webscraper.pagescraper import PageScraper
 from search_extractor.google_search import GoogleSearch
 
@@ -188,16 +189,8 @@ def search_webpage(request):
             # start saving new webpage url
             search = GoogleSearch(form.cleaned_data['keyword'])
             search.start_search(max_page=form.cleaned_data['page'])
-            for item in search.search_result:
-                Webpage.objects.create(url=item)
-                ext = tldextract.extract(web.url)
-                dom, created = Domain.objects.get_or_create(name=".".join(ext[1:]))
-                hp, created2 = Homepage.objects.get_or_create(name=".".join(ext), domain=dom)
-                web.homepage = hp
-                web.save()
+            add_list_url_to_webpage(search.search_result)
             return redirect('website_management:view_all_webpages')
-        #~ else:
-            #~ return redirect('website_management:add_new_webpage')
     else:
         form = SearchWebpageForm()
     return render(request,

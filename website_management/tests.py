@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django_webtest import WebTest
 from django.core.urlresolvers import reverse
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 
 from .models import Webpage, Homepage, Domain
 from .forms import AddWebpageForm
@@ -208,7 +208,7 @@ class ViewAllHomepagesTestCase(TestCase):
 
     def test_view_all_homepages_(self):
         resp = self.client.get(
-                    reverse('website_management:view_all_homepages'))
+               reverse('website_management:view_all_homepages'))
         self.assertIn("www.pupil.com", resp.content)
         self.assertIn("www.facebook.com", resp.content)
         self.assertIn("www.detik.com", resp.content)
@@ -233,8 +233,7 @@ class ViewAllDomainsTestCase(TestCase):
         dom = Domain.objects.create(name="republika.co.id")
 
     def test_view_all_homepages_(self):
-        resp = self.client.get(
-                    reverse('website_management:view_all_domains'))
+        resp = self.client.get(reverse('website_management:view_all_domains'))
         self.assertIn("pupil.com", resp.content)
         self.assertIn("facebook.com", resp.content)
         self.assertIn("detik.com", resp.content)
@@ -247,3 +246,20 @@ class ViewAllDomainsTestCase(TestCase):
                         Homepage.objects.all().count())
         self.assertEqual(resp.context['doms'][0].keys().sort(),
                          ['name', 'date_added', 'id'].sort())
+
+
+class SearchWebpagesTestCase(WebTest):
+    def online_search_webpage(self):
+        """
+        This test method is NOT meant tobe run on project test. You should run
+        this one specific method test. when the keyword is queried to google,
+        the result in 1 page will be save to database. this method search
+        url that contain the keyword, which means, is exist, the search is
+        success and saved.
+        """
+        form = self.app.get(reverse('website_management:search_webpage')).form
+        form['keyword'] = 'essanpupil'
+        form['page'] = '1'
+        response = form.submit().follow()
+        webs = Webpage.objects.filter(url__contains='essanpupil')
+        self.assertEqual(bool(webs.count()), True)

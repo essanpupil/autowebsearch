@@ -9,6 +9,7 @@ class GoogleSearch:
         self.query = "q=%s" % (kwd.replace(" ", "+"))
         self.is_final_page = False
         self.current_page = 1
+        self.current_html_page = ''
         self.search_result = []
         self.google = "http://www.google.com/search?"
 
@@ -39,7 +40,8 @@ class GoogleSearch:
         # must already included in the url.
         self.request_page = requests.get(url)
         self.request_page.raise_for_status()
-        soup = BeautifulSoup(self.request_page.text)
+        self.current_html_page = self.request_page.text
+        soup = BeautifulSoup(self.current_html_page)
         results = soup.find_all('a', class_=False)
         links = []  # store the final url of search result, 10 links
         
