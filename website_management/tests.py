@@ -163,8 +163,8 @@ class AddNewWebpageWebTest(WebTest):
         form = self.app.get(reverse('website_management:add_new_webpage')).form
         form['url'] = 'http://sudutpandangpupil.blogspot.com/'
         response = form.submit().follow()
-        self.assertIn(
-            'http://sudutpandangpupil.blogspot.com/', response.content)
+        self.assertIn('http://sudutpandangpupil.blogspot.com/',
+                      response.content)
 
 
 class ViewAllWebpagesTestCase(TestCase):

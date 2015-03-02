@@ -4,7 +4,7 @@ import tldextract
 from django.db import IntegrityError, transaction
 from website_management.models import Homepage, Webpage, Domain
 from .models import ExtendHomepage, StringParameter, StringAnalysist
-from .models import ExtendWebpage
+from .models import ExtendWebpage, ExtendDomain
 
 
 def string_analyst(hp_id):
@@ -30,13 +30,42 @@ def string_analyst(hp_id):
 def add_url_to_webpage(url):
     "add url and its component to database"
     ext = tldextract.extract(url)
-    dom, crtd = Domain.objects.get_or_create(name = ext.registered_domain)
-    hp, crtd2 = Homepage.objects.get_or_create(name = '.'.join(ext),
-                                               domain = dom)
+    try:
+        with transaction.atomic():
+            dom, crtd = Domain.objects.get_or_create(name = ext.registered_domain)
+            ExtendDomain.objects.create(domain=dom)
+    except:
+        pass
+    try:
+        with transaction.atomic():
+            hp, crtd2 = Homepage.objects.get_or_create(name = '.'.join(ext),
+                                                       domain = dom)
+            ExtendHomepage.objects.create(homepage=hp)
+    except:
+        pass
     try:
         with transaction.atomic():
             web = Webpage.objects.create(url=url, homepage=hp)
             ExtendWebpage.objects.create(webpage=web)
+    except IntegrityError:
+        raise IntegrityError
+
+
+def add_scam_url_website(url):
+    "add url and its component to database"
+    ext = tldextract.extract(url)
+    dom, crtd = Domain.objects.get_or_create(name = ext.registered_domain)
+    ExtendDomain.objects.create(domain=dom)
+    hp, crtd2 = Homepage.objects.get_or_create(name = '.'.join(ext),
+                                               domain = dom)
+    ExtendHomepage.objects.create(homepage=hp)
+    try:
+        with transaction.atomic():
+            web = Webpage.objects.create(url=url, homepage=hp)
+            ExtendWebpage.objects.create(webpage=web)
+            exthp = ExtendHomepage.objects.get(homepage=hp)
+            exthp.scam = True
+            exthp.save()
     except IntegrityError:
         raise IntegrityError
 

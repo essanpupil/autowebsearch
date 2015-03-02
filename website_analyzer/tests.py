@@ -1,6 +1,6 @@
 import datetime
 
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from django_webtest import WebTest
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
@@ -56,6 +56,21 @@ def view_all_website_setup():
             'http://www.pupil.com/profile/',
             'http://www.essanpupil.com/profile/']
     add_list_url_to_webpage(urls)
+
+
+class AddScamWebsiteTestCase(WebTest):
+    def test_access_input_page(self):
+        'testing the response of webpage that should display the input form'
+        resp = self.app.get(reverse('website_analyzer:add_scam_website'))
+        self.assertEqual(resp.status_code, 200)
+        
+        # fill the form input with url of website's homepage, then submit it
+        form = resp.form
+        form['url'] = 'http://www.pupil.com'
+        submit_form = form.submit().follow()
+        
+        # check the new homepage url in the view_webpage
+        self.assertIn('www.pupil.com', submit_form.content)
 
 
 class ViewAllWebsiteTestCase(TestCase):
@@ -226,7 +241,7 @@ class StartAnalyzeTestCase(TestCase):
         self.assertEqual(hp.extendhomepage.whitelist, False)
 
 
-class ExtractLinksTestCase(TestCase):
+class ExtractLinksTestCase(TransactionTestCase):
     def setUp(self):
         add_url_to_webpage('http://www.pupil.com/scam')
         web = Webpage.objects.get(url='http://www.pupil.com/scam')

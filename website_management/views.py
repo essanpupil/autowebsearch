@@ -113,6 +113,7 @@ def domain_detail(request, dom_id):
         context['domhp'].append({'name': item.name, 'id': item.id})
     return render(request, 'website_management/domain_detail.html', context)
 
+
 def add_new_webpage(request):
     "Display form to add new webpage"
     # if this is a POST request, we should process the form data
@@ -122,15 +123,14 @@ def add_new_webpage(request):
         # check the form is valid or not
         if form.is_valid():
             # start saving new webpage url
-            Webpage.objects.create(url=form.cleaned_data['url'])
+            add_url_to_webpage(form.cleaned_data['url'])
             return redirect('website_management:view_all_webpages')
-        #~ else:
-            #~ return redirect('website_management:add_new_webpage')
     else:
         form = AddWebpageForm()
     return render(request,
-                    'website_management/add_new_webpage.html',
-                    {'form': form})
+                  'website_management/add_new_webpage.html',
+                  {'form': form})
+
 
 def view_all_webpages(request):
     "display all webpage"

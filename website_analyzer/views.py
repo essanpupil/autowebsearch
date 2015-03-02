@@ -5,8 +5,9 @@ import tldextract
 from .models import ExtendHomepage, Sequence
 from website_management.models import Homepage, Webpage
 from .analyzer_lib import string_analyst, add_list_url_to_webpage
-from .analyzer_lib import add_url_to_webpage
+from .analyzer_lib import add_url_to_webpage, add_scam_url_website
 from webscraper.pagescraper import PageScraper
+from .forms import AddScamWebsiteForm
 
 
 def analyze_website(request, hp_id):
@@ -73,7 +74,20 @@ def extract_links(request, web_id):
 
 def add_scam_website(request):
     "manually add website known as scam"
-    pass
+    # if this is a POST request, the form data is processed
+    if request.method == 'POST':
+        # create form instance and populate with data from the request
+        form = AddScamWebsiteForm(request.POST)
+        
+        # check the form is valid or not
+        if form.is_valid():
+            # start saving scam homepage url to database
+            add_scam_url_website(form.cleaned_data['url'])
+            return redirect('website_analyzer:view_websites')
+    else:
+        form = AddScamWebsiteForm()
+    return render(request, 'website_analyzer/add_scam_website.html',
+                  {'form': form})
 
 
 def view_websites(request):
@@ -87,7 +101,7 @@ def view_websites(request):
                                         'name': hp.name,
                                         'scam': exthp.scam,
                                         'inspection': exthp.inspected,
-                                        'report': exthp.report,
+                                        'report': exthp.reported,
                                         'access': exthp.access,
                                         'web_count': hp.webpage_set.all().count(),
                                         'date_added': hp.date_added,
