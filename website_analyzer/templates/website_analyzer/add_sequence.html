@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block navigation %}
+    {% include 'website_analyzer/analyst_nav.html' %}
+{% endblock %}
+{% block content %}
+<h3>Add Sequence</h3>
+<form method="post" action="{% url 'website_analyzer:add_sequence' %}">
+{% csrf_token %}
+{{ form.as_p }}
+<br />
+<br />
+<input type="submit" value="Save new sequence" />
+<input type="reset" value="Clear input area" />
+</form>
+{% endblock %}

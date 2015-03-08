@@ -26,4 +26,6 @@ urlpatterns = patterns('',
                            name='view_websites'),
                        url(r'^view_sequence/$', views.view_sequence,
                            name='view_sequence'),
+                       url(r'^add_sequence/$', views.add_sequence,
+                           name='add_sequence'),
                       )

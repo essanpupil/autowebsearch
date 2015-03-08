@@ -15,6 +15,7 @@
         <th>Report Status</th>
         <th>Access Status</th>
         <th>Webpage Count</th>
+        <th>Action</th>
     </tr>
     {% for web in websites %}
     <tr>
@@ -27,6 +28,7 @@
         <td>{{ web.report }}</td>
         <td>{{ web.access }}</td>
         <td>{{ web.web_count }}</td>
+        <td><a href="{% url 'website_analyzer:analyze_website' web.id %}">Analyze</a></td>
     </tr>
     {% empty %}
         Website database is empty

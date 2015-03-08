@@ -14,6 +14,8 @@ from website_management.models import Homepage, Domain, Webpage
 from webscraper.pagescraper import PageScraper
 
 
+now = datetime.datetime.now()
+
 def analye_website_setup():
     "prepare data for AnalyzeWebsiteViewTest"
     dom = Domain.objects.create(name='pupil.com')
@@ -45,7 +47,7 @@ def analye_website_setup():
                                            the definitive page.
                                            """)
     web2.save()
-    StringParameter.objects.create(name='this is scam', level="1")
+    StringParameter.objects.create(sentence='this is scam', definitive=True)
 
 
 def view_all_website_setup():
@@ -186,7 +188,6 @@ class AnalyzeWebsiteViewTest(TestCase):
         webpages (id & url) from this homepage, any matching string parameter,
         scam, report, access, whitelist, date added & domain name"""
         analye_website_setup()
-        now = datetime.datetime.now()
         hp = Homepage.objects.get(name='www.pupil.com')
         resp = self.client.get(reverse('website_analyzer:analyze_website',
                                        kwargs={'hp_id': hp.id}))
@@ -208,7 +209,6 @@ class AnalyzeWebsiteViewTest(TestCase):
         webpages (id & url) from this homepage, any matching string parameter,
         scam, report, access, whitelist, date added & domain name"""
         analye_website_setup()
-        now = datetime.datetime.now()
         hp = Homepage.objects.get(name='www.pupil.com')
         resp = self.client.get(reverse('website_analyzer:analyze_website',
                                        kwargs={'hp_id': hp.id}))
@@ -274,3 +274,54 @@ class ExtractLinksTestCase(TransactionTestCase):
         self.assertEqual(hp.filter(name='www.ppl.com').count(), 1)
         self.assertEqual(dom.filter(name='ppl.com').count(), 1)
         
+
+class AddStringParameterTestCase(WebTest):
+    'test for insert string parameter to database'
+    def test_add_sequence(self):
+        resp = self.app.get(reverse('website_analyzer:add_sequence'))
+        self.assertEqual(resp.status_code, 200)
+        form = resp.form
+        
+        # search form input
+        form['sentence'] = 'this is a scam'
+        submit_form = form.submit().follow()
+        
+        # check the new homepage url in the view_sequence
+        self.assertIn('this is a scam', submit_form.content)
+
+
+class ViewStringParameterTestCase(TestCase):
+    'test to display all string parameter'
+    def view_string_parameter_setup(self):
+        StringParameter.objects.create(sentence='This is a scam',
+                                       definitive=True)
+        StringParameter.objects.create(sentence='scam warning',
+                                       definitive=False)
+    
+    def test_context_view_empty_view_string_parameter(self):
+        'test passed context when database empty'
+        resp = self.client.get(reverse('website_analyzer:view_sequence'))
+        self.assertEqual(resp.status_code, 200)     # response test
+        self.assertEqual(len(resp.context['parameters']), 0)
+    
+    def test_rendered_template_view_string_parameter(self):
+        'test rendered html source for empty database'
+        resp = self.client.get(reverse('website_analyzer:view_sequence'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'String Parameter database is empty',
+                            count=1)
+    
+    def test_context_view_non_empty_database_view_sequence(self):
+        'test passed context when the database is not empty'
+        self.view_string_parameter_setup()
+        resp = self.client.get(reverse('website_analyzer:view_sequence'))
+        self.assertEqual(resp.status_code, 200)     # response test
+        self.assertEqual(len(resp.context['parameters']), 2)
+        self.assertIn('sentence', resp.context['parameters'][0].keys())
+        self.assertIn('definitive', resp.context['parameters'][0].keys())
+        self.assertIn('date_added', resp.context['parameters'][0].keys())
+        self.assertEqual(resp.context['parameters'][0]['date_added'],
+                         now.date())
+        self.assertContains(resp,'This is a scam', count=1)
+        self.assertContains(resp,'scam warning', count=1)
+    

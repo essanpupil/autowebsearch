@@ -85,8 +85,12 @@ class SequenceDescription(models.Model):
 
 class StringParameter(models.Model):
     "Store string parameter to be search during analysist"
-    name = models.CharField(unique=True, max_length=255)
-    level = models.CharField(max_length=1, default="0")
+    sentence = models.CharField(max_length=255, unique=True)
+    definitive = models.BooleanField(default=False)
+    date_added = models.DateField(auto_now=True)
+    
+    def __unicode__(self):
+        return self.sentence
 
 
 class StringAnalysist(models.Model):

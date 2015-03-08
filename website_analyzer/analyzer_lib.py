@@ -14,11 +14,11 @@ def string_analyst(hp_id):
     params = StringParameter.objects.all()
     for web in hp.webpage_set.all():
         for param in params:
-            if param.name in web.extendwebpage.text_body:
+            if param.sentence in web.extendwebpage.text_body:
                 StringAnalysist.objects.create(webpage=web,
                                                parameter=param,
                                                find=True)
-                if param.level == "1":
+                if param.definitive:
                     exthp.scam=True
                     exthp.save()
             else:

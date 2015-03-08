@@ -2,13 +2,28 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, PageNotAnInteger
 import tldextract
 
-from .models import ExtendHomepage, Sequence
+from .models import ExtendHomepage, Sequence, StringParameter
 from website_management.models import Homepage, Webpage
 from .analyzer_lib import string_analyst, add_list_url_to_webpage
 from .analyzer_lib import add_url_to_webpage, add_scam_url_website
 from webscraper.pagescraper import PageScraper
-from .forms import AddScamWebsiteForm
+from .forms import AddScamWebsiteForm, AddSequenceForm
 
+
+def add_sequence(request):
+    'view to display and process form add new parameter sequence'
+    if request.method == 'POST':
+        form = AddSequenceForm(request.POST)
+        if form.is_valid():
+            sentence = form.cleaned_data['sentence'].lower()
+            definitive = form.cleaned_data['definitive']
+            StringParameter.objects.create(sentence=sentence.strip(),
+                                           definitive=definitive)
+            return redirect('website_analyzer:view_sequence')
+    else:
+        form = AddSequenceForm()
+    return render(request, 'website_analyzer/add_sequence.html',
+                  {'form': form})
 
 def analyze_website(request, hp_id):
     "Display page to analyze website, the last analysist result is displayed"
@@ -129,4 +144,18 @@ def view_websites(request):
 
 def view_sequence(request):
     "display sequence parameter used for analyze website"
-    pass
+    parameters = StringParameter.objects.all()
+    context = {'parameters': []}
+    for parameter in parameters:
+        context['parameters'].append({'sentence': parameter.sentence,
+                                     'date_added': parameter.date_added,
+                                     'definitive': parameter.definitive})
+    paginator = Paginator(context['parameters'], 10)
+    page = request.GET.get('page')
+    try:
+        context['parameters'] = paginator.page(page)
+    except PageNotAnInteger:
+        context['parameters'] = paginator.page(1)
+    except EmptyPage:
+        context['parameters'] = paginator.page(paginator.num_pages)
+    return render(request, 'website_analyzer/view_sequences.html', context)
