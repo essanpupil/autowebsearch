@@ -4,7 +4,7 @@ from .pagescraper import PageScraper
 
 
 class TestNoJavascriptWebpage(unittest.TestCase):
-    "perform test for webpage that does not contain javascript"
+    """perform test for webpage that does not contain javascript"""
     def setUp(self):
         self.nojshtml = """
                    <html>
@@ -19,7 +19,7 @@ class TestNoJavascriptWebpage(unittest.TestCase):
                    """
 
     def test_nojshtml_word_list(self):
-        "get text from html without javacript"
+        """get text from html without javacript"""
         w = PageScraper()
         text = w.word_tokens(self.nojshtml)
         text.sort()
@@ -29,7 +29,7 @@ class TestNoJavascriptWebpage(unittest.TestCase):
 
 
 class ExtractUrlTestCase(unittest.TestCase):
-    "Test link extraction"
+    """Test link extraction"""
     def setUp(self):
         self.html = """
                     <html>

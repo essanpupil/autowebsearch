@@ -48,5 +48,9 @@
         <th align="left">HTML page</th>
         <td>{{ web.html_page|yesno:"Downloaded, Empty" }}</td>
     </tr>
+    <tr>
+        <th align="left" valign="top">Text body</th>
+        <td>{{ web.text_body|default_if_none:"Text body of this webpage is not yet downloaded" }}</td>
+    </tr>
 </table>
 {% endblock %}

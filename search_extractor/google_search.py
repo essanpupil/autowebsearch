@@ -21,7 +21,7 @@ class GoogleSearch:
             start = "start=%s" % str((page - 1) * 10)
             url = "%s%s&%s" % (self.google, self.query, start)
             self._execute_search_request(url)
-            self.current_page = self.current_page + 1
+            self.current_page += 1
 
     def more_search(self, more_page):
         # method to add more result to an already exist result
@@ -33,7 +33,7 @@ class GoogleSearch:
             start = "start=%s" % str((page - 1) * 10)
             url = "%s%s&%s" % (self.google, self.query, start)
             self._execute_search_request(url)
-            self.current_page = self.current_page + 1
+            self.current_page += 1
 
     def _execute_search_request(self, url):
         # method to execute the query to google. The specified page and keyword
@@ -48,7 +48,7 @@ class GoogleSearch:
         # this loop filter the search result links inside the search page
         for target in results:
             # filter only link from search result shoul be appended
-            if ((target.get('href').find("/url?q") == 0) and not (target.get('href').find("/url?q=http://webcache.googleusercontent.com") == 0) and not (target.get('href').find("/url?q=/settings/") ==0)):
+            if (target.get('href').find("/url?q") == 0) and not (target.get('href').find("/url?q=http://webcache.googleusercontent.com") == 0) and not (target.get('href').find("/url?q=/settings/") ==0):
                 start_index = target.get('href').find('http')
                 end_index = target.get('href').find('&sa')
 

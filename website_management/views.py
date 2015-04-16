@@ -1,10 +1,5 @@
-from urlparse import urlparse
 import tldextract
-
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import Http404, HttpResponse, HttpResponseNotFound
-from django.db import IntegrityError
-from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator, PageNotAnInteger
 
 from .models import Webpage, Domain, Homepage
@@ -13,9 +8,11 @@ from .management_lib import add_list_url_to_webpage, add_url_to_webpage
 from webscraper.pagescraper import PageScraper
 from search_extractor.google_search import GoogleSearch
 
+from website_analyzer.models import ExtendWebpage
+from website_analyzer.analyzer_lib import fill_text_body
 
 def website_dashboard(request):
-    "display info summary about saved webpages, homepage, & domain"
+    """display info summary about saved webpages, homepage, & domain"""
     webs = Webpage.objects.all()
     homepages = Homepage.objects.all()
     domains = Domain.objects.all()
@@ -33,23 +30,32 @@ def website_dashboard(request):
         context['newest_5_dom'].append({'name': dom.name, 'id': dom.id})
     return render(request, 'website_management/dashboard.html', context)
 
+
 def webpage_detail(request, web_id):
-    "display detail info of selected webpage"
+    """display detail info of selected webpage"""
     web = get_object_or_404(Webpage, id=web_id)
     web_data = {'url': web.url,
                 'hp': '',
                 'idhp': '',
                 'iddom': '',
-                'dom': '', 
+                'dom': '',
                 'added': web.date_added,
                 'status': web.last_response,
                 'last_check': web.last_response_check,
                 'html_page': bool(web.html_page),
-                'id': web.id,}
-    if web.homepage == None:
+                'text_body': '',
+                'id': web.id, }
+    if web.html_page != None:
+        page = PageScraper()
+        extw, created = ExtendWebpage.objects.get_or_create(webpage=web)
+        fill_text_body(extw)
+        web_data['text_body'] = extw.text_body
+    else:
+        web_data['text_body'] = None
+    if web.homepage is None:
         web_data['hp'] = None
-        web_data['idhp'] = None        
-        web_data['iddom'] = None        
+        web_data['idhp'] = None
+        web_data['iddom'] = None
         web_data['dom'] = None
     else:
         web_data['hp'] = web.homepage.name
@@ -57,11 +63,12 @@ def webpage_detail(request, web_id):
         web_data['iddom'] = web.homepage.domain.id
         web_data['dom'] = web.homepage.domain.name
     return render(request,
-                    'website_management/web_detail.html',
-                    {'web': web_data})
+                  'website_management/web_detail.html',
+                  {'web': web_data})
+
 
 def fetch_html_page(request, web_id):
-    'downloading html source code of webpage'
+    """downloading html source code of webpage"""
     web = get_object_or_404(Webpage, id=web_id)
     ext = tldextract.extract(web.url)
     dom, created = Domain.objects.get_or_create(name=".".join(ext[1:]))
@@ -69,16 +76,15 @@ def fetch_html_page(request, web_id):
                                                   domain=dom)
     web.homepage = hp
     web.save()
-    if web.html_page is None:
-        page_scraper = PageScraper()
-        page_scraper.fetch_webpage(web.url)
-        web.html_page = page_scraper.html
-        web.save()
-    return redirect('website_management:webpage_detail', web_id = web.id)
+    page_scraper = PageScraper()
+    page_scraper.fetch_webpage(web.url)
+    web.html_page = page_scraper.html
+    web.save()
+    return redirect('website_management:webpage_detail', web_id=web.id)
 
 
 def get_domain_homepage(request, web_id):
-    "extract domain and homepage from webpage's url"
+    """extract domain and homepage from webpage's url"""
     web = get_object_or_404(Webpage, id=web_id)
     ext = tldextract.extract(web.url)
     dom, created = Domain.objects.get_or_create(name=".".join(ext[1:]))
@@ -86,36 +92,37 @@ def get_domain_homepage(request, web_id):
                                                   domain=dom)
     web.homepage = hp
     web.save()
-    return redirect('website_management:webpage_detail', web_id = web.id)
-    
-    
+    return redirect('website_management:webpage_detail', web_id=web.id)
+
+
 def homepage_detail(request, hp_id):
-    "display detail info of selected homepage"
+    """display detail info of selected homepage"""
     hp = get_object_or_404(Homepage, id=hp_id)
     context = {'hpname': hp.name,
-                'hpid': hp.id,
-                'hpadded': hp.date_added,
-                'hpdomain': hp.domain.name,
-                'iddom': hp.domain.id,
-                'hpweb': []}
+               'hpid': hp.id,
+               'hpadded': hp.date_added,
+               'hpdomain': hp.domain.name,
+               'iddom': hp.domain.id,
+               'hpweb': []}
     for item in hp.webpage_set.all():
         context['hpweb'].append({'url': item.url, 'id': item.id})
     return render(request, 'website_management/homepage_detail.html', context)
 
+
 def domain_detail(request, dom_id):
-    "display detail info of selected domain"
+    """display detail info of selected domain"""
     dom = get_object_or_404(Domain, id=dom_id)
     context = {'domname': dom.name,
-                'domid': dom.id,
-                'domadded': dom.date_added,
-                'domhp': []}
+               'domid': dom.id,
+               'domadded': dom.date_added,
+               'domhp': []}
     for item in dom.homepage_set.all():
         context['domhp'].append({'name': item.name, 'id': item.id})
     return render(request, 'website_management/domain_detail.html', context)
 
 
 def add_new_webpage(request):
-    "Display form to add new webpage"
+    """Display form to add new webpage"""
     # if this is a POST request, we should process the form data
     if request.method == 'POST':
         # create form instance and populate with data from the request
@@ -133,7 +140,7 @@ def add_new_webpage(request):
 
 
 def view_all_webpages(request):
-    "display all webpage"
+    """display all webpage"""
     webs = Webpage.objects.all().order_by('id').reverse()
     context = {'webs': []}
     for item in webs:
@@ -152,11 +159,12 @@ def view_all_webpages(request):
     except EmptyPage:
         context['webs'] = paginator.page(paginator.num_pages)
     return render(request,
-        'website_management/view_all_webpages.html', context)
-        
+                  'website_management/view_all_webpages.html', context)
+
+
 def view_all_homepages(request):
-    "display all webpage"
-    homes = Homepage.objects.all()
+    """display all webpage"""
+    homes = Homepage.objects.all().order_by('id').reverse()
     context = {'homes': []}
     for item in homes:
         context['homes'].append({
@@ -164,11 +172,20 @@ def view_all_homepages(request):
             'date_added': item.date_added,
             'domain': item.domain.name,
             'id': item.id})
+    paginator = Paginator(context['homes'], 10)
+    page = request.GET.get('page')
+    try:
+        context['homes'] = paginator.page(page)
+    except PageNotAnInteger:
+        context['homes'] = paginator.page(1)
+    except EmptyPage:
+        context['homes'] = paginator.page(paginator.num_pages)
     return render(request,
-        'website_management/view_all_homepages.html', context)
-    
+                  'website_management/view_all_homepages.html', context)
+
+
 def view_all_domains(request):
-    "display all domain"
+    """display all domain"""
     doms = Domain.objects.all()
     context = {'doms': []}
     for item in doms:
@@ -176,10 +193,11 @@ def view_all_domains(request):
                                 'date_added': item.date_added,
                                 'id': item.id})
     return render(request,
-        'website_management/view_all_domains.html', context)
+                  'website_management/view_all_domains.html', context)
+
 
 def search_webpage(request):
-    "display text input to start searching website in internet"
+    """display text input to start searching website in internet"""
     if request.method == 'POST':
         # create form instance and populate with data from the request
         form = SearchWebpageForm(request.POST)
@@ -193,5 +211,5 @@ def search_webpage(request):
     else:
         form = SearchWebpageForm()
     return render(request,
-                    'website_management/search_webpage.html',
-                    {'form': form})
+                  'website_management/search_webpage.html',
+                  {'form': form})

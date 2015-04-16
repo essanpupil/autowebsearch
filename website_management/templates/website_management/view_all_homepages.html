@@ -1,6 +1,21 @@
 {% extends 'base.html' %}
 {% block navigation %}
     {% include 'website_management/website_nav.html' %}
+<div class="pagination">
+    <span class="step-links">
+        {% if websites.has_previous %}
+            <a href="?page={{ homes.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ homes.number }} of {{ homes.paginator.num_pages }}.
+        </span>
+
+        {% if homes.has_next %}
+            <a href="?page={{ homes.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
 {% endblock %}
 {% block content %}
 <h3>View all homepages</h3>

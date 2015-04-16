@@ -1,6 +1,22 @@
 {% extends 'base.html' %}
 {% block navigation %}
     {% include 'website_management/website_nav.html' %}
+    <h4>Page navigation</h4>
+<div class="pagination">
+    <span class="step-links">
+        {% if webs.has_previous %}
+            <a href="?page={{ webs.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ webs.number }} of {{ webs.paginator.num_pages }}.
+        </span>
+
+        {% if webs.has_next %}
+            <a href="?page={{ webs.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
 {% endblock %}
 {% block content %}
 <h3>View all webpages</h3>
@@ -39,20 +55,4 @@
         </tr>
     {% endfor %}
 </table>
-<br />
-<div class="pagination">
-    <span class="step-links">
-        {% if webs.has_previous %}
-            <a href="?page={{ webs.previous_page_number }}">previous</a>
-        {% endif %}
-
-        <span class="current">
-            Page {{ webs.number }} of {{ webs.paginator.num_pages }}.
-        </span>
-
-        {% if webs.has_next %}
-            <a href="?page={{ webs.next_page_number }}">next</a>
-        {% endif %}
-    </span>
-</div>
 {% endblock %}

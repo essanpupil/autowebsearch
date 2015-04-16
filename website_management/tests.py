@@ -3,10 +3,8 @@ import datetime
 from django.test import TestCase
 from django_webtest import WebTest
 from django.core.urlresolvers import reverse
-from django.db import IntegrityError, transaction
 
 from .models import Webpage, Homepage, Domain
-from .forms import AddWebpageForm
 
 
 class WebsiteDashboardViewsTestCase(TestCase):
@@ -68,7 +66,7 @@ class WebsiteDashboardViewsTestCase(TestCase):
         self.assertContains(resp, 'kompas.com', 3)
         self.assertContains(resp, 'twiter.com', 3)
         self.assertContains(resp, 'republika.co.id', 3)
-        self.assertNotContains(resp,'www.pupil.com')
+        self.assertNotContains(resp, 'www.pupil.com')
         self.assertNotContains(resp, 'http://www.pupil.com/profil/')
         self.assertNotContains(resp, 'blogspot.com')
 
@@ -85,9 +83,9 @@ class WebpageDetailViewsTestcase(TestCase):
         web = Webpage.objects.all().values_list('id', flat=True)
         index = 1
         while index in web:
-            index = index + 1
+            index += 1
         resp = self.client.get(
-                reverse('website_management:webpage_detail', args=[index]))
+            reverse('website_management:webpage_detail', args=[index]))
         self.assertEqual(resp.status_code, 404)
 
     def test_webpage_detail_from_setup_data(self):
@@ -115,9 +113,9 @@ class HomepageDetailViewsTestcase(TestCase):
         hp = Homepage.objects.all().values_list('id', flat=True)
         index = 1
         while index in hp:
-            index = index + 1
+            index += 1
         resp = self.client.get(
-                reverse('website_management:homepage_detail', args=[index]))
+            reverse('website_management:homepage_detail', args=[index]))
         self.assertEqual(resp.status_code, 404)
 
     def test_homepage_detail_from_setup_data(self):
@@ -142,9 +140,9 @@ class DomainDetailViewsTestcase(TestCase):
         dom = Domain.objects.all().values_list('id', flat=True)
         index = 1
         while index in dom:
-            index = index + 1
+            index += 1
         resp = self.client.get(
-                reverse('website_management:domain_detail', args=[index]))
+            reverse('website_management:domain_detail', args=[index]))
         self.assertEqual(resp.status_code, 404)
 
     def test_domain_detail_from_setup_data(self):
@@ -189,8 +187,8 @@ class ViewAllWebpagesTestCase(TestCase):
         self.assertTrue(len(resp.context['webs']),
                         Webpage.objects.all().count())
         self.assertEqual(resp.context['webs'][0].keys().sort(),
-                         ['url', 'date_added', 'last_response',
-                         'last_response_check', 'id'].sort())
+            ['url', 'date_added', 'last_response',
+             'last_response_check', 'id'].sort())
 
 
 class ViewAllHomepagesTestCase(TestCase):
@@ -210,7 +208,7 @@ class ViewAllHomepagesTestCase(TestCase):
 
     def test_view_all_homepages_(self):
         resp = self.client.get(
-               reverse('website_management:view_all_homepages'))
+            reverse('website_management:view_all_homepages'))
         self.assertIn("www.pupil.com", resp.content)
         self.assertIn("www.facebook.com", resp.content)
         self.assertIn("www.detik.com", resp.content)
@@ -222,7 +220,7 @@ class ViewAllHomepagesTestCase(TestCase):
         self.assertTrue(len(resp.context['homes']),
                         Homepage.objects.all().count())
         self.assertEqual(resp.context['homes'][0].keys().sort(),
-                         ['name', 'date_added', 'domain', 'id'].sort())
+            ['name', 'date_added', 'domain', 'id'].sort())
 
 
 class ViewAllDomainsTestCase(TestCase):

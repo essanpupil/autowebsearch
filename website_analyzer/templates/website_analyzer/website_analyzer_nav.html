@@ -1,17 +1,19 @@
 <h4>Website analyzer navigation</h4>
 <ul>
+    {% comment %}
     <li>
         <a href="{% url 'website_analyzer:display_pages' %}">
             Display webpages
         </a>
     </li>
+    {% endcomment %}
     <li>
-        <a href="{% url 'website_analyzer:display_analyst' %}">
-            Display analyst data
+        <a href="{% url 'website_analyzer:crawl_website' id %}">
+            Crawl website
         </a>
     </li>
     <li>
-        <a href="{% url 'website_analyzer:edit_analyst' %}">
+        <a href="{% url 'website_analyzer:edit_analyst' id %}">
             Edit analyst data
         </a>
     </li>

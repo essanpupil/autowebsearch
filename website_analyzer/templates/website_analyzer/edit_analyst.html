@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Edit website's analyst data</h3>
+<form action="{% url 'website_analyzer:edit_analyst' homepage.id %}"
+      method="post">
+{% csrf_token %}
+<table>
+    {{ form }}
+</table>
+<input type="submit" value="Save Edit" />
+<a href="{% url 'website_analyzer:edit_analyst' homepage.id %}">
+    Cancel edit and return
+</a>
+</form>
+{% endblock %}

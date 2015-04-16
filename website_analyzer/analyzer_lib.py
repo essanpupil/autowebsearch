@@ -1,4 +1,3 @@
-from bs4 import BeautifulSoup
 import tldextract
 
 from django.db import IntegrityError, transaction
@@ -6,9 +5,10 @@ from website_management.models import Homepage, Webpage, Domain
 from .models import ExtendHomepage, StringParameter, StringAnalysist
 from .models import ExtendWebpage, ExtendDomain
 
+from webscraper.pagescraper import PageScraper
 
 def string_analyst(hp_id):
-    "function to do string analyst to homepage"
+    """function to do string analyst to homepage"""
     hp = Homepage.objects.get(id=hp_id)
     exthp, created = ExtendHomepage.objects.get_or_create(homepage=hp)
     params = StringParameter.objects.all()
@@ -19,7 +19,7 @@ def string_analyst(hp_id):
                                                parameter=param,
                                                find=True)
                 if param.definitive:
-                    exthp.scam=True
+                    exthp.scam = True
                     exthp.save()
             else:
                 StringAnalysist.objects.create(webpage=web,
@@ -28,18 +28,18 @@ def string_analyst(hp_id):
 
 
 def add_url_to_webpage(url):
-    "add url and its component to database"
+    """add url and its component to database"""
     ext = tldextract.extract(url)
     try:
         with transaction.atomic():
-            dom, crtd = Domain.objects.get_or_create(name = ext.registered_domain)
+            dom, crtd = Domain.objects.get_or_create(name=ext.registered_domain)
             ExtendDomain.objects.create(domain=dom)
     except:
         pass
     try:
         with transaction.atomic():
-            hp, crtd2 = Homepage.objects.get_or_create(name = '.'.join(ext),
-                                                       domain = dom)
+            hp, crtd2 = Homepage.objects.get_or_create(name='.'.join(ext),
+                                                       domain=dom)
             ExtendHomepage.objects.create(homepage=hp)
     except:
         pass
@@ -52,12 +52,12 @@ def add_url_to_webpage(url):
 
 
 def add_scam_url_website(url):
-    "add url and its component to database"
+    """add url and its component to database"""
     ext = tldextract.extract(url)
-    dom, crtd = Domain.objects.get_or_create(name = ext.registered_domain)
+    dom, crtd = Domain.objects.get_or_create(name=ext.registered_domain)
     ExtendDomain.objects.create(domain=dom)
-    hp, crtd2 = Homepage.objects.get_or_create(name = '.'.join(ext),
-                                               domain = dom)
+    hp, crtd2 = Homepage.objects.get_or_create(name='.'.join(ext),
+                                               domain=dom)
     ExtendHomepage.objects.create(homepage=hp)
     try:
         with transaction.atomic():
@@ -71,9 +71,16 @@ def add_scam_url_website(url):
 
 
 def add_list_url_to_webpage(urls):
-    "add list url and their components to database"
+    """add list url and their components to database"""
     for url in urls:
         try:
             add_url_to_webpage(url)
         except IntegrityError:
             continue
+
+def fill_text_body(extw):
+    "Function to fill text_body of an ExtendWebpage object"
+    page = PageScraper()
+    text = page.get_text_body(html=extw.webpage.html_page)
+    extw.text_body = text
+    extw.save()

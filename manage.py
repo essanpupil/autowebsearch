@@ -10,11 +10,12 @@ if __name__ == "__main__":
     if 'livereload' in sys.argv:
         from django.core.wsgi import get_wsgi_application
         from livereload import Server
+
         application = get_wsgi_application()
         server = Server(application)
 
-        #add your watch
-        #server.watch('/home/pupil/workpace/ScamSearcher/')
+        # add your watch
+        # server.watch('/home/pupil/workpace/ScamSearcher/')
         server.serve(host='localhost')
     else:
         execute_from_command_line(sys.argv)
