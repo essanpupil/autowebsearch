@@ -260,6 +260,7 @@ class ExtractLinksTestCase(TransactionTestCase):
     "Test extract links from webpage"
     def setUp(self):
         "setup dummy webpage"
+        response = self.client.get
         add_url_to_webpage('http://www.pupil.com/scam')
         web = Webpage.objects.get(url='http://www.pupil.com/scam')
         web.html_page = """
@@ -446,8 +447,8 @@ class EditAnalystDataTestCase(WebTest):
         form['reported'] = 'Reported'
 
 
-class CrawlWebsiteTest(TestCase):
-    "testcase for crawling website feature"
-    website = 
-    resp = self.get(reverse('website_analyzer:crawl_website',
-        args=[website.id]))
+#class CrawlWebsiteTest(TestCase):
+#    "testcase for crawling website feature"
+#    website = 
+#    resp = self.get(reverse('website_analyzer:crawl_website',
+#        args=[website.id]))

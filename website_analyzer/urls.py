@@ -29,5 +29,9 @@ urlpatterns = patterns('',
                        url(r'^add_sequence/$', views.add_sequence,
                            name='add_sequence'),
                        url(r'^crawl_website/(?P<homepage_id>\d+)/$',
-                           views.crawl_website,
-                           name='crawl_website'),)
+                           views.crawl_homepage,
+                           name='crawl_website'),
+                       url(r'^start_sequence_analysist/(?P<homepage_id>\d+)$',
+                           views.start_sequence_analysist,
+                           name='start_sequence_analysist'),
+                       )

@@ -31,11 +31,12 @@
         <th align="left">Whitelist status</th><td>{{ whitelist|yesno:"Yes, No, Unknown" }}</td>
     </tr>
     <tr>
-        <th align="left">List of webpages</th>
+        <th align="left" valign="top">List of webpages</th>
         <td>
             {% for web in webpages %}
-                <a href="{% url 'website_management:webpage_detail' web.id %}">
-                    {{ web.url }} <br />
+                <a href="{% url 'website_management:webpage_detail' web.id %}"
+                    title="{{ web.url }}">
+                    {{ web.url|truncatechars:80 }}<br />
                 </a>
             {% empty %}
                 This website does not have webpages
@@ -46,8 +47,12 @@
         <th align="left">List of sequence</th>
         <td>
             {% for seq in params %}
+            <div style="border:1px solid black;">
                 <p>{{ seq.parameter }}</p>
-                <p>{{ seq.web }}</p>
+                <p>{{ seq.webpage }}</p>
+                <p>{{ seq.find }}</p>
+                <p>{{ seq.time }}</p>
+            </div>
             {% empty %}
                 This website does not have matching sequence
             {% endfor %}

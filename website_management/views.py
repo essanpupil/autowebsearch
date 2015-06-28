@@ -1,6 +1,8 @@
 import tldextract
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, PageNotAnInteger
+from django.contrib.auth.decorators import login_required
 
 from .models import Webpage, Domain, Homepage
 from .forms import AddWebpageForm, SearchWebpageForm
@@ -11,6 +13,8 @@ from search_extractor.google_search import GoogleSearch
 from website_analyzer.models import ExtendWebpage
 from website_analyzer.analyzer_lib import fill_text_body
 
+
+@login_required
 def website_dashboard(request):
     """display info summary about saved webpages, homepage, & domain"""
     webs = Webpage.objects.all()
@@ -31,6 +35,7 @@ def website_dashboard(request):
     return render(request, 'website_management/dashboard.html', context)
 
 
+@login_required
 def webpage_detail(request, web_id):
     """display detail info of selected webpage"""
     web = get_object_or_404(Webpage, id=web_id)
@@ -67,6 +72,7 @@ def webpage_detail(request, web_id):
                   {'web': web_data})
 
 
+@login_required
 def fetch_html_page(request, web_id):
     """downloading html source code of webpage"""
     web = get_object_or_404(Webpage, id=web_id)
@@ -83,6 +89,7 @@ def fetch_html_page(request, web_id):
     return redirect('website_management:webpage_detail', web_id=web.id)
 
 
+@login_required
 def get_domain_homepage(request, web_id):
     """extract domain and homepage from webpage's url"""
     web = get_object_or_404(Webpage, id=web_id)
@@ -95,6 +102,7 @@ def get_domain_homepage(request, web_id):
     return redirect('website_management:webpage_detail', web_id=web.id)
 
 
+@login_required
 def homepage_detail(request, hp_id):
     """display detail info of selected homepage"""
     hp = get_object_or_404(Homepage, id=hp_id)
@@ -109,6 +117,7 @@ def homepage_detail(request, hp_id):
     return render(request, 'website_management/homepage_detail.html', context)
 
 
+@login_required
 def domain_detail(request, dom_id):
     """display detail info of selected domain"""
     dom = get_object_or_404(Domain, id=dom_id)
@@ -121,6 +130,7 @@ def domain_detail(request, dom_id):
     return render(request, 'website_management/domain_detail.html', context)
 
 
+@login_required
 def add_new_webpage(request):
     """Display form to add new webpage"""
     # if this is a POST request, we should process the form data
@@ -139,6 +149,7 @@ def add_new_webpage(request):
                   {'form': form})
 
 
+@login_required
 def view_all_webpages(request):
     """display all webpage"""
     webs = Webpage.objects.all().order_by('id').reverse()
@@ -162,6 +173,7 @@ def view_all_webpages(request):
                   'website_management/view_all_webpages.html', context)
 
 
+@login_required
 def view_all_homepages(request):
     """display all webpage"""
     homes = Homepage.objects.all().order_by('id').reverse()
@@ -184,6 +196,7 @@ def view_all_homepages(request):
                   'website_management/view_all_homepages.html', context)
 
 
+@login_required
 def view_all_domains(request):
     """display all domain"""
     doms = Domain.objects.all()
@@ -196,6 +209,7 @@ def view_all_domains(request):
                   'website_management/view_all_domains.html', context)
 
 
+@login_required
 def search_webpage(request):
     """display text input to start searching website in internet"""
     if request.method == 'POST':

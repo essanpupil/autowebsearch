@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block pagetitle %}View all client | ScamSearcher{% endblock %}
+{% block navigation %}
+    {% include 'administrative/admin_nav.html' %}
+    <h4>Page navigation</h4>
+    <div class="pagination">
+        <span class="step-links">
+            {% if clients.has_previous %}
+                <a href="?page={{ clients.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ clients.number }} of {{ clients.paginator.num_pages }}.
+            </span>
+
+            {% if clients.has_next %}
+                <a href="?page={{ clients.next_page_number }}">next</a>
+            {% endif %}
+        </span>
+    </div>
+{% endblock %}
+{% block content %}
+<h3>View all client</h3>
+{{ error_message }}
+<table>
+    <tr>
+        <th>No.</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Start Date</th>
+        <th>End date</th>
+        <th>Status</th>
+        <th>Address</th>
+        <th>Action</th>
+    </tr>
+    {% for client in clients %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ client.name }}</td>
+            <td>{{ client.email }}</td>
+            <td>{{ client.phone }}</td>
+            <td>{{ client.date_start }}</td>
+            <td>{{ client.date_end }}</td>
+            <td>{{ client.status }}</td>
+            <td>{{ client.address }}</td>
+            <td>
+                <a href="{% url 'administrative:detail_client' client.id %}">
+                    Detail
+                </a>
+            </td>
+        </tr>
+    {% empty %}
+        <tr>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}

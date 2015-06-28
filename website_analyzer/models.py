@@ -101,7 +101,6 @@ class SequenceDescription(models.Model):
 
 
 class StringParameter(models.Model):
-
     """Store string parameter to be search during analysist"""
     sentence = models.CharField(max_length=255, unique=True)
     definitive = models.BooleanField(default=False)
@@ -112,8 +111,7 @@ class StringParameter(models.Model):
 
 
 class StringAnalysist(models.Model):
-
-    """Store analisyst result of webpage's"""
+    """Store analysist result of webpage's"""
     webpage = models.ForeignKey(Webpage)
     parameter = models.ForeignKey(StringParameter)
     time = models.DateTimeField(auto_now=True)

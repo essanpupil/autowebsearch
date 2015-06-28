@@ -1,6 +1,8 @@
 import tldextract
 
+from django.utils import timezone
 from django.db import IntegrityError, transaction
+
 from website_management.models import Homepage, Webpage, Domain
 from .models import ExtendHomepage, StringParameter, StringAnalysist
 from .models import ExtendWebpage, ExtendDomain
@@ -84,3 +86,64 @@ def fill_text_body(extw):
     text = page.get_text_body(html=extw.webpage.html_page)
     extw.text_body = text
     extw.save()
+
+
+def string_analysist(homepage):
+    """function to doing string analysist on to website/homepage model object.
+    required website_management.models.Homepage as argument"""
+    hari_ini = timezone.now()
+    parameters = StringParameter.objects.all()
+    webpages = homepage.webpage_set.all()
+    for parameter in parameters:
+        for webpage in webpages:
+            newest_string_analysist = StringAnalysist.objects.filter(
+                    webpage=webpage,
+                    parameter=parameter).order_by('time').reverse()
+            if newest_string_analysist.count() == 0:
+                extw, created = ExtendWebpage.objects.get_or_create(
+                        webpage=webpage)
+                if parameter.sentence in extw.text_body:
+                    StringAnalysist.objects.create(webpage=webpage,
+                            parameter=parameter,
+                            find=True)
+                else:
+                    StringAnalysist.objects.create(webpage=webpage,
+                            parameter=parameter,
+                            find=False)
+            else:
+                if (hari_ini - newest_string_analysist[0].time).days == 0:
+                    continue
+                else:
+                    extw, created = ExtendWebpage.objects.get_or_create(
+                            webpage=webpage)
+                    if parameter.sentence in extw.text_body:
+                        StringAnalysist.objects.create(webpage=webpage,
+                                parameter=parameter,
+                                find=True)
+                    else:
+                        StringAnalysist.objects.create(webpage=webpage,
+                                parameter=parameter,
+                                find=False)
+            continue
+        continue
+
+
+def crawl_website(homepage):
+    """function to fetch html code and url of a website, start from available
+    webpages in the database. The only accepted argument in Homepage object."""
+    keep_crawling = True
+    while True:
+        for webpage in homepage.webpage_set.all():
+            page = PageScraper()
+            page.fetch_webpage(webpage.url)
+            webpage.html_page = page.html
+            extw, created = ExtendWebpage.objects.get_or_create(
+                    webpage=webpage)
+            extw.text_body = page.get_text_body()
+            extw.save()
+            webpage.save()
+            add_list_url_to_webpage(page.ideal_urls())
+        if not homepage.webpage_set.filter(html_page__isnull=True).exists():
+            break
+
+

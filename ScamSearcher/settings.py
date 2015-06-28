@@ -38,6 +38,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'website_management',
     'website_analyzer',
+    'administrative',
+    'django_extensions',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -64,9 +66,10 @@ DATABASES = {
         #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         #'ENGINE': 'django.db.backends.mysql',
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'scam_searcher',
-        'USER': 'superpostgres',
-        'PASSWORD': 'mencontekteman',
+        'NAME': 'scam_db',
+        'USER': 'scam_user',
+        'PASSWORD': 'semuapenipu',
+        'HOST': 'localhost',
 
     }
 }
@@ -91,3 +94,9 @@ STATICFILES_DIRS = (os.path.join(os.path.dirname(__file__), 'static').replace('\
 STATIC_URL = '/static/'
 
 TEMPLATE_DIRS = (os.path.join(os.path.dirname(__file__), 'templates').replace('\\', '/'),)
+
+LOGIN_URL = 'login'
+
+LOGIN_REDIRECT_URL = 'website_management:website_dashboard'
+
+LOGOUT_URL = 'logout'

@@ -33,11 +33,11 @@ class PageScraper:
         linedPageText = page_text.splitlines()
         line2 = []
         for line in linedPageText:
-            line_a = line.strip()
-            line_b = line_a.lower()
+#            line_a = line.strip()
+            line_b = line.lower()
             if len(line) != 0:
                 line2.append(line_b.encode('ascii', 'ignore'))
-        return "\n".join(line2)
+        return page_text.lower()#"\n".join(line2)
 
     def word_tokens(self, html=None):
         """return word tokens of webpage"""

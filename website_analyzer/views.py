@@ -1,15 +1,17 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.urlresolvers import reverse
+from django.contrib.auth.decorators import login_required
 
-from .models import ExtendHomepage, StringParameter
+from .models import ExtendHomepage, StringParameter, StringAnalysist
 from website_management.models import Homepage, Webpage
 from .analyzer_lib import string_analyst, add_list_url_to_webpage
-from .analyzer_lib import add_scam_url_website
+from .analyzer_lib import add_scam_url_website, string_analysist, crawl_website
 from webscraper.pagescraper import PageScraper
 from .forms import AddScamWebsiteForm, AddSequenceForm, EditAnalystForm
 
 
+@login_required
 def add_sequence(request):
     """view to display and process form add new parameter sequence"""
     if request.method == 'POST':
@@ -26,10 +28,12 @@ def add_sequence(request):
                   {'form': form})
 
 
+@login_required
 def analyze_website(request, hp_id):
     """Display page to analyze website,
     the last analysist result is displayed"""
     hp = get_object_or_404(Homepage, id=hp_id)
+    my_webpage = hp.webpage_set.all()
     exthp, created = ExtendHomepage.objects.get_or_create(homepage=hp)
     context = {'name': hp.name,
                'id': hp.id,
@@ -42,17 +46,27 @@ def analyze_website(request, hp_id):
                'whitelist': hp.extendhomepage.whitelist,
                'webpages': [],
                'params': []}
-    for web in hp.webpage_set.all():
+    for web in my_webpage:
         context['webpages'].append({'id': web.id, 'url': web.url})
+    for item in StringAnalysist.objects.filter(webpage__in=my_webpage,
+            find=True):
+        temp = {'parameter': '', 'webpage': '', 'find': ''}
+        temp['parameter'] = item.parameter.sentence
+        temp['webpage'] = item.webpage.url
+        temp['find'] = item.find
+        temp['time'] = item.time
+        context['params'].append(temp)
     return render(request, 'website_analyzer/analyze_website.html', context)
 
 
+@login_required
 def start_analyze(request, hp_id):
     """execute analyze process"""
     string_analyst(hp_id)
     return redirect('website_analyzer:analyze_website', hp_id=hp_id)
 
 
+@login_required
 def analyst_dashboard(request):
     """Display summary info of analyzed website."""
     exthp = ExtendHomepage.objects.all()
@@ -62,16 +76,19 @@ def analyst_dashboard(request):
     return render(request, 'website_analyzer/dashboard.html', context)
 
 
+@login_required
 def display_pages(request, hp_id):
     """Display webpages of current homepage"""
     pass
 
 
+@login_required
 def display_analyst(request, hp_id):
     """Display analysist data of current homepage"""
     pass
 
 
+@login_required
 def edit_analyst(request, homepage_id):
     """Display edit form of analyst data for current homepage"""
     website = get_object_or_404(Homepage, id=homepage_id)
@@ -103,12 +120,13 @@ def edit_analyst(request, homepage_id):
     return render(request, 'website_analyzer/edit_analyst.html', context)
     
 
-
+@login_required
 def view_tokens(request, web_id):
     """Display tokens of current webpage"""
     pass
 
 
+@login_required
 def extract_links(request, web_id):
     """extract links from the current webpage. filter ideal links only"""
     web = get_object_or_404(Webpage, id=web_id)
@@ -118,6 +136,7 @@ def extract_links(request, web_id):
     return redirect('website_management:view_all_webpages')
 
 
+@login_required
 def add_scam_website(request):
     """manually add website known as scam"""
     # if this is a POST request, the form data is processed
@@ -136,9 +155,10 @@ def add_scam_website(request):
                   {'form': form})
 
 
+@login_required
 def view_websites(request):
     """display scam website"""
-    websites = Homepage.objects.all()
+    websites = Homepage.objects.all().order_by('date_added').reverse()
     context = {'websites': []}
     for hp in websites:
         try:
@@ -151,8 +171,7 @@ def view_websites(request):
                  'report': exthp.reported,
                  'access': exthp.access,
                  'web_count': hp.webpage_set.all().count(),
-                 'date_added': hp.date_added,
-                 'domain': hp.domain.name})
+                 'date_added': hp.date_added,})
         except ExtendHomepage.DoesNotExist:
             context['websites'].append(
                 {'id': hp.id,
@@ -162,8 +181,7 @@ def view_websites(request):
                  'report': 'n/a',
                  'access': 'n/a',
                  'web_count': hp.webpage_set.all().count(),
-                 'date_added': hp.date_added,
-                 'domain': hp.domain.name})
+                 'date_added': hp.date_added,})
     paginator = Paginator(context['websites'], 10)
     page = request.GET.get('page')
     try:
@@ -175,6 +193,7 @@ def view_websites(request):
     return render(request, 'website_analyzer/view_websites.html', context)
 
 
+@login_required
 def view_sequence(request):
     """display sequence parameter used for analyze website"""
     parameters = StringParameter.objects.all()
@@ -193,16 +212,28 @@ def view_sequence(request):
         context['parameters'] = paginator.page(paginator.num_pages)
     return render(request, 'website_analyzer/view_sequences.html', context)
 
-def crawl_website(request, homepage_id):
+
+@login_required
+def crawl_homepage(request, homepage_id):
     "View to extract all links inside a website"
     website = get_object_or_404(Homepage, id=homepage_id)
-    for webpage in website.webpage_set.all():
-        page = PageScraper()
-        if webpage.html_page == None:
-            page.fetch_webpage(webpage.url)
-            webpage.html_page = page.html
-            webpage.save()
-        else:
-            pass
-        add_list_url_to_webpage(page.ideal_urls(webpage.html_page))
+    crawl_website(website)
+#    for webpage in website.webpage_set.all():
+#        page = PageScraper()
+#        if webpage.html_page == None:
+#            page.fetch_webpage(webpage.url)
+#            webpage.html_page = page.html
+#            webpage.save()
+#        else:
+#            pass
+#        add_list_url_to_webpage(page.ideal_urls(webpage.html_page))
     return redirect('website_analyzer:analyze_website', hp_id=website.id)
+
+
+@login_required
+def start_sequence_analysist(request, homepage_id):
+    """start executing string parameter analysist on to homepage and then save
+    result to StringAnalysist model"""
+    homepage = get_object_or_404(Homepage, id=homepage_id)
+    string_analysist(homepage)
+    return redirect('website_analyzer:analyze_website', hp_id=homepage.id)
