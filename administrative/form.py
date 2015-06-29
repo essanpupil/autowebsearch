@@ -1,7 +1,7 @@
-from django.forms import ModelForm
+from django.forms import ModelForm, URLInput
 from django import forms
 
-from .models import Client
+from .models import Client, Website
 
 
 class AddClientForm(ModelForm):
@@ -9,3 +9,13 @@ class AddClientForm(ModelForm):
     class Meta:
         model = Client
         fields = ('name', 'email', 'phone', 'address') 
+
+
+class AddClientHomepageForm(ModelForm):
+    "input client's homepage"
+    class Meta:
+        model = Website
+        fields = ['homepage', 'event']
+        widgets = {
+            'homepage': URLInput(),
+        }

@@ -4,16 +4,23 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, PageNotAnInteger
 
 from .models import Client, Event, Operator
-from .form import AddClientForm
+from .form import AddClientForm, AddClientHomepageForm
 from .administrative_lib import save_client
 
 @login_required
 def admin_dashboard(request):
     "Display summary administrative info"
+    context = {}
     users = User.objects.all()
-    clients = Client.objects.all()
+    clients = Client.objects.all().order_by('date_start')
+    context['clients'] = {'count': clients.count(),
+                          'last_added': [],}
+    for client in clients[:5]:
+        client_data = {'id': client.id,
+                       'name': client.name,}
+        context['clients']['last_added'].append(client_data)
     events = Event.objects.all()
-    return render(request, 'administrative/dashboard.html')
+    return render(request, 'administrative/dashboard.html', context)
 
 
 @login_required
@@ -44,27 +51,27 @@ def view_client(request):
     clients = Client.objects.all().order_by('date_start').reverse()
     context = {'clients': []}
     for item in clients:
-        context['clients'].append({
-            'id': item.id,
-            'name': item.name,
-            'email': item.email,
-            'phone': item.phone,
-            'status': '',
-            'date_start': item.date_start,
-            'date_end': item.date_end,
-            'address': item.address})
-        if context['client'].date_end == None:
-            context['client'].status = 'Active'
+        client_data = {'id': item.id,
+                       'name': item.name,
+                       'email': item.email,
+                       'phone': item.phone,
+                       'status': '',
+                      # 'date_start': item.date_start,
+                      # 'date_end': item.date_end,
+                       'address': item.address}
+        if item.date_end == None:
+            client_data['status'] = 'Active'
         else:
-            context['client'].status = 'Deleted'
-        paginator = Paginator(context['clients'], 10)
-        page = request.GET.get('page')
-        try:
-            context['clients'] = paginator.page(page)
-        except PageNotAnInteger:
-            context['clients'] = paginator.page(1)
-        except EmptyPage:
-            context['clients'] = paginator.page(paginator.num_pages)
+            client_data['status'] = 'Deleted'
+        context['clients'].append(client_data)
+    paginator = Paginator(context['clients'], 10)
+    page = request.GET.get('page')
+    try:
+        context['clients'] = paginator.page(page)
+    except PageNotAnInteger:
+        context['clients'] = paginator.page(1)
+    except EmptyPage:
+        context['clients'] = paginator.page(paginator.num_pages)
     return render(request,
                   'administrative/view_client.html', context)
         
@@ -92,7 +99,23 @@ def detail_client(request, client_id):
 @login_required
 def add_homepage(request, client_id):
     "Display add client's homepage form"
-    pass
+    # if this is a POST request, the data should be processed
+    if request.method == 'POST':
+        # create form instance and populate with data from the request
+        form = AddClientHomepageForm(request.POST)
+        # check the form is valid or not
+        if form.is_valid():
+            # start saving new client to database
+            save_client(name=form.cleaned_data['name'],
+                        email=form.cleaned_data['email'],
+                        phone=form.cleaned_data['phone'],
+                        address=form.cleaned_data['address'])
+            return redirect('administrative:view_client')
+    else:
+        form = AddClientHomepageForm()
+    return render(request,
+                  'administrative/add_homepage.html',
+                  {'form':form})
 
 
 @login_required
