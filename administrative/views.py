@@ -3,9 +3,12 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, PageNotAnInteger
 
-from .models import Client, Event, Operator
+from .models import Client, Event, Operator, Website
 from .form import AddClientForm, AddClientHomepageForm
 from .administrative_lib import save_client, save_client_homepage
+from website_management.management_lib import add_url_to_webpage
+from website_management.models import Webpage
+
 
 @login_required
 def admin_dashboard(request):
@@ -107,10 +110,17 @@ def add_homepage(request, client_id):
         # check the form is valid or not
         if form.is_valid():
             # start saving new client to database
-            save_client_homepage(url=form.cleaned_data['name'], client=client)
-            return redirect('administrative:view_client', client_id=client_id)
+            # save_client_homepage(url=form.cleaned_data['homepage'],
+            #                    client=client,
+            #                    event=form.cleaned_data['event'])
+            add_url_to_webpage(form.cleaned_data['url'])
+            webpage = Webpage.objects.get(url=form.cleaned_data['url'])
+            Website.objects.create(client=form.cleaned_data['client'],
+                homepage=webpage.homepage,
+                event=form.cleaned_data['event'])
+            return redirect('administrative:detail_client', client_id=client_id)
     else:
-        form = AddClientHomepageForm()
+        form = AddClientHomepageForm(initial={'client':client, 'event':None})
     return render(request,
                   'administrative/add_homepage.html',
                   {'form':form,

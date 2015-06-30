@@ -1,4 +1,5 @@
-from django.forms import ModelForm, URLInput
+from django.forms import ModelForm, URLInput, HiddenInput
+from django.core import validators
 from django import forms
 
 from .models import Client, Website
@@ -13,9 +14,10 @@ class AddClientForm(ModelForm):
 
 class AddClientHomepageForm(ModelForm):
     "input client's homepage"
+    url =  forms.URLField(validators=[validators.URLValidator])
     class Meta:
         model = Website
-        fields = ['homepage', 'event']
+        fields = ['url', 'event', 'client']
         widgets = {
-            'homepage': URLInput(),
+            'client': HiddenInput(),
         }

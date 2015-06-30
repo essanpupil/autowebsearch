@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
-{% block navigation %}{% include 'website_management/website_nav.html' %}{% endblock %}
+{% block navigation %}
+    {% include 'administrative/admin_nav.html' %}
+    {% include 'administrative/client_detail_nav.html' %}    
+{% endblock %}
 {% block pagetitle %}Add new web page manualy | ScamSearcher{% endblock %}
 {% block content %}
 <h3>Add new webpage for {{ client.name }}</h3>
