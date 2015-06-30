@@ -5,7 +5,7 @@ from django.core.paginator import Paginator, PageNotAnInteger
 
 from .models import Client, Event, Operator
 from .form import AddClientForm, AddClientHomepageForm
-from .administrative_lib import save_client
+from .administrative_lib import save_client, save_client_homepage
 
 @login_required
 def admin_dashboard(request):
@@ -100,22 +100,23 @@ def detail_client(request, client_id):
 def add_homepage(request, client_id):
     "Display add client's homepage form"
     # if this is a POST request, the data should be processed
+    client = Client.objects.get(id=client_id)
     if request.method == 'POST':
         # create form instance and populate with data from the request
         form = AddClientHomepageForm(request.POST)
         # check the form is valid or not
         if form.is_valid():
             # start saving new client to database
-            save_client(name=form.cleaned_data['name'],
-                        email=form.cleaned_data['email'],
-                        phone=form.cleaned_data['phone'],
-                        address=form.cleaned_data['address'])
-            return redirect('administrative:view_client')
+            save_client_homepage(url=form.cleaned_data['name'], client=client)
+            return redirect('administrative:view_client', client_id=client_id)
     else:
         form = AddClientHomepageForm()
     return render(request,
                   'administrative/add_homepage.html',
-                  {'form':form})
+                  {'form':form,
+                   'client': {'id': client.id,
+                              'name': client.name}
+                  })
 
 
 @login_required

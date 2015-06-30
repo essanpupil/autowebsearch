@@ -39,6 +39,6 @@ class Website(models.Model):
     "Save websites used by event and clients"
     homepage = models.OneToOneField(Homepage)
     client = models.ForeignKey(Client)
-    event = models.ForeignKey(Event, blank=True, null=True)
+    event = models.ForeignKey(Event, blank=True, null=True, default=None)
     def __unicode__(self):
-        return homepage.url
+        return self.homepage.name
