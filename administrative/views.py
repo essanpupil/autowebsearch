@@ -90,11 +90,16 @@ def detail_client(request, client_id):
                    'date_start': client.date_start,
                    'date_end': client.date_end,
                    'status': '',
+                   'websites': [],
                    'address': client.address,}
     if client_data['date_end'] == None:
         client_data['status'] = 'Active'
     else:
         client_data['status'] = 'Deleted'
+    websites = Website.objects.filter(client=client)
+    for website in websites:
+        client_data['websites'].append({'url': website.homepage.name,
+                                        'id': website.homepage.id})
     return render(request, 'administrative/detail_client.html',
                   {'client': client_data})
 

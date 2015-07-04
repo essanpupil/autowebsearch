@@ -37,14 +37,14 @@
     <tr>
         <th align="left">Websites</th>
         <td>
+        <ul>
         {% for web in client.websites %}
-            <a href="{% url 'website_management:homepage_detail' web.id %}">
-                {{ web.name }}</a>
-           (<a href="{% url 'administrative:delete_homepage' web.id %}">
-                Delete homepage</a>)
+            <li><a href="{% url 'website_management:homepage_detail' web.id %}">
+                {{ web.url }}</a></li>
         {% empty %}
-            No homepage database for this client ( - )
+            No homepage database for this client
         {% endfor %}
+        </ul>
         </td>
     </tr>
 </table>

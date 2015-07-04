@@ -18,6 +18,8 @@ urlpatterns = [
         views.detail_client, name='detail_client'),
     url(r'^add-homepage/(?P<client_id>\d+)/$',
         views.add_homepage, name='add_homepage'),
+    url(r'^delete-homepage/(?P<client_id>\d+)/$',
+        views.add_homepage, name='delete_homepage'),
 
     # operator url section
     url(r'^add-operator/$',
