@@ -23,19 +23,16 @@ class AddClientHomepageForm(ModelForm):
         }
 
 
-class DeleteClientHomepageForm(forms.Form):
-    "input client's homepage"
-    homepage = forms.ModelChoiceField(queryset=None)
-    #client_id = forms.IntegerField()
-    def __init__(self, client, *args, **kwargs):
-        super(DeleteClientHomepageForm, self).__init__(*args, **kwargs)
-        self.fields['homepage'].queryset = Website.objects.filter(
-                                               client=client)
-       # self.fields['client_id'].widget = forms.HiddenInput()
-       # self.fields['client_id'].initial = client_obj.id
-    #class Meta:
-    #    model = Website
-    #    fields = ['homepage', 'client']
-    #    widgets = {
-    #        'client': HiddenInput(),
-    #    }
+#class DeleteClientHomepageForm(forms.Form):
+#    "input client's homepage"
+#    homepage = forms.ModelChoiceField(queryset=None)
+#    #client_id = forms.IntegerField()
+#    def __init__(self, client, *args, **kwargs):
+#        super(DeleteClientHomepageForm, self).__init__(*args, **kwargs)
+#        self.fields['homepage'].queryset = Website.objects.filter(
+#                                               client=client)
+#
+#
+#class EditClientForm(ModelForm):
+#    "form with initial data to edit client's data"
+#

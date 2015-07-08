@@ -2,11 +2,11 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, PageNotAnInteger
-from django.views.generic.edit import DeleteView
-from django.core.urlresolvers import reverse_lazy
+from django.views.generic.edit import DeleteView, UpdateView
+from django.core.urlresolvers import reverse_lazy, reverse
 
 from .models import Client, Event, Operator, Website
-from .form import AddClientForm, AddClientHomepageForm, DeleteClientHomepageForm
+from .form import AddClientForm, AddClientHomepageForm#, DeleteClientHomepageForm
 from .administrative_lib import save_client, save_client_homepage
 from website_management.management_lib import add_url_to_webpage
 from website_management.models import Webpage
@@ -142,10 +142,12 @@ def delete_homepage_success(request):
     "display delete success"
     return render(request, 'administrative/delete_client_website_success.html')
 
-def edit_client(request):
+class EditClient(UpdateView):
     'Display edit client form'
-    pass
-
+    model = Client
+    success_url = reverse_lazy('administrative:view_client')
+    fields = ['name', 'email', 'phone', 'address']
+    template_name_suffix = '_edit_form'
 
 def delete_client(request, client_id):
     'Display delete client confirmation'

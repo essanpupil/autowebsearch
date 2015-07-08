@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block navigation %}
+{% include 'administrative/admin_nav.html' %}
+{% include 'administrative/client_detail_nav.html' %}
+{% endblock %}
+{% block content %}
+<h3>Edit client: {{ client.name }}</h3>
+<table>
+    <tr>
+        <th align="left">Status</th>
+        <td>{{ client.status }}</td>
+    </tr>
+    <tr>
+        <th align="left">Name</th>
+        <td>{{ client.name }}</td>
+    </tr>
+    <tr>
+        <th align="left">Email</th>
+        <td>{{ client.email }}</td>
+    </tr>
+    <tr>
+        <th align="left">Phone</th>
+        <td>{{ client.phone }}</td>
+    </tr>
+    <tr>
+        <th align="left">Date added</th>
+        <td>{{ client.date_start }}</td>
+    </tr>
+    <tr>
+        <th align="left">Date ended</th>
+        <td>{{ client.date_end }}</td>
+    </tr>
+    <tr>
+        <th align="left">Address</th>
+        <td>{{ client.address }}</td>
+    </tr>
+    <tr>
+        <th align="left">Websites</th>
+        <td>
+        <ul>
+        {% for web in client.websites %}
+            <li><a href="{% url 'website_management:homepage_detail' web.id_homepage %}">
+                {{ web.url }}</a> (<a href="{% url 'administrative:delete_homepage' pk=web.id_website %}">Delete</a>)
+            </li>
+        {% empty %}
+            No homepage database for this client
+        {% endfor %}
+        </ul>
+        </td>
+    </tr>
+</table>
+{% endblock %}
