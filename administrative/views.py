@@ -1,3 +1,6 @@
+import datetime
+
+from django.utils import timezone
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -6,7 +9,7 @@ from django.views.generic.edit import DeleteView, UpdateView
 from django.core.urlresolvers import reverse_lazy, reverse
 
 from .models import Client, Event, Operator, Website
-from .form import AddClientForm, AddClientHomepageForm#, DeleteClientHomepageForm
+from .form import AddClientForm, AddClientHomepageForm, DeleteClientForm
 from .administrative_lib import save_client, save_client_homepage
 from website_management.management_lib import add_url_to_webpage
 from website_management.models import Webpage
@@ -61,13 +64,11 @@ def view_client(request):
                        'email': item.email,
                        'phone': item.phone,
                        'status': '',
-                      # 'date_start': item.date_start,
-                      # 'date_end': item.date_end,
                        'address': item.address}
         if item.date_end == None:
             client_data['status'] = 'Active'
         else:
-            client_data['status'] = 'Deleted'
+            client_data['status'] = 'Not Active'
         context['clients'].append(client_data)
     paginator = Paginator(context['clients'], 10)
     page = request.GET.get('page')
@@ -97,7 +98,7 @@ def detail_client(request, client_id):
     if client_data['date_end'] == None:
         client_data['status'] = 'Active'
     else:
-        client_data['status'] = 'Deleted'
+        client_data['status'] = 'Not Active'
     websites = Website.objects.filter(client=client)
     for website in websites:
         client_data['websites'].append({'url': website.homepage.name,
@@ -149,9 +150,55 @@ class EditClient(UpdateView):
     fields = ['name', 'email', 'phone', 'address']
     template_name_suffix = '_edit_form'
 
+
 def delete_client(request, client_id):
-    'Display delete client confirmation'
-    pass
+    'function to set date_end value (delete) to client'
+    client = Client.objects.get(id=client_id)
+    form = DeleteClientForm()
+    return render(request,
+                  'administrative/delete_client.html',
+                  {'form':form,
+                   'client': {'id': client.id,
+                              'name': client.name}
+              })
+
+
+def delete_client_process(request):
+    "processing delete client (saving date_end)"
+    client = get_object_or_404(Client, id=request.POST['id_client'])
+    print request.POST['status']
+    print client.__dict__
+    if request.POST['status'] == "deactive":
+        client.date_end = timezone.now()
+        client.save()
+        print client.__dict__
+    elif request.POST['status'] == "active":
+        client.date_end = None
+        client.save()
+        print client.__dict__
+    else:
+        pass
+    return redirect('administrative:detail_client', client.id)
+
+#    if request.method == 'POST':
+#        form = DeleteClientForm(request.POST)
+#        print form.cleaned_data['deactive']
+#        if form.is_valid():
+#            if form.cleaned_data['deactive']:
+#                print form.cleaned_data['deactive']
+#                client.date_end = datetime.datetime.now()
+#                client.save()
+#            else:
+#                print form.cleaned_data['deactive']
+#            return redirect('administrative:detail_client', client_id=client_id)
+#    else:
+#        form = DeleteClientForm()
+#    return render(request,
+#                  'administrative/delete_client.html',
+#                  {'form':form,
+#                   'client': {'id': client.id,
+#                              'name': client.name}
+#                  })
 
 
 def add_operator(request):

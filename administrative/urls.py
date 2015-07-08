@@ -14,6 +14,8 @@ urlpatterns = [
         views.EditClient.as_view(), name='edit_client'),
     url(r'^delete-client/(?P<client_id>\d+)/$',
         views.delete_client, name='delete_client'),
+    url(r'^delete-client-process/$',
+        views.delete_client_process, name='delete_client_process'),
     url(r'^detail-client/(?P<client_id>\d+)/$',
         views.detail_client, name='detail_client'),
     url(r'^add-homepage/(?P<client_id>\d+)/$',

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block navigation %}{% include 'administrative/admin_nav.html' %}{% endblock %}
+{% block pagetitle %}Delete client | ScamSearcher{% endblock %}
+{% block content %}
+<h3>Delete client: {{ client.name }}</h3>
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<form action="{% url 'administrative:delete_client_process' %}" method="post">
+{% csrf_token %}
+Change Status: <input type="radio" name="status" value="deactive" /> Deactive <input type="radio" name="status" value="active" checked/> Active
+<input type="hidden" name="id_client" value="{{ client.id }}" />
+<br />
+<br />
+<input type="submit" value="Save new client's status" />
+<input type="reset" value="Clear input area" />
+</form>
+{% endblock %}
