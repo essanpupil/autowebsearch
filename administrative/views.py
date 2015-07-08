@@ -2,9 +2,11 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, PageNotAnInteger
+from django.views.generic.edit import DeleteView
+from django.core.urlresolvers import reverse_lazy
 
 from .models import Client, Event, Operator, Website
-from .form import AddClientForm, AddClientHomepageForm
+from .form import AddClientForm, AddClientHomepageForm, DeleteClientHomepageForm
 from .administrative_lib import save_client, save_client_homepage
 from website_management.management_lib import add_url_to_webpage
 from website_management.models import Webpage
@@ -99,7 +101,8 @@ def detail_client(request, client_id):
     websites = Website.objects.filter(client=client)
     for website in websites:
         client_data['websites'].append({'url': website.homepage.name,
-                                        'id': website.homepage.id})
+                                        'id_homepage': website.homepage.id,
+                                        'id_website': website.id})
     return render(request, 'administrative/detail_client.html',
                   {'client': client_data})
 
@@ -107,17 +110,10 @@ def detail_client(request, client_id):
 @login_required
 def add_homepage(request, client_id):
     "Display add client's homepage form"
-    # if this is a POST request, the data should be processed
     client = Client.objects.get(id=client_id)
     if request.method == 'POST':
-        # create form instance and populate with data from the request
         form = AddClientHomepageForm(request.POST)
-        # check the form is valid or not
         if form.is_valid():
-            # start saving new client to database
-            # save_client_homepage(url=form.cleaned_data['homepage'],
-            #                    client=client,
-            #                    event=form.cleaned_data['event'])
             add_url_to_webpage(form.cleaned_data['url'])
             webpage = Webpage.objects.get(url=form.cleaned_data['url'])
             Website.objects.create(client=form.cleaned_data['client'],
@@ -134,18 +130,24 @@ def add_homepage(request, client_id):
                   })
 
 
-@login_required
-def delete_homepage(request, client_id):
-    "Display delete homepage confirmation"
-    pass
+#@login_required
+class WebsiteDelete(DeleteView):
+    "delete client's website"
+    model = Website
+    success_url = reverse_lazy('administrative:delete_client_website_success')
+    template_name = 'administrative/delete_client_website.html'
 
+
+def delete_homepage_success(request):
+    "display delete success"
+    return render(request, 'administrative/delete_client_website_success.html')
 
 def edit_client(request):
     'Display edit client form'
     pass
 
 
-def delete_client(request):
+def delete_client(request, client_id):
     'Display delete client confirmation'
     pass
 

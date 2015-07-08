@@ -39,8 +39,9 @@
         <td>
         <ul>
         {% for web in client.websites %}
-            <li><a href="{% url 'website_management:homepage_detail' web.id %}">
-                {{ web.url }}</a></li>
+            <li><a href="{% url 'website_management:homepage_detail' web.id_homepage %}">
+                {{ web.url }}</a> (<a href="{% url 'administrative:delete_homepage' pk=web.id_website %}">Delete</a>)
+            </li>
         {% empty %}
             No homepage database for this client
         {% endfor %}
