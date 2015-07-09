@@ -1,5 +1,3 @@
-import datetime
-
 from django.utils import timezone
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
@@ -9,7 +7,8 @@ from django.views.generic.edit import DeleteView, UpdateView
 from django.core.urlresolvers import reverse_lazy, reverse
 
 from .models import Client, Event, Operator, Website
-from .form import AddClientForm, AddClientHomepageForm, DeleteClientForm
+from .form import AddClientForm, AddClientHomepageForm, DeleteClientForm, \
+                  AddEventForm
 from .administrative_lib import save_client, save_client_homepage
 from website_management.management_lib import add_url_to_webpage
 from website_management.models import Webpage
@@ -180,25 +179,6 @@ def delete_client_process(request):
         pass
     return redirect('administrative:detail_client', client.id)
 
-#    if request.method == 'POST':
-#        form = DeleteClientForm(request.POST)
-#        print form.cleaned_data['deactive']
-#        if form.is_valid():
-#            if form.cleaned_data['deactive']:
-#                print form.cleaned_data['deactive']
-#                client.date_end = datetime.datetime.now()
-#                client.save()
-#            else:
-#                print form.cleaned_data['deactive']
-#            return redirect('administrative:detail_client', client_id=client_id)
-#    else:
-#        form = DeleteClientForm()
-#    return render(request,
-#                  'administrative/delete_client.html',
-#                  {'form':form,
-#                   'client': {'id': client.id,
-#                              'name': client.name}
-#                  })
 
 
 def add_operator(request):
@@ -241,9 +221,26 @@ def delete_user(request):
     pass
 
 
-def add_event(request):
+def add_event(request, client_id):
     "display add event form"
-    pass
+    if request.method == 'POST':
+        form = AddEventForm(request.POST)
+        if form.is_valid():
+            client = form.cleaned_data['client']
+            event = Event.objects.create(
+                        client=client,
+                        name=form.cleaned_data['name'],
+                        time_end=form.cleaned_data['time_end'])
+            return redirect('administrative:view_event', client_id=client_id)
+    else:
+        client = Client.objects.get(id=client_id)
+        form = AddEventForm(initial={'client': client,})
+    return render(request,
+                  'administrative/add_event.html',
+                  {'form':form,
+                   'client': {'id': client.id,
+                              'name': client.name}
+                  })
 
 
 def delete_event(request):
@@ -251,7 +248,27 @@ def delete_event(request):
     pass
 
 
-def view_event(request):
+def view_event(request, client_id):
+    "display all event"
+    client = get_object_or_404(Client, id=client_id)
+    events = Event.objects.filter(client=client)
+    context = {'events': [],
+               'client': {'id': client.id,
+                          'name': client.name}}
+    for event in events:
+        event_data = {'name': event.name,
+                      'status': '',
+                      'time_start': event.time_start,
+                      'time_end': event.time_end}
+        if event.time_end == None:
+            event_data['status'] = 'Ongoing'
+        else:
+            event_page['status'] = 'Ended'
+        context['events'].append(event_data)
+    return render(request, 'administrative/view_event.html', context)
+
+
+def view_all_event(request):
     "display all event"
     pass
 

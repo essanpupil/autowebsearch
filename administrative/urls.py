@@ -25,6 +25,10 @@ urlpatterns = [
     url(r'^delete-homepage-success/$',
         views.delete_homepage_success,
         name='delete_client_website_success'),
+    url(r'^view-event/(?P<client_id>\d+)/$',
+        views.view_event, name='view_event'),
+    url(r'^add-event/(?P<client_id>\d+)/$',
+        views.add_event, name='add_event'),
 
     # operator url section
     url(r'^add-operator/$',
@@ -46,9 +50,8 @@ urlpatterns = [
         views.delete_user, name='delete_user'),
 
     # event url section
-    url(r'^add-event/$', views.add_event, name='add_event'),
-    url(r'^view-event/$',
-        views.view_event, name='view_event'),
+    url(r'^view-all-event/$',
+        views.view_all_event, name='view_all_event'),
     url(r'^edit-event/(?P<event_id>\d+)/$',
         views.edit_event, name='edit_event'),
     url(r'^delete-event/(?P<event_id>\d+)/$',

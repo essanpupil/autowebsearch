@@ -5,4 +5,6 @@
     <li><a href="{% url 'administrative:edit_client' pk=client.id %}">Edit client</a></li>
     <li><a href="{% url 'administrative:delete_client' client.id %}">Delete
         client</a></li>
+    <li><a href="{% url 'administrative:add_event' client.id %}">Add event</a></li>
+    <li><a href="{% url 'administrative:view_event' client.id %}">View event</a></li>
 </ul>

@@ -15,6 +15,7 @@ class Client(models.Model):
 
 class Event(models.Model):
     "Place to save events held by clients"
+    client = models.ForeignKey(Client, default=None)
     name = models.CharField(max_length=255, null=False, blank=False)
     time_start = models.DateField(auto_now_add=True)
     time_end = models.DateField(null=True, blank=True)

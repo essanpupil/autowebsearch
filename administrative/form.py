@@ -2,7 +2,7 @@ from django.forms import ModelForm, URLInput, HiddenInput
 from django.core import validators
 from django import forms
 
-from .models import Client, Website
+from .models import Client, Website, Event
 
 
 class AddClientForm(ModelForm):
@@ -26,3 +26,11 @@ class AddClientHomepageForm(ModelForm):
 class DeleteClientForm(forms.Form):
     "input new client"
     deactive = forms.BooleanField()
+
+
+class AddEventForm(ModelForm):
+    "save event for specific client"
+    class Meta:
+        model = Event
+        fields = '__all__'
+        widgets = {'client': HiddenInput(),}
