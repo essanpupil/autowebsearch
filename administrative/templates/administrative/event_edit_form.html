@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block navigation %}
+{% include 'administrative/admin_nav.html' %}
+{% include 'administrative/client_detail_nav.html' %}
+{% endblock %}
+{% block content %}
+<h3>Edit event</h3>
+<form action="" method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Save Edit" />
+</form>
+{% endblock %}

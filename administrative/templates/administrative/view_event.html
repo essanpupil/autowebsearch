@@ -39,12 +39,16 @@
             <td>{{ event.status }}</td>
             <td>{{ event.time_start }}</td>
             <td>{{ event.time_end }}</td>
-            <td><a href="{% url 'administrative:edit_event' event.id %}" />
+            <td><a href="{% url 'administrative:edit_event' pk=event.id %}" />
                     Edit
                 </a>
                 &nbsp;
                 <a href="{% url 'administrative:detail_event' event.id %}" />
                     Detail
+                </a>
+                &nbsp;
+                <a href="{% url 'administrative:delete_event' event.id %}" />
+                    Delete
                 </a>
             </td>
         </tr>

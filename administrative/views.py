@@ -297,6 +297,21 @@ def view_all_event(request):
     pass
 
 
-def edit_event(request):
-    "display edit event form"
-    pass
+class EditEvent(UpdateView):
+    'Display edit event form'
+    model = Event
+    fields = ['name',]
+    template_name_suffix = '_edit_form'
+    
+    def get_context_data(self, **kwargs):
+        # call the base implementation first to get a context
+        context = super(EditEvent, self).get_context_data(**kwargs)
+        # add in a queryset of other context
+        context['client'] = {'id': self.object.client.id,
+                             'name': self.object.client.name,}
+        return context
+
+    def get_success_url(self, **kwargs):
+        success_url = reverse_lazy('administrative:view_event', args=[self.object.client.id])
+        return success_url
+
