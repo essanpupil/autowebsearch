@@ -29,7 +29,8 @@
         <th>Name</th>
         <th>Status</th>
         <th>Date start</th>
-        <th>date end</th>
+        <th>Date end</th>
+        <th>Action</th>
     </tr>
     {% for event in events %}
         <tr>
@@ -38,9 +39,18 @@
             <td>{{ event.status }}</td>
             <td>{{ event.time_start }}</td>
             <td>{{ event.time_end }}</td>
+            <td><a href="{% url 'administrative:edit_event' event.id %}" />
+                    Edit
+                </a>
+                &nbsp;
+                <a href="{% url 'administrative:detail_event' event.id %}" />
+                    Detail
+                </a>
+            </td>
         </tr>
     {% empty %}
         <tr>
+            <td>-</td>
             <td>-</td>
             <td>-</td>
             <td>-</td>

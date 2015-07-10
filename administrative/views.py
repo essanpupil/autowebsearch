@@ -248,6 +248,29 @@ def delete_event(request):
     pass
 
 
+def detail_event(request, event_id):
+    "display delete event confirmation"
+    event = Event.objects.get(id=event_id)
+    context = {'event': '',
+               'client': {'id': event.client.id,
+                          'name': event.client.name}}
+    event_data = {'client': event.client.name,
+                  'name': event.name,
+                  'time_start': event.time_start,
+                  'time_end': event.time_end,
+                  'status': '',
+                  'websites': []}
+    if event.time_end is None:
+        event_data['status'] = 'Ongoing'
+    else:
+        event_data['status'] = 'Ended'
+    for website in Website.objects.filter(event=event):
+        event_data['website'].append({'name': website.homepage.name,
+                                     'id': website.homepage.id,})
+    context['event'] = event_data                                     
+    return render(request, 'administrative/detail_event.html', context)
+
+
 def view_event(request, client_id):
     "display all event"
     client = get_object_or_404(Client, id=client_id)
@@ -257,6 +280,7 @@ def view_event(request, client_id):
                           'name': client.name}}
     for event in events:
         event_data = {'name': event.name,
+                      'id': event.id,
                       'status': '',
                       'time_start': event.time_start,
                       'time_end': event.time_end}
