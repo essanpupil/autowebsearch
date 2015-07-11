@@ -305,7 +305,7 @@ def view_event(request, client_id):
         if event.time_end == None:
             event_data['status'] = 'Ongoing'
         else:
-            event_page['status'] = 'Ended'
+            event_data['status'] = 'Ended'
         context['events'].append(event_data)
     return render(request, 'administrative/view_event.html', context)
 
