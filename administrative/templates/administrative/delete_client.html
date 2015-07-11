@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
-{% block navigation %}{% include 'administrative/admin_nav.html' %}{% endblock %}
+{% block navigation %}
+    {% include 'administrative/admin_nav.html' %}
+    {% include 'administrative/client_detail_nav.html' %}{% endblock %}
 {% block pagetitle %}Delete client | ScamSearcher{% endblock %}
 {% block content %}
 <h3>Delete client: {{ client.name }}</h3>

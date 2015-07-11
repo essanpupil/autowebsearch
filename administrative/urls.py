@@ -33,6 +33,8 @@ urlpatterns = [
         views.EditEvent.as_view(), name='edit_event'),
     url(r'^delete-event/(?P<event_id>\d+)/$',
         views.delete_event, name='delete_event'),
+    url(r'^delete-event-process/$',
+        views.delete_event_process, name='delete_event_process'),
     url(r'^detail-event/(?P<event_id>\d+)/$',
         views.detail_event, name='detail_event'),
 

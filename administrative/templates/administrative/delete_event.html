@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block navigation %}
+    {% include 'administrative/admin_nav.html' %}
+    {% include 'administrative/client_detail_nav.html' %}{% endblock %}
+{% block pagetitle %}Delete event | ScamSearcher{% endblock %}
+{% block content %}
+<h3>Delete event: {{ event.name }}</h3>
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<form action="{% url 'administrative:delete_event_process' %}" method="post">
+{% csrf_token %}
+Change Status: <input type="radio" name="status" value="ended" /> End Event <input type="radio" name="status" value="keepgoing" checked/> Keep going
+<input type="hidden" name="id_event" value="{{ event.id }}" />
+<br />
+<br />
+<input type="submit" value="Save event's new status" />
+<input type="reset" value="Clear input area" />
+</form>
+{% endblock %}

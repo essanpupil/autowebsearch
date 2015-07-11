@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse_lazy, reverse
 
 from .models import Client, Event, Operator, Website
 from .form import AddClientForm, AddClientHomepageForm, DeleteClientForm, \
-                  AddEventForm
+                  AddEventForm, DeleteEventForm
 from .administrative_lib import save_client, save_client_homepage
 from website_management.management_lib import add_url_to_webpage
 from website_management.models import Webpage
@@ -165,16 +165,12 @@ def delete_client(request, client_id):
 def delete_client_process(request):
     "processing delete client (saving date_end)"
     client = get_object_or_404(Client, id=request.POST['id_client'])
-    print request.POST['status']
-    print client.__dict__
     if request.POST['status'] == "deactive":
         client.date_end = timezone.now()
         client.save()
-        print client.__dict__
     elif request.POST['status'] == "active":
         client.date_end = None
         client.save()
-        print client.__dict__
     else:
         pass
     return redirect('administrative:detail_client', client.id)
@@ -243,9 +239,31 @@ def add_event(request, client_id):
                   })
 
 
-def delete_event(request):
+def delete_event(request, event_id):
     "display delete event confirmation"
-    pass
+    event = Event.objects.get(id=event_id)
+    form = DeleteEventForm()
+    return render(request,
+                  'administrative/delete_event.html',
+                  {'form': form,
+                   'event': event,
+                   'client': {'id': event.client.id,
+                              'name': event.client.name}
+                  })
+
+
+def delete_event_process(request):
+    "processing delete event (saving date_end)"
+    event = get_object_or_404(Event, id=request.POST['id_event'])
+    if request.POST['status'] == "ended":
+        event.time_end = timezone.now()
+        event.save()
+    elif request.POST['status'] == "keepgoing":
+        event.time_end = None
+        event.save()
+    else:
+        pass
+    return redirect('administrative:detail_event', event.id)
 
 
 def detail_event(request, event_id):

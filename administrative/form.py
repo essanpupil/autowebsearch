@@ -23,6 +23,11 @@ class AddClientHomepageForm(ModelForm):
         }
 
 
+class DeleteEventForm(forms.Form):
+    "input new client"
+    deactive = forms.BooleanField()
+
+
 class DeleteClientForm(forms.Form):
     "input new client"
     deactive = forms.BooleanField()
