@@ -39,9 +39,9 @@ urlpatterns = [
         views.detail_event, name='detail_event'),
 
     # operator url section
-    url(r'^add-operator/$',
+    url(r'^add-operator/(?P<client_id>\d+)/$',
         views.add_operator, name='add_operator'),
-    url(r'^view-operator/$',
+    url(r'^view-operator/(?P<client_id>\d+)/$',
         views.view_operator, name='view_operator'),
     url(r'^edit-operator/(?P<operator_id>\d+)/$',
         views.edit_operator, name='edit_operator'),

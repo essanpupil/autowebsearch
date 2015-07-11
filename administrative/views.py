@@ -177,17 +177,17 @@ def delete_client_process(request):
 
 
 
-def add_operator(request):
+def add_operator(request, client_id):
     'Display add operator form'
     pass
 
 
-def view_operator(request):
+def view_operator(request, client_id):
     'Display all operator form'
     pass
 
 
-def edit_operator(request):
+def edit_operator(request, operator_id):
     'display edit operator form'
     pass
 
