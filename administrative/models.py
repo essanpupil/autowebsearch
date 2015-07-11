@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 from website_management.models import Homepage
 
@@ -26,7 +27,7 @@ class Event(models.Model):
 
 class Operator(models.Model):
     "This is Client's employee"
-    name = models.CharField(max_length=100, null=False, blank=False)
+    user = models.OneToOneField(User)
     client = models.ForeignKey(Client)
     event = models.ManyToManyField(Event, blank=True)
     email = models.EmailField(null=False, blank=False)

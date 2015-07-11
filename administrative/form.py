@@ -2,7 +2,7 @@ from django.forms import ModelForm, URLInput, HiddenInput
 from django.core import validators
 from django import forms
 
-from .models import Client, Website, Event
+from .models import Client, Website, Event, Operator
 
 
 class AddClientForm(ModelForm):
@@ -10,6 +10,16 @@ class AddClientForm(ModelForm):
     class Meta:
         model = Client
         fields = ('name', 'email', 'phone', 'address') 
+
+
+class AddOperatorForm(ModelForm):
+    "input new client"
+    class Meta:
+        model = Operator
+        fields = '__all__'
+        widgets = {
+            'client': HiddenInput(),
+        }
 
 
 class AddClientHomepageForm(ModelForm):

@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse_lazy, reverse
 
 from .models import Client, Event, Operator, Website
 from .form import AddClientForm, AddClientHomepageForm, DeleteClientForm, \
-                  AddEventForm, DeleteEventForm
+                  AddEventForm, DeleteEventForm, AddOperatorForm 
 from .administrative_lib import save_client, save_client_homepage
 from website_management.management_lib import add_url_to_webpage
 from website_management.models import Webpage
@@ -33,13 +33,9 @@ def admin_dashboard(request):
 @login_required
 def add_client(request):
     'Display add client form'
-    # if this is a POST request, the data should be processed
     if request.method == 'POST':
-        # create form instance and populate with data from the request
         form = AddClientForm(request.POST)
-        # check the form is valid or not
         if form.is_valid():
-            # start saving new client to database
             save_client(name=form.cleaned_data['name'],
                         email=form.cleaned_data['email'],
                         phone=form.cleaned_data['phone'],
@@ -177,14 +173,40 @@ def delete_client_process(request):
 
 
 
+@login_required
 def add_operator(request, client_id):
     'Display add operator form'
-    pass
+    client = Client.objects.get(id=client_id)
+    if request.method == 'POST':
+        form = AddOperatorForm(request.POST)
+        if form.is_valid():
+            return redirect('administrative:view_operator', client.id)
+    else:
+        form = AddOperatorForm(initial={'client':client})
+    return render(request,
+                  'administrative/add_operator.html',
+                  {'form': form,
+                   'client': {'id': client.id,
+                              'name': client.name}})
 
 
 def view_operator(request, client_id):
     'Display all operator form'
-    pass
+    client = get_object_or_404(Client, id=client_id)
+    operators = Operator.objects.filter(client=client)
+    context = {'operators': [],
+               'client': {'id': client.id,
+                          'name': client.name}}
+    for event in operators:
+        operator_data = {'username': operator.user.get_username(),
+                         'id': operator.id,
+                         'fullname': operator.user.get_full_name(),
+                         'email': operator.user.email,
+                         'status': operator.user.is_active(),
+                         'time_start': event.time_start,
+                         'time_end': event.time_end}
+        context['operators'].append(operator_data)
+    return render(request, 'administrative/view_operator.html', context)
 
 
 def edit_operator(request, operator_id):
