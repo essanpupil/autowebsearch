@@ -43,7 +43,7 @@ urlpatterns = [
         views.add_operator, name='add_operator'),
     url(r'^view-operator/(?P<client_id>\d+)/$',
         views.view_operator, name='view_operator'),
-    url(r'^edit-operator/(?P<operator_id>\d+)/$',
+    url(r'^edit-operator/(?P<pk>\d+)/$',
         views.edit_operator, name='edit_operator'),
     url(r'^delete-operator/(?P<operator_id>\d+)/$',
         views.delete_operator, name='delete_operator'),

@@ -175,14 +175,26 @@ def delete_client_process(request):
 
 @login_required
 def add_operator(request, client_id):
-    'Display add operator form'
     client = Client.objects.get(id=client_id)
     if request.method == 'POST':
         form = AddOperatorForm(request.POST)
         if form.is_valid():
+            uname = form.cleaned_data['username']
+            passwd = form.cleaned_data['password']
+            first_name = form.cleaned_data['first_name']
+            last_name = form.cleaned_data['last_name']
+            email = form.cleaned_data['email']
+            client = form.cleaned_data['client']
+            user = User.objects.create_user(username=uname,
+                                            password=passwd,
+                                            email=email,
+                                            first_name=first_name,
+                                            last_name=last_name,)
+            operator = Operator.objects.create(client=client,
+                                               user=user,)
             return redirect('administrative:view_operator', client.id)
     else:
-        form = AddOperatorForm(initial={'client':client})
+        form = AddOperatorForm(initial={'client': client,})
     return render(request,
                   'administrative/add_operator.html',
                   {'form': form,
@@ -197,15 +209,28 @@ def view_operator(request, client_id):
     context = {'operators': [],
                'client': {'id': client.id,
                           'name': client.name}}
-    for event in operators:
+    for operator in operators:
         operator_data = {'username': operator.user.get_username(),
                          'id': operator.id,
                          'fullname': operator.user.get_full_name(),
                          'email': operator.user.email,
-                         'status': operator.user.is_active(),
-                         'time_start': event.time_start,
-                         'time_end': event.time_end}
+                         'status': '',
+                         'time_start': operator.date_start,
+                         'time_end': operator.date_end}
+        if operator.user.is_active:
+            operator_data['status'] = 'Active'
+        else:
+            operator_data['status'] = 'Not Active'
+
         context['operators'].append(operator_data)
+    paginator = Paginator(context['operators'], 10)
+    page = request.GET.get('page')
+    try:
+        context['operators'] = paginator.page(page)
+    except PageNotAnInteger:
+        context['operators'] = paginator.page(1)
+    except EmptyPage:
+        context['operators'] = paginator.page(paginator.num_pages)
     return render(request, 'administrative/view_operator.html', context)
 
 

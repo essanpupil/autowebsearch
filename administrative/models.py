@@ -30,7 +30,6 @@ class Operator(models.Model):
     user = models.OneToOneField(User)
     client = models.ForeignKey(Client)
     event = models.ManyToManyField(Event, blank=True)
-    email = models.EmailField(null=False, blank=False)
     date_start = models.DateField(auto_now_add=True)
     date_end = models.DateField(null=True, blank=True)
     def __unicode__(self):
