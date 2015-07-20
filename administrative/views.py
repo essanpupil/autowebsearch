@@ -234,9 +234,47 @@ def view_operator(request, client_id):
     return render(request, 'administrative/view_operator.html', context)
 
 
+@login_required
 def edit_operator(request, operator_id):
-    'display edit operator form'
-    pass
+    "display edit operator form"
+    operator = Operator.objects.get(id=operator_id)
+    context = {'operator': {}, 'client': {}}
+    context['client'] = {'id': operator.client.id,
+                         'name': operator.client.name}
+    context['operator'] = {'id': operator.id,
+                           'username': operator.user.get_username(),
+                           'first_name': operator.user.first_name,
+                           'last_name': operator.user.last_name,
+                           'email': operator.user.email,}
+    return render(request, 'administrative/edit_operator.html', context)
+
+
+@login_required
+def edit_operator_process(request):
+    operator = Operator.objects.get(id=request.POST['operator_id'])
+    op_user = operator.user
+    op_user.first_name = request.POST['first_name']
+    op_user.last_name = request.POST['last_name']
+    op_user.email = request.POST['email']
+    op_user.save()
+    return redirect('administrative:view_operator', operator.client.id)
+#class EditOperator(UpdateView):
+#    'Display edit client form'
+#    model = Operator
+#    fields = ['event']
+#    template_name_suffix = '_edit_form'
+#    
+#    def get_context_data(self, **kwargs):
+#        # call the base implementation first to get a context
+#        context = super(EditOperator, self).get_context_data(**kwargs)
+#        # add in a queryset of other context
+#        context['client'] = {'id': self.object.client.id,
+#                             'name': self.object.client.name,}
+#        return context
+#
+#    def get_success_url(self, **kwargs):
+#        success_url = reverse_lazy('administrative:view_operator', args=[self.object.client.id])
+#        return success_url
 
 
 def delete_operator(request):

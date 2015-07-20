@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block navigation %}
+{% include 'administrative/admin_nav.html' %}
+{% include 'administrative/client_detail_nav.html' %}
+{% endblock %}
+{% block content %}
+<h3>Edit operator</h3>
+<form method="post" action="{% url 'administrative:edit_operator_process' %}">{% csrf_token %}
+<input type="hidden" name="operator_id" value="{{ operator.id }}" />
+<table>
+<tr><td>Username</td><td>{{ operator.username }}</td></tr>
+<tr><td>First Name</td><td><input type="text" name="first_name" value="{{ operator.first_name }}" /></td></tr>
+<tr><td>Last Name</td><td><input type="text" name="last_name" value="{{ operator.last_name }}" /></td></tr>
+<tr><td>email</td><td><input type="text" name="email" value="{{ operator.email }}" /></td></tr>
+<tr><td colspan="2"><input type="submit" value="Save Operator Edit"> &nbsp;&nbsp;&nbsp;</td></tr>
+</table>
+</form>
+{% endblock %}

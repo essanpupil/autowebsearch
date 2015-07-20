@@ -43,7 +43,8 @@
             <td>{{ operator.status }}</td>
             <td>{{ operator.time_start }}</td>
             <td>{{ operator.time_end }}</td>
-            <td><a href="{% url 'administrative:edit_operator' pk=operator.id %}" />
+            <td>
+            <a href="{% url 'administrative:edit_operator' operator.id %}" />
                     Edit
                 </a>
                 &nbsp;
