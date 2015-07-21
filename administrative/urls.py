@@ -49,6 +49,8 @@ urlpatterns = [
         views.edit_operator_process, name='edit_operator_process'),
     url(r'^delete-operator/(?P<operator_id>\d+)/$',
         views.delete_operator, name='delete_operator'),
+    url(r'^delete-operator-process/$',
+        views.delete_operator_process, name='delete_operator_process'),
 
     # user url section
     url(r'^add-user/$', views.add_user, name='add_user'),

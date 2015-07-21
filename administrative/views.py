@@ -277,9 +277,35 @@ def edit_operator_process(request):
 #        return success_url
 
 
-def delete_operator(request):
+def delete_operator(request, operator_id):
     'display delete operator confirmation'
-    pass
+    operator = Operator.objects.get(id=operator_id)
+    context = {'operator': {}, 'client': {}}
+    context['client'] = {'id': operator.client.id,
+                         'name': operator.client.name}
+    context['operator'] = {'id': operator.id,
+                           'username': operator.user.get_username(),
+                           'date_end': operator.date_end,}
+    return render(request, 'administrative/delete_operator.html', context)
+
+
+def delete_operator_process(request):
+    "processing delete client (saving date_end)"
+    operator = get_object_or_404(Operator, id=request.POST['id_operator'])
+    if request.POST['status'] == "nonactive":
+        operator.date_end = timezone.now()
+        op_usr = operator.user
+        op_usr.is_active = False
+        op_usr.save()
+        operator.save()
+    elif request.POST['status'] == "active":
+        operator.date_end = None
+        op_usr.is_active = True
+        op_usr.save()
+        operator.save()
+    else:
+        pass
+    return redirect('administrative:view_operator', operator.client.id)
 
 
 def add_user(request):
