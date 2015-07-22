@@ -345,6 +345,11 @@ class EditUser(UpdateView):
 #        form = EditUserForm()
 #    context = {'form': form,}
 #    return render(request, 'administrative/edit_user.html', context)
+class DeleteUser(UpdateView):
+    model = User
+    fields = ['is_active']
+    template_name = 'administrative/user_update_form.html'
+    success_url = reverse_lazy('administrative:view_user')
 
 
 def view_user(request):

@@ -60,8 +60,10 @@ urlpatterns = [
        # views.edit_user, name='edit_user'),
     url(r'^edit-user/(?P<pk>\d+)/$',
         views.EditUser.as_view(), name='edit_user'),
-    url(r'^delete-user/(?P<user_id>\d+)/$',
-        views.delete_user, name='delete_user'),
+   # url(r'^delete-user/(?P<user_id>\d+)/$',
+    #    views.delete_user, name='delete_user'),
+    url(r'^delete-user/(?P<pk>\d+)/$',
+        views.DeleteUser.as_view(), name='delete_user'),
 
     # event url section
     url(r'^view-all-event/$',
