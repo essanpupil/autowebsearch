@@ -28,6 +28,8 @@
         <th>Full Name</th>
         <th>Email</th>
         <th>Status</th>
+        <th>Staff</th>
+        <th>Superuser</th>
         <th>Action</th>
     </tr>
     {% for user in users %}
@@ -37,6 +39,8 @@
             <td>{{ user.fullname }}</td>
             <td>{{ user.email }}</td>
             <td>{{ user.status }}</td>
+            <td>{{ user.staff }}</td>
+            <td>{{ user.superuser }}</td>
             <td>
             <a href="{% url 'administrative:edit_user' user.id %}" />
                     Edit

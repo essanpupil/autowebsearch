@@ -77,3 +77,5 @@ class AddUserForm(ModelForm):
         fields = ('username', 'password', 'password_again', 'first_name', 'last_name', 'email')
         widgets = {'password': PasswordInput(),}
 
+
+#class EditUserForm(ModelForm):

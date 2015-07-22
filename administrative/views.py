@@ -8,7 +8,8 @@ from django.core.urlresolvers import reverse_lazy, reverse
 
 from .models import Client, Event, Operator, Website
 from .form import AddClientForm, AddClientHomepageForm, DeleteClientForm, \
-                  AddEventForm, DeleteEventForm, AddOperatorForm, AddUserForm
+                  AddEventForm, DeleteEventForm, AddOperatorForm, \
+                  AddUserForm#,# EditUserForm
 from .administrative_lib import save_client, save_client_homepage
 from website_management.management_lib import add_url_to_webpage
 from website_management.models import Webpage
@@ -319,6 +320,7 @@ def add_user(request):
             user.first_name = form.cleaned_data['first_name']
             user.last_name = form.cleaned_data['last_name']
             user.email = form.cleaned_data['email']
+            user.is_staff = True
             user.save()
             return redirect('administrative:view_user')
     else:
@@ -327,21 +329,35 @@ def add_user(request):
     return render(request, 'administrative/add_user.html', context)
     
 
-
-def edit_user(request):
-    "display edit operator form"
-    pass
+class EditUser(UpdateView):
+    model = User
+    fields = ['is_staff', 'is_superuser']
+    template_name = 'administrative/user_update_form.html'
+    success_url = reverse_lazy('administrative:view_user')
+#def edit_user(request, user_id):
+#    "display edit operator form"
+#    user = User.objects.get(id=user_id)
+#    if request.method == 'POST':
+#        form = EditUserForm(request.POST)
+#        if form.is_valid():
+#            return redirect('administrative/view_user.html')
+#    else:
+#        form = EditUserForm()
+#    context = {'form': form,}
+#    return render(request, 'administrative/edit_user.html', context)
 
 
 def view_user(request):
     "display all operator"
-    users = User.objects.all()#filter(operator=None)
+    users = User.objects.filter(operator=None).order_by('id').reverse()
     context = {'users': [],}
     for user in users:
         user_data = {'id': user.id,
                      'username': user.get_username(),
                      'fullname': user.get_full_name(),
                      'email': user.email,
+                     'staff': user.is_staff,
+                     'superuser': user.is_superuser,
                      'status': '',}
         if user.is_active:
             user_data['status'] = 'Active'
