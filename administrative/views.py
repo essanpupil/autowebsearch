@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse_lazy, reverse
 
 from .models import Client, Event, Operator, Website
 from .form import AddClientForm, AddClientHomepageForm, DeleteClientForm, \
-                  AddEventForm, DeleteEventForm, AddOperatorForm 
+                  AddEventForm, DeleteEventForm, AddOperatorForm, AddUserForm
 from .administrative_lib import save_client, save_client_homepage
 from website_management.management_lib import add_url_to_webpage
 from website_management.models import Webpage
@@ -310,7 +310,22 @@ def delete_operator_process(request):
 
 def add_user(request):
     'display add user form'
-    pass
+    if request.method == "POST":
+        form = AddUserForm(request.POST)
+        if form.is_valid():
+            user = User.objects.create_user(
+                       username = form.cleaned_data['username'],
+                       password = form.cleaned_data['password'])
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            user.email = form.cleaned_data['email']
+            user.save()
+            return redirect('administrative:view_user')
+    else:
+        form = AddUserForm()
+    context = {'form': form,}
+    return render(request, 'administrative/add_user.html', context)
+    
 
 
 def edit_user(request):
@@ -320,7 +335,28 @@ def edit_user(request):
 
 def view_user(request):
     "display all operator"
-    pass
+    users = User.objects.all()#filter(operator=None)
+    context = {'users': [],}
+    for user in users:
+        user_data = {'id': user.id,
+                     'username': user.get_username(),
+                     'fullname': user.get_full_name(),
+                     'email': user.email,
+                     'status': '',}
+        if user.is_active:
+            user_data['status'] = 'Active'
+        else:
+            user_data['status'] = 'Not Active'
+        context['users'].append(user_data)
+    paginator = Paginator(context['users'], 10)
+    page = request.GET.get('page')
+    try:
+        context['users'] = paginator.page(page)
+    except PageNotAnInteger:
+        context['users'] = paginator.page(1)
+    except EmptyPage:
+        context['users'] = paginator.page(paginator.num_pages)
+    return render(request, 'administrative/view_user.html', context)
 
 
 def delete_user(request):

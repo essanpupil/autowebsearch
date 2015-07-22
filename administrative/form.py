@@ -1,4 +1,4 @@
-from django.forms import ModelForm, URLInput, HiddenInput
+from django.forms import ModelForm, URLInput, HiddenInput, PasswordInput
 from django.core import validators
 from django import forms
 from django.contrib.auth.models import User
@@ -59,3 +59,21 @@ class AddEventForm(ModelForm):
         model = Event
         fields = '__all__'
         widgets = {'client': HiddenInput(),}
+
+
+class AddUserForm(ModelForm):
+    "Add new user"
+    password_again = forms.CharField(widget=forms.PasswordInput)
+
+    def clean(self):
+        'custom clean to match password & password_again field'
+        form_data = self.cleaned_data
+        if form_data['password'] != form_data['password_again']:
+            self._errors['password'] = ["Password do not match"]
+            del form_data['password']
+        return form_data
+    class Meta:
+        model = User
+        fields = ('username', 'password', 'password_again', 'first_name', 'last_name', 'email')
+        widgets = {'password': PasswordInput(),}
+
