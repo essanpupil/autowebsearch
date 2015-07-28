@@ -97,6 +97,6 @@ TEMPLATE_DIRS = (os.path.join(os.path.dirname(__file__), 'templates').replace('\
 
 LOGIN_URL = 'login'
 
-LOGIN_REDIRECT_URL = 'website_management:website_dashboard'
+LOGIN_REDIRECT_URL = 'welcome'
 
 LOGOUT_URL = 'logout'

@@ -15,8 +15,11 @@ class PageScraper:
     def fetch_webpage(self, url):
         """start fetching webpage"""
         self.url = url
-        req = requests.get(self.url)
-        self.html = req.text
+        try:
+            req = requests.get(self.url)
+            self.html = req.text
+        except:
+            self.html = "Failed to fetch webpage."
 
     def get_text_body(self, html=None):
         """
