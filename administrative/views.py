@@ -135,6 +135,7 @@ class WebsiteDelete(DeleteView):
     template_name = 'administrative/delete_client_website.html'
 
 
+@login_required
 def delete_homepage_success(request):
     "display delete success"
     return render(request, 'administrative/delete_client_website_success.html')
@@ -147,6 +148,7 @@ class EditClient(UpdateView):
     template_name_suffix = '_edit_form'
 
 
+@login_required
 def delete_client(request, client_id):
     'function to set date_end value (delete) to client'
     client = Client.objects.get(id=client_id)
@@ -159,6 +161,7 @@ def delete_client(request, client_id):
               })
 
 
+@login_required
 def delete_client_process(request):
     "processing delete client (saving date_end)"
     client = get_object_or_404(Client, id=request.POST['id_client'])
@@ -309,6 +312,7 @@ def delete_operator_process(request):
     return redirect('administrative:view_operator', operator.client.id)
 
 
+@login_required
 def add_user(request):
     'display add user form'
     if request.method == "POST":
@@ -334,17 +338,8 @@ class EditUser(UpdateView):
     fields = ['is_staff', 'is_superuser']
     template_name = 'administrative/user_update_form.html'
     success_url = reverse_lazy('administrative:view_user')
-#def edit_user(request, user_id):
-#    "display edit operator form"
-#    user = User.objects.get(id=user_id)
-#    if request.method == 'POST':
-#        form = EditUserForm(request.POST)
-#        if form.is_valid():
-#            return redirect('administrative/view_user.html')
-#    else:
-#        form = EditUserForm()
-#    context = {'form': form,}
-#    return render(request, 'administrative/edit_user.html', context)
+
+
 class DeleteUser(UpdateView):
     model = User
     fields = ['is_active']
@@ -352,6 +347,7 @@ class DeleteUser(UpdateView):
     success_url = reverse_lazy('administrative:view_user')
 
 
+@login_required
 def view_user(request):
     "display all operator"
     users = User.objects.filter(operator=None).order_by('id').reverse()
@@ -380,11 +376,13 @@ def view_user(request):
     return render(request, 'administrative/view_user.html', context)
 
 
+@login_required
 def delete_user(request):
     "display delete operator confirmation"
     pass
 
 
+@login_required
 def add_event(request, client_id):
     "display add event form"
     if request.method == 'POST':
@@ -407,6 +405,7 @@ def add_event(request, client_id):
                   })
 
 
+@login_required
 def delete_event(request, event_id):
     "display delete event confirmation"
     event = Event.objects.get(id=event_id)
@@ -420,6 +419,7 @@ def delete_event(request, event_id):
                   })
 
 
+@login_required
 def delete_event_process(request):
     "processing delete event (saving date_end)"
     event = get_object_or_404(Event, id=request.POST['id_event'])
@@ -434,6 +434,7 @@ def delete_event_process(request):
     return redirect('administrative:detail_event', event.id)
 
 
+@login_required
 def detail_event(request, event_id):
     "display delete event confirmation"
     event = Event.objects.get(id=event_id)
@@ -457,6 +458,7 @@ def detail_event(request, event_id):
     return render(request, 'administrative/detail_event.html', context)
 
 
+@login_required
 def view_event(request, client_id):
     "display all event"
     client = get_object_or_404(Client, id=client_id)
@@ -478,6 +480,7 @@ def view_event(request, client_id):
     return render(request, 'administrative/view_event.html', context)
 
 
+@login_required
 def view_all_event(request):
     "display all event"
     pass
