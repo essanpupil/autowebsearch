@@ -1,4 +1,5 @@
 from django.utils import timezone
+from django.db import IntegrityError
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -111,12 +112,20 @@ def add_homepage(request, client_id):
     if request.method == 'POST':
         form = AddClientHomepageForm(request.POST)
         if form.is_valid():
-            add_url_to_webpage(form.cleaned_data['url'])
+            if Webpage.objects.filter(url=form.cleaned_data['url']).exists():
+                webpage = Webpage.objects.get(url=form.cleaned_data['url'])
+            else:
+                add_url_to_webpage(form.cleaned_data['url'])
             webpage = Webpage.objects.get(url=form.cleaned_data['url'])
-            Website.objects.create(client=form.cleaned_data['client'],
-                homepage=webpage.homepage,
-                event=form.cleaned_data['event'])
-            return redirect('administrative:detail_client', client_id=client_id)
+            try:
+                Website.objects.create(client=form.cleaned_data['client'],
+                    homepage=webpage.homepage,
+                    event=form.cleaned_data['event'])
+                return redirect('administrative:detail_client',
+                            client_id=client_id)
+            except:
+                return redirect('administrative:detail_client',
+                            client_id=client_id)
     else:
         form = AddClientHomepageForm(initial={'client':client, 'event':None})
     return render(request,
