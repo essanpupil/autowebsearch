@@ -26,7 +26,8 @@ class Homepage(models.Model):
 class Webpage(models.Model):
     """Store webpages"""
     id = models.AutoField(primary_key=True)
-    url = models.URLField(max_length=250, unique=True)
+    url = models.URLField(max_length=255, unique=True)
+    full_url = models.TextField(null=True, blank=True, default="")
     homepage = models.ForeignKey(Homepage, blank=True, null=True)
     html_page = models.TextField(blank=True, null=True)
     date_added = models.DateField(auto_now=True)

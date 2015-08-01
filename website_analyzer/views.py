@@ -218,15 +218,6 @@ def crawl_homepage(request, homepage_id):
     "View to extract all links inside a website"
     website = get_object_or_404(Homepage, id=homepage_id)
     crawl_website(website)
-#    for webpage in website.webpage_set.all():
-#        page = PageScraper()
-#        if webpage.html_page == None:
-#            page.fetch_webpage(webpage.url)
-#            webpage.html_page = page.html
-#            webpage.save()
-#        else:
-#            pass
-#        add_list_url_to_webpage(page.ideal_urls(webpage.html_page))
     return redirect('website_analyzer:analyze_website', hp_id=website.id)
 
 

@@ -47,8 +47,17 @@ def add_url_to_webpage(url):
         pass
     try:
         with transaction.atomic():
-            web = Webpage.objects.create(url=url, homepage=hp)
-            ExtendWebpage.objects.create(webpage=web)
+            if len(url) > 255:
+                truncate_url = url[0:255]
+                web = Webpage.objects.create(url=truncate_url,
+                                             full_url=url,
+                                             homepage=hp)
+                ExtendWebpage.objects.create(webpage=web)
+            else:
+                web = Webpage.objects.create(url=url,
+                                             full_url=url,
+                                             homepage=hp)
+                ExtendWebpage.objects.create(webpage=web)
     except IntegrityError:
         raise IntegrityError
 
@@ -145,5 +154,6 @@ def crawl_website(homepage):
             add_list_url_to_webpage(page.ideal_urls())
         if not homepage.webpage_set.filter(html_page__isnull=True).exists():
             break
-
-
+    ext_hp = ExtendHomepage.objects.get(homepage=homepage)
+    ext_hp.full_crawled += 1
+    ext_hp.save()
