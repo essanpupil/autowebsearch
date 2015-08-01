@@ -32,6 +32,7 @@ class Webpage(models.Model):
     last_response = models.CharField(max_length=3, blank=True, null=True)
     last_response_check = models.DateField(blank=True, null=True)
     redirect_url = models.URLField(null=True, blank=True)
+    times_crawled = models.IntegerField(default=0)
 
     def __unicode__(self):
         return self.url
