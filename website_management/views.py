@@ -4,8 +4,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 
-from .models import Webpage, Domain, Homepage
-from .forms import AddWebpageForm, SearchWebpageForm
+from .models import Webpage, Domain, Homepage, Search, Query
+from .forms import AddWebpageForm, SearchWebpageForm, AddNewKeywordForm
 from .management_lib import add_list_url_to_webpage, add_url_to_webpage
 from webscraper.pagescraper import PageScraper
 from search_extractor.google_search import GoogleSearch
@@ -219,11 +219,47 @@ def search_webpage(request):
         if form.is_valid():
             # start saving new webpage url
             search = GoogleSearch(form.cleaned_data['keyword'])
+            query_object = Query.objects.get_or_create(
+                                        keywords=form.cleaned_data['keyword'])
             search.start_search(max_page=form.cleaned_data['page'])
             add_list_url_to_webpage(search.search_result)
+            for url in search.search_result:
+                webpage = Webpage.objects.get(url=url)
+                query_object = Query.objects.get(
+                                   keywords=form.cleaned_data['keyword'])
+                saved_search = Search.objects.create(webpage=webpage,
+                                                     query=query_object)
             return redirect('website_management:view_all_webpages')
     else:
         form = SearchWebpageForm()
     return render(request,
                   'website_management/search_webpage.html',
                   {'form': form})
+
+
+@login_required
+def add_new_keyword(request):
+    """Display form to add new webpage"""
+    if request.method == 'POST':
+        form = AddNewKeywordForm(request.POST)
+        if form.is_valid():
+            query = Query.objects.create(keywords=form.cleaned_data['keywords'])
+            return redirect('website_management:view_all_keywords')
+    else:
+        form = AddNewKeywordForm()
+    return render(request,
+                  'website_management/add_new_keyword.html',
+                  {'form': form})
+
+
+@login_required
+def view_all_keywords(request):
+    """display all keywords"""
+    queries = Query.objects.all().order_by('id').reverse()
+    context = {'queries': []}
+    for item in queries:
+        context['queries'].append({'keyword': item.keywords,
+                                   'date_added': item.date_added,
+                                   'id': item.id})
+    return render(request,
+                  'website_management/view_all_keywords.html', context)
