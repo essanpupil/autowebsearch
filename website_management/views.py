@@ -220,7 +220,8 @@ def search_webpage(request):
             # start saving new webpage url
             search = GoogleSearch(form.cleaned_data['keyword'])
             query_object = Query.objects.get_or_create(
-                                        keywords=form.cleaned_data['keyword'])
+                                        keywords=form.cleaned_data['keyword'],
+                                        times_used=1)
             search.start_search(max_page=form.cleaned_data['page'])
             add_list_url_to_webpage(search.search_result)
             for url in search.search_result:
@@ -260,6 +261,7 @@ def view_all_keywords(request):
     for item in queries:
         context['queries'].append({'keyword': item.keywords,
                                    'date_added': item.date_added,
+                                   'times_used': item.times_used,
                                    'id': item.id})
     return render(request,
                   'website_management/view_all_keywords.html', context)

@@ -43,6 +43,7 @@ class Query(models.Model):
     "Store keyword used to search in google"
     keywords = models.CharField(max_length=255)
     date_added = models.DateTimeField(auto_now=True)
+    times_used = models.IntegerField(default=0)
     
     def __unicode__(self):
         return self.keywords

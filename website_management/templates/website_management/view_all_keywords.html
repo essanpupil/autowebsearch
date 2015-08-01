@@ -9,16 +9,19 @@
     <tr>
         <th>No.</th>
         <th>Keyword</th>
-        <th>date Added</th>
+        <th>Times Used</th>
+        <th>Date Added</th>
     </tr>
     {% for query in queries %}
         <tr>
             <td>{{ forloop.counter }}</td>
             <td>{{ query.keyword }}</td>
+            <td>{{ query.times_used }}</td>
             <td>{{ query.date_added }}</td>
         </tr>
     {% empty %}
         <tr>
+            <td>-</td>
             <td>-</td>
             <td>-</td>
             <td>-</td>

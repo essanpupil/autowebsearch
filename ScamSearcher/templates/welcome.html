@@ -2,12 +2,6 @@
 {% block navigation %}
 {% endblock %}
 {% block content %}
-<h3>Welcome</h3>
-Select from menu above
-{{ request.method }}
-{% extends "base.html" %}
-
-{% block content %}
 <h4>Welcome {{ user.username }}</h4>
 Welcome to Scam Searcher
 {% endblock %}
