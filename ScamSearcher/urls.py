@@ -1,11 +1,15 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from django.contrib.auth import views as auth_views
+
+from .views import login, logout, welcome
 
 from .views import welcome, user_profile, password_changed
 
 urlpatterns = patterns('',
                        url(r'^admin/', include(admin.site.urls)),
+                       url(r'^$', welcome, name='welcome'),
+                       url(r'^login$', login, name='login'),
+                       url(r'^logout$', logout, name='logout'),
                        url(r'^login/', auth_views.login, name='login'),
                        url(r'^logout/',
                            auth_views.logout,
@@ -33,4 +37,3 @@ urlpatterns = patterns('',
                                    namespace='administrative',
                                    app_name='administrative')),
                        )
-
