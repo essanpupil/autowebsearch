@@ -21,30 +21,35 @@ from website_analyzer.models import StringParameter
 @login_required
 def admin_dashboard(request):
     "Display summary administrative info"
-    context = {}
-    users = User.objects.all()
-    clients = Client.objects.all().order_by('date_start')
-    operators = Operator.objects.all().order_by('date_start')
-    events = Event.objects.all().order_by('time_start')
-    context['clients'] = {'count': clients.count(),
-                          'last_added': [],}
-    for client in clients[:5]:
-        client_data = {'id': client.id,
-                       'name': client.name,}
-        context['clients']['last_added'].append(client_data)
-    context['operators'] = {'count': operators.count(),
-                          'last_added': [],}
-    for operator in operators[:5]:
-        operator_data = {'id': operator.id,
-                         'name': operator.user.get_username(),}
-        context['operators']['last_added'].append(operator_data)
-    context['events'] = {'count': events.count(),
-                          'last_added': [],}
-    for event in events[:5]:
-        event_data = {'id': event.id,
-                       'name': event.name,}
-        context['events']['last_added'].append(event_data)
-    return render(request, 'administrative/dashboard.html', context)
+    if request.user.is_staff:
+        context = {}
+        users = User.objects.all()
+        clients = Client.objects.all().order_by('date_start')
+        operators = Operator.objects.all().order_by('date_start')
+        events = Event.objects.all().order_by('time_start')
+        context['clients'] = {'count': clients.count(),
+                              'last_added': [],}
+        for client in clients[:5]:
+            client_data = {'id': client.id,
+                           'name': client.name,}
+            context['clients']['last_added'].append(client_data)
+        context['operators'] = {'count': operators.count(),
+                              'last_added': [],}
+        for operator in operators[:5]:
+            operator_data = {'id': operator.id,
+                             'name': operator.user.get_username(),}
+            context['operators']['last_added'].append(operator_data)
+        context['events'] = {'count': events.count(),
+                              'last_added': [],}
+        for event in events[:5]:
+            event_data = {'id': event.id,
+                           'name': event.name,}
+            context['events']['last_added'].append(event_data)
+        return render(request, 'administrative/dashboard.html', context)
+    else:
+        operator = Operator.objects.get(user=request.user)
+        client = operator.client
+        return redirect('administrative:detail_client', client.id)
 
 
 @login_required
