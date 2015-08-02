@@ -14,18 +14,21 @@ from .forms import AddScamWebsiteForm, AddSequenceForm, EditAnalystForm
 @login_required
 def add_sequence(request):
     """view to display and process form add new parameter sequence"""
-    if request.method == 'POST':
-        form = AddSequenceForm(request.POST)
-        if form.is_valid():
-            sentence = form.cleaned_data['sentence'].lower()
-            definitive = form.cleaned_data['definitive']
-            StringParameter.objects.create(sentence=sentence.strip(),
-                                           definitive=definitive)
-            return redirect('website_analyzer:view_sequence')
+    if request.user.is_staff:
+        if request.method == 'POST':
+            form = AddSequenceForm(request.POST)
+            if form.is_valid():
+                sentence = form.cleaned_data['sentence'].lower()
+                definitive = form.cleaned_data['definitive']
+                StringParameter.objects.create(sentence=sentence.strip(),
+                                               definitive=definitive)
+                return redirect('website_analyzer:view_sequence')
+        else:
+            form = AddSequenceForm()
+        return render(request, 'website_analyzer/add_sequence.html',
+                      {'form': form})
     else:
-        form = AddSequenceForm()
-    return render(request, 'website_analyzer/add_sequence.html',
-                  {'form': form})
+            return redirect('website_analyzer:analyst_dashboard')
 
 
 @login_required
