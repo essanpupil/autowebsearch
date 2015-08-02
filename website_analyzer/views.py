@@ -139,20 +139,18 @@ def extract_links(request, web_id):
 @login_required
 def add_scam_website(request):
     """manually add website known as scam"""
-    # if this is a POST request, the form data is processed
-    if request.method == 'POST':
-        # create form instance and populate with data from the request
-        form = AddScamWebsiteForm(request.POST)
-
-        # check the form is valid or not
-        if form.is_valid():
-            # start saving scam homepage url to database
-            add_scam_url_website(form.cleaned_data['url'])
-            return redirect('website_analyzer:view_websites')
+    if request.user.is_staff:
+        if request.method == 'POST':
+            form = AddScamWebsiteForm(request.POST)
+            if form.is_valid():
+                add_scam_url_website(form.cleaned_data['url'])
+                return redirect('website_analyzer:view_websites')
+        else:
+            form = AddScamWebsiteForm()
+        return render(request, 'website_analyzer/add_scam_website.html',
+                      {'form': form})
     else:
-        form = AddScamWebsiteForm()
-    return render(request, 'website_analyzer/add_scam_website.html',
-                  {'form': form})
+        return redirect('website_analyzer:analyst_dashboard')
 
 
 @login_required

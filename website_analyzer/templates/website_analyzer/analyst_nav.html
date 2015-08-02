@@ -5,11 +5,13 @@
             View websites
         </a>
     </li>
+{% if user.is_superuser %}
     <li>
         <a href="{% url 'website_analyzer:add_scam_website' %}">
             Add new scam websites
         </a>
     </li>
+{% endif %}
     <li>
         <a href="{% url 'website_analyzer:view_sequence' %}">
             View sequence parameter
