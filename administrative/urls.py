@@ -40,6 +40,10 @@ urlpatterns = [
         views.delete_event_process, name='delete_event_process'),
     url(r'^detail-event/(?P<event_id>\d+)/$',
         views.detail_event, name='detail_event'),
+    url(r'^view-client-keyword/(?P<client_id>\d+)/$',
+        views.view_client_keyword, name='view_client_keyword'),
+    url(r'^add-client-keyword/(?P<client_id>\d+)/$',
+        views.add_client_keyword, name='add_client_keyword'),
 
     # operator url section
     url(r'^add-operator/(?P<client_id>\d+)/$',

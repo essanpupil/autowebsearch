@@ -7,13 +7,13 @@ from django.core.paginator import Paginator, PageNotAnInteger
 from django.views.generic.edit import DeleteView, UpdateView
 from django.core.urlresolvers import reverse_lazy, reverse
 
-from .models import Client, Event, Operator, Website
+from .models import Client, Event, Operator, Website, ClientKeyword
 from .form import AddClientForm, AddClientHomepageForm, DeleteClientForm, \
                   AddEventForm, DeleteEventForm, AddOperatorForm, \
-                  AddUserForm#,# EditUserForm
+                  AddUserForm, AddClientKeywordForm
 from .administrative_lib import save_client, save_client_homepage
 from website_management.management_lib import add_url_to_webpage
-from website_management.models import Webpage
+from website_management.models import Webpage, Query
 
 
 @login_required
@@ -513,3 +513,49 @@ class EditEvent(UpdateView):
         success_url = reverse_lazy('administrative:view_event', args=[self.object.client.id])
         return success_url
 
+
+@login_required
+def view_client_keyword(request, client_id):
+    "display all keyword belong to this client"
+    client = get_object_or_404(Client, id=client_id)
+    keywords = ClientKeyword.objects.filter(client=client)
+    context = {'keywords': [],
+               'client': {'id': client.id,
+                          'name': client.name}}
+    for keyword in keywords:
+        keyword_data = {'name': keyword.query.keywords,
+                      'id': keyword.id,}
+        context['keywords'].append(keyword_data)
+    return render(request, 'administrative/view_client_keyword.html', context)
+
+
+@login_required
+def add_client_keyword(request, client_id):
+    "Display add client's keyword form"
+    client = Client.objects.get(id=client_id)
+    if request.method == 'POST':
+        form = AddClientKeywordForm(request.POST)
+        if form.is_valid():
+            if Query.objects.filter(
+                   keywords=form.cleaned_data['keywords']).exists():
+                client_keyword = Query.objects.get(
+                    keywords=form.cleaned_data['keywords'])
+            else:
+                Query.objects.create(keywords=form.cleaned_data['keywords'])
+            query = Query.objects.get(keywords=form.cleaned_data['keywords'])
+            try:
+                ClientKeyword.objects.create(client=form.cleaned_data['client'],
+                    query=query)
+                return redirect('administrative:detail_client',
+                            client_id=client_id)
+            except:
+                return redirect('administrative:detail_client',
+                            client_id=client_id)
+    else:
+        form = AddClientKeywordForm(initial={'client':client,})
+    return render(request,
+                  'administrative/add_client_keyword.html',
+                  {'form':form,
+                   'client': {'id': client.id,
+                              'name': client.name}
+                  })
