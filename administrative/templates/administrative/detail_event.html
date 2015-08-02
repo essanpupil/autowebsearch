@@ -31,8 +31,8 @@
         <td>
         <ul>
         {% for web in event.websites %}
-            <li><a href="{% url 'website_management:homepage_detail' web.id_homepage %}">
-                {{ web.url }}</a>
+            <li><a href="{% url 'website_management:homepage_detail' web.id %}">
+                {{ web.name }}</a>
             </li>
         {% empty %}
             No homepage database for this client

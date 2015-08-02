@@ -44,6 +44,10 @@ urlpatterns = [
         views.view_client_keyword, name='view_client_keyword'),
     url(r'^add-client-keyword/(?P<client_id>\d+)/$',
         views.add_client_keyword, name='add_client_keyword'),
+    url(r'^view-client-sequence/(?P<client_id>\d+)/$',
+        views.view_client_sequence, name='view_client_sequence'),
+    url(r'^add-client-sequence/(?P<client_id>\d+)/$',
+        views.add_client_sequence, name='add_client_sequence'),
 
     # operator url section
     url(r'^add-operator/(?P<client_id>\d+)/$',

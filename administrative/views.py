@@ -7,13 +7,15 @@ from django.core.paginator import Paginator, PageNotAnInteger
 from django.views.generic.edit import DeleteView, UpdateView
 from django.core.urlresolvers import reverse_lazy, reverse
 
-from .models import Client, Event, Operator, Website, ClientKeyword
+from .models import Client, Event, Operator, Website, ClientKeyword,\
+                    ClientSequence
 from .form import AddClientForm, AddClientHomepageForm, DeleteClientForm, \
                   AddEventForm, DeleteEventForm, AddOperatorForm, \
-                  AddUserForm, AddClientKeywordForm
+                  AddUserForm, AddClientKeywordForm, AddClientSequenceForm
 from .administrative_lib import save_client, save_client_homepage
 from website_management.management_lib import add_url_to_webpage
 from website_management.models import Webpage, Query
+from website_analyzer.models import StringParameter
 
 
 @login_required
@@ -22,13 +24,26 @@ def admin_dashboard(request):
     context = {}
     users = User.objects.all()
     clients = Client.objects.all().order_by('date_start')
+    operators = Operator.objects.all().order_by('date_start')
+    events = Event.objects.all().order_by('time_start')
     context['clients'] = {'count': clients.count(),
                           'last_added': [],}
     for client in clients[:5]:
         client_data = {'id': client.id,
                        'name': client.name,}
         context['clients']['last_added'].append(client_data)
-    events = Event.objects.all()
+    context['operators'] = {'count': operators.count(),
+                          'last_added': [],}
+    for operator in operators[:5]:
+        operator_data = {'id': operator.id,
+                         'name': operator.user.get_username(),}
+        context['operators']['last_added'].append(operator_data)
+    context['events'] = {'count': events.count(),
+                          'last_added': [],}
+    for event in events[:5]:
+        event_data = {'id': event.id,
+                       'name': event.name,}
+        context['events']['last_added'].append(event_data)
     return render(request, 'administrative/dashboard.html', context)
 
 
@@ -128,6 +143,7 @@ def add_homepage(request, client_id):
                             client_id=client_id)
     else:
         form = AddClientHomepageForm(initial={'client':client, 'event':None})
+        form.fields['event'].queryset = Event.objects.filter(client=client)
     return render(request,
                   'administrative/add_homepage.html',
                   {'form':form,
@@ -271,23 +287,6 @@ def edit_operator_process(request):
     op_user.email = request.POST['email']
     op_user.save()
     return redirect('administrative:view_operator', operator.client.id)
-#class EditOperator(UpdateView):
-#    'Display edit client form'
-#    model = Operator
-#    fields = ['event']
-#    template_name_suffix = '_edit_form'
-#    
-#    def get_context_data(self, **kwargs):
-#        # call the base implementation first to get a context
-#        context = super(EditOperator, self).get_context_data(**kwargs)
-#        # add in a queryset of other context
-#        context['client'] = {'id': self.object.client.id,
-#                             'name': self.object.client.name,}
-#        return context
-#
-#    def get_success_url(self, **kwargs):
-#        success_url = reverse_lazy('administrative:view_operator', args=[self.object.client.id])
-#        return success_url
 
 
 def delete_operator(request, operator_id):
@@ -461,7 +460,7 @@ def detail_event(request, event_id):
     else:
         event_data['status'] = 'Ended'
     for website in Website.objects.filter(event=event):
-        event_data['website'].append({'name': website.homepage.name,
+        event_data['websites'].append({'name': website.homepage.name,
                                      'id': website.homepage.id,})
     context['event'] = event_data                                     
     return render(request, 'administrative/detail_event.html', context)
@@ -510,7 +509,8 @@ class EditEvent(UpdateView):
         return context
 
     def get_success_url(self, **kwargs):
-        success_url = reverse_lazy('administrative:view_event', args=[self.object.client.id])
+        success_url = reverse_lazy('administrative:view_event',
+                                   args=[self.object.client.id])
         return success_url
 
 
@@ -555,6 +555,60 @@ def add_client_keyword(request, client_id):
         form = AddClientKeywordForm(initial={'client':client,})
     return render(request,
                   'administrative/add_client_keyword.html',
+                  {'form':form,
+                   'client': {'id': client.id,
+                              'name': client.name}
+                  })
+
+
+@login_required
+def view_client_sequence(request, client_id):
+    "display all sequence belong to this client"
+    client = get_object_or_404(Client, id=client_id)
+    sequences = ClientSequence.objects.filter(client=client)
+    context = {'sequences': [],
+               'client': {'id': client.id,
+                          'name': client.name}}
+    for sequence in sequences:
+        sequence_data = {'name': sequence.string_parameter.sentence,
+                      'id': sequence.id,
+                      'event': sequence.event,
+                      'definitive': sequence.string_parameter.definitive,}
+        context['sequences'].append(sequence_data)
+    return render(request, 'administrative/view_client_sequence.html', context)
+
+
+@login_required
+def add_client_sequence(request, client_id):
+    "Display add client's sequence form"
+    client = Client.objects.get(id=client_id)
+    if request.method == 'POST':
+        form = AddClientSequenceForm(request.POST)
+        if form.is_valid():
+            if StringParameter.objects.filter(
+                   sentence=form.cleaned_data['sequence']).exists():
+                client_sequence = StringParameter.objects.get(
+                    sentence=form.cleaned_data['sequence'])
+            else:
+                StringParameter.objects.create(
+                    sentence=form.cleaned_data['sequence'])
+            str_prm = StringParameter.objects.get(
+                          sentence=form.cleaned_data['sequence'])
+            try:
+                ClientSequence.objects.create(
+                    client=form.cleaned_data['client'],
+                    event=form.cleaned_data['event'],
+                    string_parameter=str_prm)
+                return redirect('administrative:view_client_sequence',
+                            client_id=client_id)
+            except:
+                return redirect('administrative:view_client_sequence',
+                            client_id=client_id)
+    else:
+        form = AddClientSequenceForm(initial={'client':client,})
+        form.fields['event'].queryset = Event.objects.filter(client=client)
+    return render(request,
+                  'administrative/add_client_sequence.html',
                   {'form':form,
                    'client': {'id': client.id,
                               'name': client.name}

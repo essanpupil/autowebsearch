@@ -3,7 +3,8 @@ from django.core import validators
 from django import forms
 from django.contrib.auth.models import User
 
-from .models import Client, Website, Event, Operator, ClientKeyword
+from .models import Client, Website, Event, Operator, ClientKeyword, \
+                    ClientSequence
 
 
 class AddClientForm(ModelForm):
@@ -50,6 +51,17 @@ class AddClientKeywordForm(ModelForm):
     class Meta:
         model = ClientKeyword
         fields = ['keywords', 'client']
+        widgets = {
+            'client': HiddenInput(),
+        }
+
+
+class AddClientSequenceForm(ModelForm):
+    "input client's sequence"
+    sequence =  forms.CharField()
+    class Meta:
+        model = ClientSequence
+        fields = ['sequence', 'client', 'event']
         widgets = {
             'client': HiddenInput(),
         }
