@@ -25,6 +25,7 @@ class ExtendHomepage(models.Model):
 
     homepage = models.OneToOneField(Homepage)
     full_crawled = models.IntegerField(default=0)
+    times_analyzed = models.IntegerField(default=0)
 
     # value: 'yes', 'no', 'unknown'
     scam = models.NullBooleanField(max_length=7, choices=SCAM_CHOICES,
