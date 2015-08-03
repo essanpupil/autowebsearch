@@ -36,8 +36,7 @@ def admin_dashboard(request):
         context['operators'] = {'count': operators.count(),
                               'last_added': [],}
         for operator in operators[:5]:
-            operator_data = {'id': operator.id,
-                             'name': operator.user.get_username(),}
+            operator_data = {'name': operator.user.get_username(),}
             context['operators']['last_added'].append(operator_data)
         context['events'] = {'count': events.count(),
                               'last_added': [],}

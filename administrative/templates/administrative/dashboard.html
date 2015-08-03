@@ -18,13 +18,9 @@
 <br />
 <table>
     <tr><th>Latest added operator</th></tr>
-    {% for opt in newest_5_operator %}
+    {% for opt in operators.last_added %}
     <tr>
-        <td>
-            <a href="{% url 'administrative:operator_profile' web.id %}">
-                {{ opt.url }}
-            </a>
-        </td>
+        <td>{{ opt.name }}</td>
     </tr>
     {% empty %}
     <tr><td>Operator database empty</td></tr>
