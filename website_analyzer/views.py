@@ -308,6 +308,12 @@ def edit_analyst_domain(request, dom_id):
             extdom.free = form.cleaned_data['free']
             extdom.whitelist = form.cleaned_data['whitelist']
             extdom.save()
+            domain_origin = extdom.domain
+            my_homepages = domain_origin.homepage_set.all()
+            for my_hp in my_homepages:
+                ext_hp = ExtendHomepage.objects.get(homepage=my_hp)
+                ext_hp.whitelist = True
+                ext_hp.save()
             domain.save()
             return redirect('website_analyzer:detail_analyst_domain',
                             dom_id = domain.id)
