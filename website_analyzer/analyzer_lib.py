@@ -15,6 +15,15 @@ def string_analyst(hp_id):
     exthp, created = ExtendHomepage.objects.get_or_create(homepage=hp)
     params = StringParameter.objects.all()
     for web in hp.webpage_set.all():
+        if web.extendwebpage.text_body == None:
+            page = PageScraper()
+            page.fetch_webpage(web.url)
+            web.html_page = page.html
+            extw = web.extendwebpage
+            extw.text_body = page.get_text_body()
+            extw.save()
+            web.save()
+            
         for param in params:
             if param.sentence in web.extendwebpage.text_body:
                 StringAnalysist.objects.create(webpage=web,
@@ -27,6 +36,8 @@ def string_analyst(hp_id):
                 StringAnalysist.objects.create(webpage=web,
                                                parameter=param,
                                                find=False)
+    exthp.times_analyzed += 1
+    exthp.save()
 
 
 def add_url_to_webpage(url):
