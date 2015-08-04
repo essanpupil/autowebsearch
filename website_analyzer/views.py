@@ -3,12 +3,14 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 
-from .models import ExtendHomepage, StringParameter, StringAnalysist
-from website_management.models import Homepage, Webpage
+from .models import ExtendHomepage, StringParameter, StringAnalysist,\
+                    ExtendDomain
+from website_management.models import Homepage, Webpage, Domain
 from .analyzer_lib import string_analyst, add_list_url_to_webpage
 from .analyzer_lib import add_scam_url_website, string_analysist, crawl_website
 from webscraper.pagescraper import PageScraper
-from .forms import AddScamWebsiteForm, AddSequenceForm, EditAnalystForm
+from .forms import AddScamWebsiteForm, AddSequenceForm, EditAnalystForm, \
+                   EditAnalystDomainForm
 
 
 @login_required
@@ -41,6 +43,7 @@ def analyze_website(request, hp_id):
     context = {'name': hp.name,
                'id': hp.id,
                'domain': hp.domain.name,
+               'domain_id': hp.domain.id,
                'date_added': hp.date_added,
                'scam': hp.extendhomepage.scam,
                'inspection': hp.extendhomepage.inspected,
@@ -97,7 +100,7 @@ def edit_analyst(request, homepage_id):
     website = get_object_or_404(Homepage, id=homepage_id)
     exth = ExtendHomepage.objects.get(homepage=website)
     if request.method == 'POST':
-	form = EditAnalystForm(request.POST)
+        form = EditAnalystForm(request.POST)
 	if form.is_valid():
             exth.scam = form.cleaned_data['scam']
             exth.inspected = form.cleaned_data['inspected']
@@ -238,12 +241,14 @@ def view_analyst_result(request):
     context = {}
     context['analyst_results'] = []
     for result in analyst_results:
-        result_data = {'webpage': result.webpage.url,
+        result_data = {'webpage': {'url': result.webpage.url,
+                                   'id': result.webpage.id,
+                                   'homepage_id': result.webpage.homepage.id},
                        'time': result.time,
                        'string_parameter': result.parameter,
                        'find': result.find}
         context['analyst_results'].append(result_data)
-    paginator = Paginator(context['analyst_results'], 10)
+    paginator = Paginator(context['analyst_results'], 20)
     page = request.GET.get('page')
     try:
         context['analyst_results'] = paginator.page(page)
@@ -254,3 +259,84 @@ def view_analyst_result(request):
     return render(request,
                   'website_analyzer/view_analyst_result.html',
                   context)
+
+
+@login_required
+def view_analyst_domains(request):
+    "display more info about domains"
+    domains = Domain.objects.all().order_by('date_added').reverse()
+    context = {'domains': []}
+    for dom in domains:
+        try:
+            extdom = ExtendDomain.objects.get(domain=dom)
+            context['domains'].append(
+                {'id': dom.id,
+                 'name': dom.name,
+                 'hp_count': dom.homepage_set.all().count(),
+                 'whitelist': extdom.whitelist,
+                 'free': extdom.free,
+                 'date_added': dom.date_added,})
+        except ExtendDomain.DoesNotExist:
+            context['domains'].append(
+                {'id': dom.id,
+                 'name': dom.name,
+                 'hp_count': dom.homepage_set.all().count(),
+                 'whitelist': 'N/A',
+                 'free': 'N/A',
+                 'date_added': dom.date_added,})
+    paginator = Paginator(context['domains'], 10)
+    page = request.GET.get('page')
+    try:
+        context['domains'] = paginator.page(page)
+    except PageNotAnInteger:
+        context['domains'] = paginator.page(1)
+    except EmptyPage:
+        context['domains'] = paginator.page(paginator.num_pages)
+    return render(request,
+                  'website_analyzer/view_analyst_domains.html',
+                  context)
+
+
+@login_required
+def edit_analyst_domain(request, dom_id):
+    "display form to edit domain data"
+    domain = get_object_or_404(Domain, id=dom_id)
+    extdom = ExtendDomain.objects.get(domain=domain)
+    if request.method == 'POST':
+        form = EditAnalystDomainForm(request.POST)
+	if form.is_valid():
+            extdom.free = form.cleaned_data['free']
+            extdom.whitelist = form.cleaned_data['whitelist']
+            extdom.save()
+            domain.save()
+            return redirect('website_analyzer:detail_analyst_domain',
+                            dom_id = domain.id)
+    else:
+        form = EditAnalystDomainForm()
+    context = {'form': form,
+               'domain': {},}
+    context['domain'] = {'id': domain.id,
+                         'name': domain.name,
+                         'free': domain.extenddomain.free,
+                         'whitelist': domain.extenddomain.whitelist,}
+    return render(request,
+                  'website_analyzer/edit_analyst_domain.html',
+                  context)
+
+
+@login_required
+def detail_analyst_domain(request, dom_id):
+    "display analyst data of a domain"
+    domain = get_object_or_404(Domain, id=dom_id)
+    my_homepages = domain.homepage_set.all()
+    extdom, created = ExtendDomain.objects.get_or_create(domain=domain)
+    context = {'name': domain.name,
+               'id': domain.id,
+               'date_added': domain.date_added,
+               'free': domain.extenddomain.free,
+               'whitelist': domain.extenddomain.whitelist,
+               'homepages': [],}
+    for hp in my_homepages:
+        context['homepages'].append({'id': hp.id, 'name': hp.name})
+    return render(request, 'website_analyzer/detail_analyst_domain.html', context)
+

@@ -27,15 +27,19 @@
         <th style="padding:3px;">Analyze Time</th>
         <th style="padding:3px;">String Parameter</th>
         <th style="padding:3px;">Find</th>
+        <th style="padding:3px;">Analyze</th>
     </tr>
     {% for result in analyst_results %}
     <tr>
         <td>{{ forloop.counter }}</td>
-        <td><span title="{{ result.webpage }}">
-                {{ result.webpage|truncatechars:80 }}</span></td>
+        <td><a href="{% url 'website_management:webpage_detail' result.webpage.id %}">
+                <span title="{{ result.webpage.url }}">
+                    {{ result.webpage.url|truncatechars:80 }}</span></a></td>
         <td>{{ result.time }}</td>
         <td>{{ result.string_parameter }}</td>
         <td>{{ result.find }}</td>
+        <td><a href="{% url 'website_analyzer:analyze_website' result.webpage.homepage_id %}">
+                Analyze website</a></td>
     </tr>
     {% empty %}
         <td> - </td>

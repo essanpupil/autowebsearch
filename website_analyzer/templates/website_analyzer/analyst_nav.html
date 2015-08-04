@@ -5,6 +5,11 @@
             View websites
         </a>
     </li>
+    <li>
+        <a href="{% url 'website_analyzer:view_analyst_domains' %}">
+            View analyst domains
+        </a>
+    </li>
 {% if user.is_superuser %}
     <li>
         <a href="{% url 'website_analyzer:add_scam_website' %}">

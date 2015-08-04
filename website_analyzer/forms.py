@@ -1,7 +1,7 @@
 from django.forms import ModelForm
 
 from website_management.models import Webpage, Homepage
-from .models import StringParameter, ExtendHomepage
+from .models import StringParameter, ExtendHomepage, ExtendDomain
 
 
 class AddScamWebsiteForm(ModelForm):
@@ -28,4 +28,15 @@ class EditAnalystForm(ModelForm):
         
     class Meta:
         model = ExtendHomepage
-	exclude = ['homepage']
+        exclude = ['homepage']
+
+
+class EditAnalystDomainForm(ModelForm):
+    "Form to edit analyst data of website"
+    date_added = ''
+    def __init__(self, *args, **kwargs):
+        super(EditAnalystDomainForm, self).__init__(*args, **kwargs)
+        
+    class Meta:
+        model = ExtendDomain
+        exclude = ['domain']
