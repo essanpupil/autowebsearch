@@ -34,4 +34,6 @@ urlpatterns = patterns('',
                        url(r'^start_sequence_analysist/(?P<homepage_id>\d+)$',
                            views.start_sequence_analysist,
                            name='start_sequence_analysist'),
+                       url(r'^view_analyst_result$', views.view_analyst_result,
+                           name='view_analyst_result'),
                        )

@@ -229,3 +229,28 @@ def start_sequence_analysist(request, homepage_id):
     homepage = get_object_or_404(Homepage, id=homepage_id)
     string_analysist(homepage)
     return redirect('website_analyzer:analyze_website', hp_id=homepage.id)
+
+
+@login_required
+def view_analyst_result(request):
+    "display analyst result"
+    analyst_results = StringAnalysist.objects.all().order_by('time').reverse()
+    context = {}
+    context['analyst_results'] = []
+    for result in analyst_results:
+        result_data = {'webpage': result.webpage.url,
+                       'time': result.time,
+                       'string_parameter': result.parameter,
+                       'find': result.find}
+        context['analyst_results'].append(result_data)
+    paginator = Paginator(context['analyst_results'], 10)
+    page = request.GET.get('page')
+    try:
+        context['analyst_results'] = paginator.page(page)
+    except PageNotAnInteger:
+        context['analyst_results'] = paginator.page(1)
+    except EmptyPage:
+        context['analyst_results'] = paginator.page(paginator.num_pages)
+    return render(request,
+                  'website_analyzer/view_analyst_result.html',
+                  context)

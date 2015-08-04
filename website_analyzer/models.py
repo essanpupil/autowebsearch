@@ -89,7 +89,6 @@ class Token(models.Model):
 
 
 class Pieces(models.Model):
-
     """Token sequence number on webpage"""
     webpage = models.ForeignKey(Webpage)
     token = models.ForeignKey(Token)
@@ -97,7 +96,6 @@ class Pieces(models.Model):
 
 
 class SequenceDescription(models.Model):
-
     """store the description of each sequence"""
     name = models.CharField(max_length=255, unique=True)
 
