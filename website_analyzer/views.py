@@ -171,6 +171,8 @@ def view_websites(request):
                 {'id': hp.id,
                  'name': hp.name,
                  'scam': exthp.scam,
+                 'times_analyzed': exthp.times_analyzed,
+                 'full_crawled': exthp.full_crawled,
                  'whitelist': exthp.whitelist,
                  'inspection': exthp.inspected,
                  'report': exthp.reported,
@@ -348,3 +350,55 @@ def detail_analyst_domain(request, dom_id):
         context['homepages'].append({'id': hp.id, 'name': hp.name})
     return render(request, 'website_analyzer/detail_analyst_domain.html', context)
 
+
+@login_required
+def view_client_analyst(request):
+    "display more info about domains"
+    clients = Client.objects.all()
+    context = {'clients': []}
+    for client in clients:
+        try:
+            extdom = ExtendDomain.objects.get(domain=dom)
+            context['domains'].append(
+                {'id': dom.id,
+                 'name': dom.name,
+                 'hp_count': dom.homepage_set.all().count(),
+                 'whitelist': extdom.whitelist,
+                 'free': extdom.free,
+                 'date_added': dom.date_added,})
+        except ExtendDomain.DoesNotExist:
+            context['domains'].append(
+                {'id': dom.id,
+                 'name': dom.name,
+                 'hp_count': dom.homepage_set.all().count(),
+                 'whitelist': 'N/A',
+                 'free': 'N/A',
+                 'date_added': dom.date_added,})
+    paginator = Paginator(context['domains'], 10)
+    page = request.GET.get('page')
+    try:
+        context['domains'] = paginator.page(page)
+    except PageNotAnInteger:
+        context['domains'] = paginator.page(1)
+    except EmptyPage:
+        context['domains'] = paginator.page(paginator.num_pages)
+    return render(request,
+                  'website_analyzer/view_analyst_domains.html',
+                  context)
+
+
+@login_required
+def detail_client_analyst(request, dom_id):
+    "display analyst data of a domain"
+    domain = get_object_or_404(Domain, id=dom_id)
+    my_homepages = domain.homepage_set.all()
+    extdom, created = ExtendDomain.objects.get_or_create(domain=domain)
+    context = {'name': domain.name,
+               'id': domain.id,
+               'date_added': domain.date_added,
+               'free': domain.extenddomain.free,
+               'whitelist': domain.extenddomain.whitelist,
+               'homepages': [],}
+    for hp in my_homepages:
+        context['homepages'].append({'id': hp.id, 'name': hp.name})
+    return render(request, 'website_analyzer/detail_analyst_domain.html', context)

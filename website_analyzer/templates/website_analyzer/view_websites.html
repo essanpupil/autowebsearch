@@ -25,12 +25,14 @@
         <th style="padding:3px;">No</th>
         <th style="padding:3px;">Website Name</th>
         <th style="padding:3px;">Date Added</th>
+        <th style="padding:3px;">Times analyzed?</th>
+        <th style="padding:3px;">Times full crawled</th>
         <th style="padding:3px;">Scam?</th>
-        <th style="padding:3px;">Whitelist?</th>
+        <th style="padding:3px;">Whitelist?</th>{% comment %}
         <th style="padding:3px;">Inspected?</th>
         <th style="padding:3px;">Reported?</th>
         <th style="padding:3px;">Accessible?</th>
-        <th style="padding:3px;">Page<br />Count?</th>
+        <th style="padding:3px;">Page<br />Count?</th>{% endcomment %}
         <th style="padding:3px;">Action</th>
     </tr>
     {% for web in websites %}
@@ -38,12 +40,14 @@
         <td>{{ forloop.counter }}</td>
         <td><span title="{{ web.name }}">{{ web.name|truncatechars:25 }}</span></td>
         <td>{{ web.date_added|date:"b d, Y" }}</td>
+        <td>{{ web.times_analyzed }}</td>
+        <td>{{ web.full_crawled }}</td>
         <td>{{ web.scam }}</td>
-        <td>{{ web.whitelist }}</td>
+        <td>{{ web.whitelist }}</td>{% comment %}
         <td>{{ web.inspection }}</td>
         <td>{{ web.report }}</td>
         <td>{{ web.access }}</td>
-        <td>{{ web.web_count }}</td>
+        <td>{{ web.web_count }}</td>  {% endcomment %}
         <td><a href="{% url 'website_analyzer:analyze_website' web.id %}">Analyze</a></td>
     </tr>
     {% empty %}
