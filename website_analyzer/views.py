@@ -162,7 +162,7 @@ def add_scam_website(request):
 @login_required
 def view_websites(request):
     """display scam website"""
-    websites = Homepage.objects.all().order_by('date_added').reverse()
+    websites = Homepage.objects.all().order_by('date_added')
     context = {'websites': []}
     for hp in websites:
         try:
@@ -190,7 +190,7 @@ def view_websites(request):
                  'access': 'n/a',
                  'web_count': hp.webpage_set.all().count(),
                  'date_added': hp.date_added,})
-    paginator = Paginator(context['websites'], 10)
+    paginator = Paginator(context['websites'], 20)
     page = request.GET.get('page')
     try:
         context['websites'] = paginator.page(page)
@@ -242,9 +242,10 @@ def start_sequence_analysist(request, homepage_id):
 def view_analyst_result(request):
     "display analyst result"
     analyst_results = StringAnalysist.objects.all().order_by('time').reverse()
+    analyst_websites = analyst_results.distinct('webpage')
     context = {}
     context['analyst_results'] = []
-    for result in analyst_results:
+    for result in analyst_websites:
         result_data = {'webpage': {'url': result.webpage.url,
                                    'id': result.webpage.id,
                                    'homepage_id': result.webpage.homepage.id},

@@ -116,7 +116,7 @@ class StringParameter(models.Model):
 
 
 class StringAnalysist(models.Model):
-    """Store analysist result of webpage's"""
+    """Store string parameter analysist result of webpage's"""
     webpage = models.ForeignKey(Webpage)
     parameter = models.ForeignKey(StringParameter)
     time = models.DateTimeField(auto_now=True)
