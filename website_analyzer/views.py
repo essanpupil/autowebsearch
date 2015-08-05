@@ -162,7 +162,7 @@ def add_scam_website(request):
 @login_required
 def view_websites(request):
     """display scam website"""
-    websites = Homepage.objects.all().order_by('date_added')
+    websites = Homepage.objects.all().order_by('date_added').reverse()
     context = {'websites': []}
     for hp in websites:
         try:
@@ -170,6 +170,7 @@ def view_websites(request):
             context['websites'].append(
                 {'id': hp.id,
                  'name': hp.name,
+                 'date_added': hp.date_added,
                  'scam': exthp.scam,
                  'times_analyzed': exthp.times_analyzed,
                  'full_crawled': exthp.full_crawled,
@@ -178,18 +179,19 @@ def view_websites(request):
                  'report': exthp.reported,
                  'access': exthp.access,
                  'web_count': hp.webpage_set.all().count(),
-                 'date_added': hp.date_added,})
+                 'matched_sequence': {'min': 0, 'max': 0},})
         except ExtendHomepage.DoesNotExist:
             context['websites'].append(
                 {'id': hp.id,
                  'name': hp.name,
+                 'date_added': hp.date_added,
                  'whitelist': 'n/a',
                  'scam': 'n/a',
                  'inspection': 'n/a',
                  'report': 'n/a',
                  'access': 'n/a',
                  'web_count': hp.webpage_set.all().count(),
-                 'date_added': hp.date_added,})
+                 'matched_sequence': {'min': 0, 'max': 0},})
     paginator = Paginator(context['websites'], 20)
     page = request.GET.get('page')
     try:
@@ -242,7 +244,7 @@ def start_sequence_analysist(request, homepage_id):
 def view_analyst_result(request):
     "display analyst result"
     analyst_results = StringAnalysist.objects.all().order_by('time').reverse()
-    analyst_websites = analyst_results.distinct('webpage')
+    analyst_websites = analyst_results
     context = {}
     context['analyst_results'] = []
     for result in analyst_websites:

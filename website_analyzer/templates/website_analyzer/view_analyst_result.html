@@ -34,7 +34,7 @@
         <td>{{ forloop.counter }}</td>
         <td><a href="{% url 'website_management:webpage_detail' result.webpage.id %}">
                 <span title="{{ result.webpage.url }}">
-                    {{ result.webpage.url|truncatechars:80 }}</span></a></td>
+                    {{ result.webpage.url|truncatechars:60 }}</span></a></td>
         <td>{{ result.time }}</td>
         <td>{{ result.string_parameter }}</td>
         <td>{{ result.find }}</td>
