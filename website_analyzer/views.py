@@ -171,6 +171,7 @@ def view_websites(request):
                 {'id': hp.id,
                  'name': hp.name,
                  'scam': exthp.scam,
+                 'whitelist': exthp.whitelist,
                  'inspection': exthp.inspected,
                  'report': exthp.reported,
                  'access': exthp.access,
@@ -180,6 +181,7 @@ def view_websites(request):
             context['websites'].append(
                 {'id': hp.id,
                  'name': hp.name,
+                 'whitelist': 'n/a',
                  'scam': 'n/a',
                  'inspection': 'n/a',
                  'report': 'n/a',

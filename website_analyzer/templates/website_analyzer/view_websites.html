@@ -26,6 +26,7 @@
         <th style="padding:3px;">Website Name</th>
         <th style="padding:3px;">Date Added</th>
         <th style="padding:3px;">Scam?</th>
+        <th style="padding:3px;">Whitelist?</th>
         <th style="padding:3px;">Inspected?</th>
         <th style="padding:3px;">Reported?</th>
         <th style="padding:3px;">Accessible?</th>
@@ -38,6 +39,7 @@
         <td><span title="{{ web.name }}">{{ web.name|truncatechars:25 }}</span></td>
         <td>{{ web.date_added|date:"b d, Y" }}</td>
         <td>{{ web.scam }}</td>
+        <td>{{ web.whitelist }}</td>
         <td>{{ web.inspection }}</td>
         <td>{{ web.report }}</td>
         <td>{{ web.access }}</td>
