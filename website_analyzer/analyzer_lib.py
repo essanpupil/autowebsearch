@@ -159,7 +159,6 @@ def crawl_website(homepage):
     keep_crawling = True
     while keep_crawling:
         for webpage in homepage.webpage_set.all():
-            print webpage.url
             page = PageScraper()
             page.fetch_webpage(webpage.url)
             webpage.html_page = page.html
