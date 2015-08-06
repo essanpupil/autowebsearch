@@ -10,7 +10,7 @@ from .analyzer_lib import string_analyst, add_list_url_to_webpage
 from .analyzer_lib import add_scam_url_website, string_analysist, crawl_website
 from webscraper.pagescraper import PageScraper
 from .forms import AddScamWebsiteForm, AddSequenceForm, EditAnalystForm, \
-                   EditAnalystDomainForm
+                   EditAnalystDomainForm, SearchForm
 
 
 @login_required
@@ -275,24 +275,46 @@ def view_analyst_domains(request):
     "display more info about domains"
     domains = Domain.objects.all().order_by('date_added').reverse()
     context = {'domains': []}
-    for dom in domains:
-        try:
-            extdom = ExtendDomain.objects.get(domain=dom)
-            context['domains'].append(
-                {'id': dom.id,
-                 'name': dom.name,
-                 'hp_count': dom.homepage_set.all().count(),
-                 'whitelist': extdom.whitelist,
-                 'free': extdom.free,
-                 'date_added': dom.date_added,})
-        except ExtendDomain.DoesNotExist:
-            context['domains'].append(
-                {'id': dom.id,
-                 'name': dom.name,
-                 'hp_count': dom.homepage_set.all().count(),
-                 'whitelist': 'N/A',
-                 'free': 'N/A',
-                 'date_added': dom.date_added,})
+    form = SearchForm(request.GET)
+    if form.is_valid():
+        for dom in domains.filter(name__contains=form.cleaned_data['search']):
+            try:
+                extdom = ExtendDomain.objects.get(domain=dom)
+                context['domains'].append(
+                    {'id': dom.id,
+                     'name': dom.name,
+                     'hp_count': dom.homepage_set.all().count(),
+                     'whitelist': extdom.whitelist,
+                     'free': extdom.free,
+                     'date_added': dom.date_added,})
+            except ExtendDomain.DoesNotExist:
+                context['domains'].append(
+                    {'id': dom.id,
+                     'name': dom.name,
+                     'hp_count': dom.homepage_set.all().count(),
+                     'whitelist': 'N/A',
+                     'free': 'N/A',
+                     'date_added': dom.date_added,})
+    else:
+        for dom in domains:
+            try:
+                extdom = ExtendDomain.objects.get(domain=dom)
+                context['domains'].append(
+                    {'id': dom.id,
+                     'name': dom.name,
+                     'hp_count': dom.homepage_set.all().count(),
+                     'whitelist': extdom.whitelist,
+                     'free': extdom.free,
+                     'date_added': dom.date_added,})
+            except ExtendDomain.DoesNotExist:
+                context['domains'].append(
+                    {'id': dom.id,
+                     'name': dom.name,
+                     'hp_count': dom.homepage_set.all().count(),
+                     'whitelist': 'N/A',
+                     'free': 'N/A',
+                     'date_added': dom.date_added,})
+
     paginator = Paginator(context['domains'], 20)
     page = request.GET.get('page')
     try:
@@ -301,6 +323,9 @@ def view_analyst_domains(request):
         context['domains'] = paginator.page(1)
     except EmptyPage:
         context['domains'] = paginator.page(paginator.num_pages)
+
+    context['form'] = SearchForm()
+    context['searchbase'] = "Domain"
     return render(request,
                   'website_analyzer/view_analyst_domains.html',
                   context)

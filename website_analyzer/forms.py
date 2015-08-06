@@ -1,11 +1,11 @@
 from django.forms import ModelForm
+from django import forms
 
 from website_management.models import Webpage, Homepage
 from .models import StringParameter, ExtendHomepage, ExtendDomain
 
 
 class AddScamWebsiteForm(ModelForm):
-
     """add known scam website to database"""
     class Meta:  # lint:ok
         model = Webpage
@@ -13,7 +13,6 @@ class AddScamWebsiteForm(ModelForm):
 
 
 class AddSequenceForm(ModelForm):
-
     """Add new sequence to database"""
     class Meta:  # lint:ok
         model = StringParameter
@@ -40,3 +39,8 @@ class EditAnalystDomainForm(ModelForm):
     class Meta:
         model = ExtendDomain
         exclude = ['domain']
+
+
+class SearchForm(forms.Form):
+    "search extendsomain by domain name"
+    search = forms.CharField()
