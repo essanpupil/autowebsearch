@@ -208,9 +208,9 @@ def view_websites(request):
 @login_required
 def view_sequence(request):
     """display sequence parameter used for analyze website"""
-    parameters = StringParameter.objects.all()
+    parameters = StringParameter.objects.all().order_by('date_added')
     context = {'parameters': []}
-    for parameter in parameters:
+    for parameter in parameters.reverse():
         context['parameters'].append({'sentence': parameter.sentence,
                                       'date_added': parameter.date_added,
                                       'definitive': parameter.definitive})
