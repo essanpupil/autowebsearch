@@ -16,6 +16,7 @@ class ExtendDomain(models.Model):
 
     # True if the domain is freely available (blogspot, wordpress, etc).
     free = models.NullBooleanField(null=True, blank=True)
+    times_crawled = models.IntegerField(default=0)
 
 
 class ExtendHomepage(models.Model):

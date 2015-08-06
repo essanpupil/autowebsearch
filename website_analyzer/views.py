@@ -293,7 +293,7 @@ def view_analyst_domains(request):
                  'whitelist': 'N/A',
                  'free': 'N/A',
                  'date_added': dom.date_added,})
-    paginator = Paginator(context['domains'], 10)
+    paginator = Paginator(context['domains'], 20)
     page = request.GET.get('page')
     try:
         context['domains'] = paginator.page(page)

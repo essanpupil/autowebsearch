@@ -55,7 +55,8 @@ def add_url_to_webpage(url):
                                                        domain=dom)
             ExtendHomepage.objects.create(homepage=hp)
     except:
-        pass
+            hp, crtd2 = Homepage.objects.get_or_create(name='.'.join(ext),
+                                                       domain=dom)
     try:
         with transaction.atomic():
             if len(url) > 255:
@@ -156,8 +157,9 @@ def crawl_website(homepage):
     """function to fetch html code and url of a website, start from available
     webpages in the database. The only accepted argument in Homepage object."""
     keep_crawling = True
-    while True:
+    while keep_crawling:
         for webpage in homepage.webpage_set.all():
+            print webpage.url
             page = PageScraper()
             page.fetch_webpage(webpage.url)
             webpage.html_page = page.html
@@ -169,6 +171,7 @@ def crawl_website(homepage):
             add_list_url_to_webpage(page.ideal_urls())
         if not homepage.webpage_set.filter(html_page__isnull=True).exists():
             break
+        keep_crawling = False
     ext_hp = ExtendHomepage.objects.get(homepage=homepage)
     ext_hp.full_crawled += 1
     ext_hp.save()
