@@ -329,6 +329,7 @@ def edit_analyst_domain(request, dom_id):
     else:
         form = EditAnalystDomainForm()
     context = {'form': form,
+               'id': domain.id,
                'domain': {},}
     context['domain'] = {'id': domain.id,
                          'name': domain.name,

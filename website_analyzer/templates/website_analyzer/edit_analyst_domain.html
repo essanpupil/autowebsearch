@@ -1,4 +1,8 @@
 {% extends 'base.html' %}
+{% block navigation %}
+    {% include 'website_analyzer/analyst_nav.html' %}
+    {% include 'website_analyzer/analyst_domain_nav.html' %}
+{% endblock %}
 {% block content %}
 <h3>Edit analyst domain data: {{ domain.name }}</h3>
 <form action="" method="post">
