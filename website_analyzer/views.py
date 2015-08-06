@@ -50,6 +50,8 @@ def analyze_website(request, hp_id):
                'report': hp.extendhomepage.reported,
                'access': hp.extendhomepage.access,
                'whitelist': hp.extendhomepage.whitelist,
+               'full_crawl': hp.extendhomepage.full_crawled,
+               'times_analyzed': hp.extendhomepage.times_analyzed,
                'webpages': [],
                'params': []}
     for web in my_webpage:
@@ -251,7 +253,7 @@ def view_analyst_result(request):
         result_data = {'webpage': {'url': result.webpage.url,
                                    'id': result.webpage.id,
                                    'homepage_id': result.webpage.homepage.id},
-                       'time': result.time,
+                       'analyze_time': result.time,
                        'string_parameter': result.parameter,
                        'find': result.find}
         context['analyst_results'].append(result_data)

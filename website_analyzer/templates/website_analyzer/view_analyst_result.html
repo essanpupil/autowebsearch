@@ -35,11 +35,11 @@
         <td><a href="{% url 'website_management:webpage_detail' result.webpage.id %}">
                 <span title="{{ result.webpage.url }}">
                     {{ result.webpage.url|truncatechars:60 }}</span></a></td>
-        <td>{{ result.time }}</td>
+        <td>{{ result.analyze_time|date:"H:i d-m-Y" }}</td>
         <td>{{ result.string_parameter }}</td>
         <td>{{ result.find }}</td>
         <td><a href="{% url 'website_analyzer:analyze_website' result.webpage.homepage_id %}">
-                Analyze website</a></td>
+                Analyze</a></td>
     </tr>
     {% empty %}
         <td> - </td>

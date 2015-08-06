@@ -124,6 +124,8 @@ def string_analysist(homepage):
                         webpage=webpage)
                 if extw.text_body == None:
                     crawl_website(extw.webpage.homepage)
+                else:
+                    continue
                 if parameter.sentence in extw.text_body:
                     StringAnalysist.objects.create(webpage=webpage,
                             parameter=parameter,

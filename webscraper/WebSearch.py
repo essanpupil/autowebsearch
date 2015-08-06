@@ -35,7 +35,7 @@ class GoogleSearch:
         """method to download the html text of current page result"""
         startNumber = (page - 1) * 10
         self.pageRequest = requests.get("http://google.com/search", params={'query': self.query, 'start': startNumber})
-        soup = BeautifulSoup(self.pageRequest.text)
+        soup = BeautifulSoup(self.pageRequest.text, "html5lib")
         results = soup.find_all('a', class_=False)
         href_ls = []
         for target in results:

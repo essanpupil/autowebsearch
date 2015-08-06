@@ -27,9 +27,9 @@ class PageScraper:
         text body inside a list
         """
         if html is None:
-            self.soup = BeautifulSoup(self.html)
+            self.soup = BeautifulSoup(self.html, "html5lib")
         else:
-            self.soup = BeautifulSoup(html)
+            self.soup = BeautifulSoup(html, "html5lib")
         [x.extract() for x in self.soup.find_all('script')]
         [x.extract() for x in self.soup.find_all('style')]
         page_text = self.soup.body.get_text()
@@ -55,9 +55,9 @@ class PageScraper:
     def ideal_urls(self, html=None):
         """extract the ideal url inside webpage"""
         if html is not None:
-            soup = BeautifulSoup(html)
+            soup = BeautifulSoup(html, "html5lib")
         else:
-            soup = BeautifulSoup(self.html)
+            soup = BeautifulSoup(self.html, "html5lib")
         proper_link = []
         for item in soup.find_all('a'):
             try:
@@ -71,4 +71,3 @@ class PageScraper:
         proper_link.sort()
         return proper_link
 
-#todo: make class for specific free web domain hosting
