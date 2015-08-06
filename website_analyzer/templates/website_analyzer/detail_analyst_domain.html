@@ -13,7 +13,7 @@
         <th align="left">Date added</th><td>{{ date_added|date:"d M Y" }}</td>
     </tr>
     <tr>
-        <th align="left">Free/Paid</th><td>{{ whitelist|yesno:"Free, Paid, Unknown" }}</td>
+        <th align="left">Free/Paid</th><td>{{ free|yesno:"Free, Paid, Unknown" }}</td>
     </tr>
     <tr>
         <th align="left">Whitelist status</th><td>{{ whitelist|yesno:"Yes, No, Unknown" }}</td>
