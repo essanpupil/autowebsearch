@@ -16,7 +16,7 @@
         <th style="padding:2px;">Times full crawled</th>
         <th style="padding:2px;">Webpages count</th>
     </tr>
-    {% for web in websites %}
+    {% for web in divided_websites %}
     <tr>
         <td>{{ forloop.counter }}</td>
         <td><span title="{{ web.name }}">
