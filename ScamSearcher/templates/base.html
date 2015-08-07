@@ -21,6 +21,7 @@
     <h2>Search for scam website, automatically</h2>
     <ul>
     {% block mainmenu %}
+        {% if user.is_authenticated %}
         <li>
             <a href="{% url 'website_management:website_dashboard' %}">
                 Website
@@ -36,11 +37,23 @@
                 Administrative
             </a>
         </li>
-        <li>
-            <a href="{% url 'logout' %}">
-                Logout
-            </a>
-        </li>
+            <li>
+                <a href="{% url 'user_profile' %}">
+                    {{ user.get_username }}
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'logout' %}">
+                    Logout
+                </a>
+            </li>
+        {% else %}
+            <li>
+                <a href="{% url 'login' %}">
+                    Login
+                </a>
+            </li>
+        {% endif %}
     {% endblock %}
     </ul>
 </div>

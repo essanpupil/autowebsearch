@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block navigation %}
+    {% include 'administrative/admin_nav.html' %}
+{% endblock %}
+{% block pagetitle %}Delete client's homepage | ScamSearcher{% endblock %}
+{% block content %}
+<h3>Delete confirmation</h3>
+Are you sure you want to delete {{ object }}?
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Yes, I'm sure.</button>
+</form>
+{% endblock %}

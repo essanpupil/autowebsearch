@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block pagetitle %}View client's events | ScamSearcher{% endblock %}
+{% block navigation %}
+    {% include 'administrative/admin_nav.html' %}
+    {% include 'administrative/client_detail_nav.html' %}
+    <h4>Page navigation</h4>
+    <div class="pagination">
+        <span class="step-links">
+            {% if events.has_previous %}
+                <a href="?page={{ events.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ events.number }} of {{ events.paginator.num_pages }}.
+            </span>
+
+            {% if events.has_next %}
+                <a href="?page={{ events.next_page_number }}">next</a>
+            {% endif %}
+        </span>
+    </div>
+{% endblock %}
+{% block content %}
+<h3>Events belong to: <a href="{% url 'administrative:detail_client' client.id %}" />{{ client.name }}</a></h3>
+{{ error_message }}
+<table>
+    <tr>
+        <th>No.</th>
+        <th>Name</th>
+        <th>Status</th>
+        <th>Date start</th>
+        <th>Date end</th>
+        <th>Action</th>
+    </tr>
+    {% for event in events %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ event.name }}</td>
+            <td>{{ event.status }}</td>
+            <td>{{ event.time_start }}</td>
+            <td>{{ event.time_end }}</td>
+            <td><a href="{% url 'administrative:edit_event' pk=event.id %}" />
+                    Edit
+                </a>
+                &nbsp;
+                <a href="{% url 'administrative:detail_event' event.id %}" />
+                    Detail
+                </a>
+                &nbsp;
+                <a href="{% url 'administrative:delete_event' event.id %}" />
+                    Delete
+                </a>
+            </td>
+        </tr>
+    {% empty %}
+        <tr>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block navigation %}
+    {% include 'website_analyzer/analyst_nav.html' %}
+    {% include 'website_analyzer/search.html' %}
+{% endblock %}
+{% block content %}
+<h3>View Analyst Domain</h3>
+<table>
+    <tr>
+        <th style="padding:3px;">No</th>
+        <th style="padding:3px;">Domain
+        <th style="padding:3px;">Date Added</th>
+        <th style="padding:3px;">Whitelist</th>
+        <th style="padding:3px;">Free</th>
+        <th style="padding:3px;">Homepage<br />Count?</th>
+        <th style="padding:3px;">Action</th>
+    </tr>
+    {% for dom in domains %}
+    <tr>
+        <td>{{ forloop.counter }}</td>
+        <td><span title="{{ dom.name }}">{{ dom.name|truncatechars:25 }}</span></td>
+        <td>{{ dom.date_added|date:"b d, Y" }}</td>
+        <td>{{ dom.whitelist }}</td>
+        <td>{{ dom.free }}</td>
+        <td>{{ dom.hp_count }}</td>
+        <td><a href="{% url 'website_analyzer:detail_analyst_domain' dom.id %}">Detail</a></td>
+    </tr>
+    {% empty %}
+        Analyst Domain database is empty
+    {% endfor %}
+</table>
+{% endblock %}

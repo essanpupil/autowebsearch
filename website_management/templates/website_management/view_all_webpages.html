@@ -33,7 +33,7 @@
     {% for web in webs %}
         <tr>
             <td>{{ forloop.counter }}</td>
-            <td>{{ web.url }}</td>
+            <td>{{ web.url|truncatechars:50 }}</td>
             <td>{{ web.date_added }}</td>
             <td>{{ web.last_response }}</td>
             <td>{{ web.last_response_check }}</td>

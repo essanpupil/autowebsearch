@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block navigation %}
+    {% include 'administrative/admin_nav.html' %}
+    {% include 'administrative/client_detail_nav.html' %}{% endblock %}
+{% block pagetitle %}Add new operator | ScamSearcher{% endblock %}
+{% block content %}
+<h3>Add new operator for {{ client.name }}</h3>
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<form action="{% url 'administrative:add_operator' client.id %}" method="post">
+{% csrf_token %}
+{{ form.as_p }}
+<br />
+<input type="submit" value="Add new operator" />
+<input type="reset" value="Clear input area" />
+</form>
+{% endblock %}

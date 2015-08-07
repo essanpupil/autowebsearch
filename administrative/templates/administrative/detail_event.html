@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block navigation %}
+{% include 'administrative/admin_nav.html' %}
+{% include 'administrative/client_detail_nav.html' %}
+{% endblock %}
+{% block content %}
+<h3>Event detail: {{ event.name }}</h3>
+<table>
+    <tr>
+        <th align="left">Client
+        <td>{{ event.client }}</td>
+    </tr>
+    <tr>
+        <th align="left">Status</th>
+        <td>{{ event.status }}</td>
+    </tr>
+    <tr>
+        <th align="left">Name</th>
+        <td>{{ event.name }}</td>
+    </tr>
+    <tr>
+        <th align="left">Time Start</th>
+        <td>{{ event.time_start }}</td>
+    </tr>
+    <tr>
+        <th align="left">Time End</th>
+        <td>{{ event.time_end }}</td>
+    </tr>
+    <tr>
+        <th align="left">Websites</th>
+        <td>
+        <ul>
+        {% for web in event.websites %}
+            <li><a href="{% url 'website_management:homepage_detail' web.id %}">
+                {{ web.name }}</a>
+            </li>
+        {% empty %}
+            No homepage database for this client
+        {% endfor %}
+        </ul>
+        </td>
+    </tr>
+</table>
+{% endblock %}

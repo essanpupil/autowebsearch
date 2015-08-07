@@ -3,29 +3,34 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 
-from .models import ExtendHomepage, StringParameter, StringAnalysist
-from website_management.models import Homepage, Webpage
+from .models import ExtendHomepage, StringParameter, StringAnalysist,\
+                    ExtendDomain
+from website_management.models import Homepage, Webpage, Domain
 from .analyzer_lib import string_analyst, add_list_url_to_webpage
 from .analyzer_lib import add_scam_url_website, string_analysist, crawl_website
 from webscraper.pagescraper import PageScraper
-from .forms import AddScamWebsiteForm, AddSequenceForm, EditAnalystForm
+from .forms import AddScamWebsiteForm, AddSequenceForm, EditAnalystForm, \
+                   EditAnalystDomainForm, SearchForm
 
 
 @login_required
 def add_sequence(request):
     """view to display and process form add new parameter sequence"""
-    if request.method == 'POST':
-        form = AddSequenceForm(request.POST)
-        if form.is_valid():
-            sentence = form.cleaned_data['sentence'].lower()
-            definitive = form.cleaned_data['definitive']
-            StringParameter.objects.create(sentence=sentence.strip(),
-                                           definitive=definitive)
-            return redirect('website_analyzer:view_sequence')
+    if request.user.is_staff:
+        if request.method == 'POST':
+            form = AddSequenceForm(request.POST)
+            if form.is_valid():
+                sentence = form.cleaned_data['sentence'].lower()
+                definitive = form.cleaned_data['definitive']
+                StringParameter.objects.create(sentence=sentence.strip(),
+                                               definitive=definitive)
+                return redirect('website_analyzer:view_sequence')
+        else:
+            form = AddSequenceForm()
+        return render(request, 'website_analyzer/add_sequence.html',
+                      {'form': form})
     else:
-        form = AddSequenceForm()
-    return render(request, 'website_analyzer/add_sequence.html',
-                  {'form': form})
+            return redirect('website_analyzer:analyst_dashboard')
 
 
 @login_required
@@ -38,12 +43,15 @@ def analyze_website(request, hp_id):
     context = {'name': hp.name,
                'id': hp.id,
                'domain': hp.domain.name,
+               'domain_id': hp.domain.id,
                'date_added': hp.date_added,
                'scam': hp.extendhomepage.scam,
                'inspection': hp.extendhomepage.inspected,
                'report': hp.extendhomepage.reported,
                'access': hp.extendhomepage.access,
                'whitelist': hp.extendhomepage.whitelist,
+               'full_crawl': hp.extendhomepage.full_crawled,
+               'times_analyzed': hp.extendhomepage.times_analyzed,
                'webpages': [],
                'params': []}
     for web in my_webpage:
@@ -94,7 +102,7 @@ def edit_analyst(request, homepage_id):
     website = get_object_or_404(Homepage, id=homepage_id)
     exth = ExtendHomepage.objects.get(homepage=website)
     if request.method == 'POST':
-	form = EditAnalystForm(request.POST)
+        form = EditAnalystForm(request.POST)
 	if form.is_valid():
             exth.scam = form.cleaned_data['scam']
             exth.inspected = form.cleaned_data['inspected']
@@ -139,20 +147,18 @@ def extract_links(request, web_id):
 @login_required
 def add_scam_website(request):
     """manually add website known as scam"""
-    # if this is a POST request, the form data is processed
-    if request.method == 'POST':
-        # create form instance and populate with data from the request
-        form = AddScamWebsiteForm(request.POST)
-
-        # check the form is valid or not
-        if form.is_valid():
-            # start saving scam homepage url to database
-            add_scam_url_website(form.cleaned_data['url'])
-            return redirect('website_analyzer:view_websites')
+    if request.user.is_staff:
+        if request.method == 'POST':
+            form = AddScamWebsiteForm(request.POST)
+            if form.is_valid():
+                add_scam_url_website(form.cleaned_data['url'])
+                return redirect('website_analyzer:view_websites')
+        else:
+            form = AddScamWebsiteForm()
+        return render(request, 'website_analyzer/add_scam_website.html',
+                      {'form': form})
     else:
-        form = AddScamWebsiteForm()
-    return render(request, 'website_analyzer/add_scam_website.html',
-                  {'form': form})
+        return redirect('website_analyzer:analyst_dashboard')
 
 
 @login_required
@@ -160,45 +166,84 @@ def view_websites(request):
     """display scam website"""
     websites = Homepage.objects.all().order_by('date_added').reverse()
     context = {'websites': []}
-    for hp in websites:
-        try:
-            exthp = ExtendHomepage.objects.get(homepage=hp)
-            context['websites'].append(
-                {'id': hp.id,
-                 'name': hp.name,
-                 'scam': exthp.scam,
-                 'inspection': exthp.inspected,
-                 'report': exthp.reported,
-                 'access': exthp.access,
-                 'web_count': hp.webpage_set.all().count(),
-                 'date_added': hp.date_added,})
-        except ExtendHomepage.DoesNotExist:
-            context['websites'].append(
-                {'id': hp.id,
-                 'name': hp.name,
-                 'scam': 'n/a',
-                 'inspection': 'n/a',
-                 'report': 'n/a',
-                 'access': 'n/a',
-                 'web_count': hp.webpage_set.all().count(),
-                 'date_added': hp.date_added,})
-    paginator = Paginator(context['websites'], 10)
+    form = SearchForm(request.GET)
+    if form.is_valid():
+        for hp in websites.filter(name__contains=form.cleaned_data['search']):
+            try:
+                exthp = ExtendHomepage.objects.get(homepage=hp)
+                context['websites'].append(
+                    {'id': hp.id,
+                     'name': hp.name,
+                     'date_added': hp.date_added,
+                     'scam': exthp.scam,
+                     'times_analyzed': exthp.times_analyzed,
+                     'full_crawled': exthp.full_crawled,
+                     'whitelist': exthp.whitelist,
+                     'inspection': exthp.inspected,
+                     'report': exthp.reported,
+                     'access': exthp.access,
+                     'web_count': hp.webpage_set.all().count(),
+                     'matched_sequence': {'min': 0, 'max': 0},})
+            except ExtendHomepage.DoesNotExist:
+                context['websites'].append(
+                    {'id': hp.id,
+                     'name': hp.name,
+                     'date_added': hp.date_added,
+                     'whitelist': 'n/a',
+                     'scam': 'n/a',
+                     'inspection': 'n/a',
+                     'report': 'n/a',
+                     'access': 'n/a',
+                     'web_count': hp.webpage_set.all().count(),
+                     'matched_sequence': {'min': 0, 'max': 0},})
+    else:
+        for hp in websites:
+            try:
+                exthp = ExtendHomepage.objects.get(homepage=hp)
+                context['websites'].append(
+                    {'id': hp.id,
+                     'name': hp.name,
+                     'date_added': hp.date_added,
+                     'scam': exthp.scam,
+                     'times_analyzed': exthp.times_analyzed,
+                     'full_crawled': exthp.full_crawled,
+                     'whitelist': exthp.whitelist,
+                     'inspection': exthp.inspected,
+                     'report': exthp.reported,
+                     'access': exthp.access,
+                     'web_count': hp.webpage_set.all().count(),
+                     'matched_sequence': {'min': 0, 'max': 0},})
+            except ExtendHomepage.DoesNotExist:
+                context['websites'].append(
+                    {'id': hp.id,
+                     'name': hp.name,
+                     'date_added': hp.date_added,
+                     'whitelist': 'n/a',
+                     'scam': 'n/a',
+                     'inspection': 'n/a',
+                     'report': 'n/a',
+                     'access': 'n/a',
+                     'web_count': hp.webpage_set.all().count(),
+                     'matched_sequence': {'min': 0, 'max': 0},})
+    paginator = Paginator(context['websites'], 20)
     page = request.GET.get('page')
     try:
-        context['websites'] = paginator.page(page)
+        context['pagebase'] = paginator.page(page)
     except PageNotAnInteger:
-        context['websites'] = paginator.page(1)
+        context['pagebase'] = paginator.page(1)
     except EmptyPage:
-        context['websites'] = paginator.page(paginator.num_pages)
+        context['pagebase'] = paginator.page(paginator.num_pages)
+    context['form'] = SearchForm()
+    context['searchbase'] = "Website name"
     return render(request, 'website_analyzer/view_websites.html', context)
 
 
 @login_required
 def view_sequence(request):
     """display sequence parameter used for analyze website"""
-    parameters = StringParameter.objects.all()
+    parameters = StringParameter.objects.all().order_by('date_added')
     context = {'parameters': []}
-    for parameter in parameters:
+    for parameter in parameters.reverse():
         context['parameters'].append({'sentence': parameter.sentence,
                                       'date_added': parameter.date_added,
                                       'definitive': parameter.definitive})
@@ -218,15 +263,6 @@ def crawl_homepage(request, homepage_id):
     "View to extract all links inside a website"
     website = get_object_or_404(Homepage, id=homepage_id)
     crawl_website(website)
-#    for webpage in website.webpage_set.all():
-#        page = PageScraper()
-#        if webpage.html_page == None:
-#            page.fetch_webpage(webpage.url)
-#            webpage.html_page = page.html
-#            webpage.save()
-#        else:
-#            pass
-#        add_list_url_to_webpage(page.ideal_urls(webpage.html_page))
     return redirect('website_analyzer:analyze_website', hp_id=website.id)
 
 
@@ -237,3 +273,196 @@ def start_sequence_analysist(request, homepage_id):
     homepage = get_object_or_404(Homepage, id=homepage_id)
     string_analysist(homepage)
     return redirect('website_analyzer:analyze_website', hp_id=homepage.id)
+
+
+@login_required
+def view_analyst_result(request):
+    "display analyst result"
+    analyst_results = StringAnalysist.objects.all().order_by('time').reverse()
+    analyst_websites = analyst_results
+    context = {}
+    context['analyst_results'] = []
+    for result in analyst_websites:
+        result_data = {'webpage': {'url': result.webpage.url,
+                                   'id': result.webpage.id,
+                                   'homepage_id': result.webpage.homepage.id},
+                       'analyze_time': result.time,
+                       'string_parameter': result.parameter,
+                       'find': result.find}
+        context['analyst_results'].append(result_data)
+    paginator = Paginator(context['analyst_results'], 20)
+    page = request.GET.get('page')
+    try:
+        context['analyst_results'] = paginator.page(page)
+    except PageNotAnInteger:
+        context['analyst_results'] = paginator.page(1)
+    except EmptyPage:
+        context['analyst_results'] = paginator.page(paginator.num_pages)
+    return render(request,
+                  'website_analyzer/view_analyst_result.html',
+                  context)
+
+
+@login_required
+def view_analyst_domains(request):
+    "display more info about domains"
+    domains = Domain.objects.all().order_by('date_added').reverse()
+    context = {'domains': []}
+    form = SearchForm(request.GET)
+    if form.is_valid():
+        for dom in domains.filter(name__contains=form.cleaned_data['search']):
+            try:
+                extdom = ExtendDomain.objects.get(domain=dom)
+                context['domains'].append(
+                    {'id': dom.id,
+                     'name': dom.name,
+                     'hp_count': dom.homepage_set.all().count(),
+                     'whitelist': extdom.whitelist,
+                     'free': extdom.free,
+                     'date_added': dom.date_added,})
+            except ExtendDomain.DoesNotExist:
+                context['domains'].append(
+                    {'id': dom.id,
+                     'name': dom.name,
+                     'hp_count': dom.homepage_set.all().count(),
+                     'whitelist': 'N/A',
+                     'free': 'N/A',
+                     'date_added': dom.date_added,})
+    else:
+        for dom in domains:
+            try:
+                extdom = ExtendDomain.objects.get(domain=dom)
+                context['domains'].append(
+                    {'id': dom.id,
+                     'name': dom.name,
+                     'hp_count': dom.homepage_set.all().count(),
+                     'whitelist': extdom.whitelist,
+                     'free': extdom.free,
+                     'date_added': dom.date_added,})
+            except ExtendDomain.DoesNotExist:
+                context['domains'].append(
+                    {'id': dom.id,
+                     'name': dom.name,
+                     'hp_count': dom.homepage_set.all().count(),
+                     'whitelist': 'N/A',
+                     'free': 'N/A',
+                     'date_added': dom.date_added,})
+
+    paginator = Paginator(context['domains'], 20)
+    page = request.GET.get('page')
+    try:
+        context['pagebase'] = paginator.page(page)
+    except PageNotAnInteger:
+        context['pagebase'] = paginator.page(1)
+    except EmptyPage:
+        context['pagebase'] = paginator.page(paginator.num_pages)
+    context['form'] = SearchForm()
+    context['searchbase'] = "Domain"
+    return render(request,
+                  'website_analyzer/view_analyst_domains.html',
+                  context)
+
+
+@login_required
+def edit_analyst_domain(request, dom_id):
+    "display form to edit domain data"
+    domain = get_object_or_404(Domain, id=dom_id)
+    extdom = ExtendDomain.objects.get(domain=domain)
+    if request.method == 'POST':
+        form = EditAnalystDomainForm(request.POST)
+	if form.is_valid():
+            extdom.free = form.cleaned_data['free']
+            extdom.whitelist = form.cleaned_data['whitelist']
+            extdom.save()
+            domain_origin = extdom.domain
+            my_homepages = domain_origin.homepage_set.all()
+            if extdom.whitelist == True:
+                for my_hp in my_homepages:
+                    ext_hp = ExtendHomepage.objects.get(homepage=my_hp)
+                    ext_hp.whitelist = True
+                    ext_hp.save()
+            domain.save()
+            return redirect('website_analyzer:detail_analyst_domain',
+                            dom_id = domain.id)
+    else:
+        form = EditAnalystDomainForm()
+    context = {'form': form,
+               'id': domain.id,
+               'domain': {},}
+    context['domain'] = {'id': domain.id,
+                         'name': domain.name,
+                         'free': domain.extenddomain.free,
+                         'whitelist': domain.extenddomain.whitelist,}
+    return render(request,
+                  'website_analyzer/edit_analyst_domain.html',
+                  context)
+
+
+@login_required
+def detail_analyst_domain(request, dom_id):
+    "display analyst data of a domain"
+    domain = get_object_or_404(Domain, id=dom_id)
+    my_homepages = domain.homepage_set.all()
+    extdom, created = ExtendDomain.objects.get_or_create(domain=domain)
+    context = {'name': domain.name,
+               'id': domain.id,
+               'date_added': domain.date_added,
+               'free': domain.extenddomain.free,
+               'whitelist': domain.extenddomain.whitelist,
+               'homepages': [],}
+    for hp in my_homepages:
+        context['homepages'].append({'id': hp.id, 'name': hp.name})
+    return render(request, 'website_analyzer/detail_analyst_domain.html', context)
+
+
+@login_required
+def view_client_analyst(request):
+    "display more info about domains"
+    clients = Client.objects.all()
+    context = {'clients': []}
+    for client in clients:
+        try:
+            extdom = ExtendDomain.objects.get(domain=dom)
+            context['domains'].append(
+                {'id': dom.id,
+                 'name': dom.name,
+                 'hp_count': dom.homepage_set.all().count(),
+                 'whitelist': extdom.whitelist,
+                 'free': extdom.free,
+                 'date_added': dom.date_added,})
+        except ExtendDomain.DoesNotExist:
+            context['domains'].append(
+                {'id': dom.id,
+                 'name': dom.name,
+                 'hp_count': dom.homepage_set.all().count(),
+                 'whitelist': 'N/A',
+                 'free': 'N/A',
+                 'date_added': dom.date_added,})
+    paginator = Paginator(context['domains'], 10)
+    page = request.GET.get('page')
+    try:
+        context['domains'] = paginator.page(page)
+    except PageNotAnInteger:
+        context['domains'] = paginator.page(1)
+    except EmptyPage:
+        context['domains'] = paginator.page(paginator.num_pages)
+    return render(request,
+                  'website_analyzer/view_analyst_domains.html',
+                  context)
+
+
+@login_required
+def detail_client_analyst(request, dom_id):
+    "display analyst data of a domain"
+    domain = get_object_or_404(Domain, id=dom_id)
+    my_homepages = domain.homepage_set.all()
+    extdom, created = ExtendDomain.objects.get_or_create(domain=domain)
+    context = {'name': domain.name,
+               'id': domain.id,
+               'date_added': domain.date_added,
+               'free': domain.extenddomain.free,
+               'whitelist': domain.extenddomain.whitelist,
+               'homepages': [],}
+    for hp in my_homepages:
+        context['homepages'].append({'id': hp.id, 'name': hp.name})
+    return render(request, 'website_analyzer/detail_analyst_domain.html', context)

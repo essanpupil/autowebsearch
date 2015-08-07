@@ -1,0 +1,48 @@
+{% if searchbase != None %}
+    <h4>Page Navigation</h4>
+<div class="pagination">
+    <span class="step-links">
+        {% if pagebase.has_previous %}
+            {% if "search" in request.get_full_path %}
+            <a href="?search={{ request.GET.search }}&page={{ pagebase.previous_page_number }}">previous</a>
+            {% else %}
+                <a href="?page={{ pagebase.previous_page_number }}">previous</a>
+            {% endif %}
+        {% endif %}
+
+        <span class="current">
+            Page {{ pagebase.number }} of {{ pagebase.paginator.num_pages }}.
+        </span>
+
+        {% if pagebase.has_next %}
+            {% if "search" in request.get_full_path %}
+            <a href="?search={{ request.GET.search }}&page={{ pagebase.next_page_number }}">next</a>
+            {% else %}
+                <a href="?page={{ pagebase.next_page_number }}">next</a>
+            {% endif %}
+        {% endif %}
+    </span>
+</div>
+    <h4>Search base value: {{ searchbase }}</h4>
+    <form action="" method="get" >
+    {{ form }}
+    <input type="submit" value="Submit Search" />
+</form>
+{% else %}
+    <h4>Page Navigation</h4>
+<div class="pagination">
+    <span class="step-links">
+        {% if pagebase.has_previous %}
+            <a href="?page={{ pagebase.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ pagebase.number }} of {{ pagebase.paginator.num_pages }}.
+        </span>
+
+        {% if pagebase.has_next %}
+            <a href="?page={{ pagebase.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
+{% endif %}

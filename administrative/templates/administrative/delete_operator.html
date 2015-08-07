@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block navigation %}
+    {% include 'administrative/admin_nav.html' %}
+    {% include 'administrative/client_detail_nav.html' %}{% endblock %}
+{% block pagetitle %}Delete operator | ScamSearcher{% endblock %}
+{% block content %}
+<h3>Delete operator: {{ operator.username }}</h3>
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<form action="{% url 'administrative:delete_operator_process' %}" method="post">
+{% csrf_token %}
+Change Status: <input type="radio" name="status" value="active" /> Operator active <input type="radio" name="status" value="nonactive" checked/> Operator non active
+<input type="hidden" name="id_operator" value="{{ operator.id }}" />
+<br />
+<br />
+<input type="submit" value="Save operator's new status" />
+</form>
+{% endblock %}
