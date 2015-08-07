@@ -29,7 +29,7 @@
         <th style="padding:3px;">Find</th>
         <th style="padding:3px;">Analyze</th>
     </tr>
-    {% for result in analyst_results %}
+    {% for result in filtered_results %}
     <tr>
         <td>{{ forloop.counter }}</td>
         <td><a href="{% url 'website_management:webpage_detail' result.webpage.id %}">

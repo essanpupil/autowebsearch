@@ -278,18 +278,11 @@ def start_sequence_analysist(request, homepage_id):
 @login_required
 def view_analyst_result(request):
     "display analyst result"
-    analyst_results = StringAnalysist.objects.all().order_by('time').reverse()
-    analyst_websites = analyst_results
+    analyst_results = StringAnalysist.objects.values_list(
+                          'id', flat=True).order_by('time').reverse()
     context = {}
-    context['analyst_results'] = []
-    for result in analyst_websites:
-        result_data = {'webpage': {'url': result.webpage.url,
-                                   'id': result.webpage.id,
-                                   'homepage_id': result.webpage.homepage.id},
-                       'analyze_time': result.time,
-                       'string_parameter': result.parameter,
-                       'find': result.find}
-        context['analyst_results'].append(result_data)
+    context['analyst_results'] = analyst_results
+    context['filtered_results'] = []
     paginator = Paginator(context['analyst_results'], 20)
     page = request.GET.get('page')
     try:
@@ -298,6 +291,16 @@ def view_analyst_result(request):
         context['analyst_results'] = paginator.page(1)
     except EmptyPage:
         context['analyst_results'] = paginator.page(paginator.num_pages)
+    analyst_websites = StringAnalysist.objects.filter(
+                           id__in=context['analyst_results'].object_list)
+    for result in analyst_websites:
+        result_data = {'webpage': {'url': result.webpage.url,
+                                   'id': result.webpage.id,
+                                   'homepage_id': result.webpage.homepage.id},
+                       'analyze_time': result.time,
+                       'string_parameter': result.parameter,
+                       'find': result.find}
+        context['filtered_results'].append(result_data)
     return render(request,
                   'website_analyzer/view_analyst_result.html',
                   context)
