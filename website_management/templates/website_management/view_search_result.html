@@ -3,21 +3,21 @@
     {% include 'website_management/website_nav.html' %}
 {% endblock %}
 {% block content %}
-<h3>View all keywords</h3>
+<h3>View search result</h3>
 {{ error_message }}
 <table>
     <tr>
         <th>No.</th>
-        <th>Keyword</th>
-        <th>Times Used</th>
-        <th>Date Added</th>
+        <th>Search Time</th>
+        <th>Keywords used</th>
+        <th>Webpage Result</th>
     </tr>
-    {% for query in queries %}
+    {% for search in search_results %}
         <tr>
             <td>{{ forloop.counter }}</td>
-            <td>{{ query.keyword }}</td>
-            <td>{{ query.times_used }}</td>
-            <td>{{ query.date_added }}</td>
+            <td>{{ search.search_time }}</td>
+            <td>{{ search.keywords }}</td>
+            <td>{{ search.webpage }}</td>
         </tr>
     {% empty %}
         <tr>

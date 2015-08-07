@@ -35,4 +35,6 @@ urlpatterns = patterns('',
                            name='add_new_keyword'),
                        url(r'^view_all_keywords/$', views.view_all_keywords,
                            name='view_all_keywords'),
+                       url(r'^view-search-result/$', views.view_search_result,
+                           name='view_search_result'),
                        )
