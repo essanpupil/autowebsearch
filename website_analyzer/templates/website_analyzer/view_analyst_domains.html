@@ -1,6 +1,19 @@
 {% extends 'base.html' %}
 {% block navigation %}
     {% include 'website_analyzer/analyst_nav.html' %}
+    <div class="pagination">
+        <span class="step-links">
+            {% if domains.has_previous %}
+                 <a href="?page={{ domains.previous_page_number }}">previous</a>
+            {% endif %}
+            <span class="current">
+                Page {{ domains.number }} of {{ domains.paginator.num_pages }}.
+            </span>
+            {% if domains.has_next %}
+                <a href="?page={{ domains.next_page_number }}">next</a>
+            {% endif %}
+        </span>
+    </div>
     {% include 'website_analyzer/search.html' %}
 {% endblock %}
 {% block content %}
@@ -15,7 +28,7 @@
         <th style="padding:3px;">Homepage<br />Count?</th>
         <th style="padding:3px;">Action</th>
     </tr>
-    {% for dom in domains %}
+    {% for dom in divided_domains %}
     <tr>
         <td>{{ forloop.counter }}</td>
         <td><span title="{{ dom.name }}">{{ dom.name|truncatechars:25 }}</span></td>
