@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block navigation %}
+    {% include 'website_analyzer/analyst_nav.html' %}
+{% endblock %}
+{% block content %}
+<h3>Edit sequence:</h3>
+"{{ object.sentence }}"
+<form action="" method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Save edit" />
+</form>
+{% endblock %}

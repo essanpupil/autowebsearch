@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required
+from django.views.generic.edit import UpdateView
 
 from .models import ExtendHomepage, StringParameter, StringAnalysist,\
                     ExtendDomain
@@ -116,6 +117,8 @@ def edit_analyst(request, homepage_id):
     else:
         form = EditAnalystForm()
     context = {'form': form,
+               'id': website.id,
+               'domain_id': website.domain.id,
                'homepage': {},}
     context['homepage'] = {'id': website.id,
                            'name': website.name,
@@ -262,6 +265,7 @@ def view_sequence(request):
     context = {'parameters': []}
     for parameter in parameters.reverse():
         context['parameters'].append({'sentence': parameter.sentence,
+                                      'id': parameter.id,
                                       'date_added': parameter.date_added,
                                       'definitive': parameter.definitive})
     paginator = Paginator(context['parameters'], 10)
@@ -496,4 +500,13 @@ def detail_client_analyst(request, dom_id):
                'homepages': [],}
     for hp in my_homepages:
         context['homepages'].append({'id': hp.id, 'name': hp.name})
-    return render(request, 'website_analyzer/detail_analyst_domain.html', context)
+    return render(request, 
+                  'website_analyzer/detail_analyst_domain.html', context)
+
+
+class SequenceUpdate(UpdateView):
+    "edit definitive status of a string parameter"
+    model = StringParameter
+    fields = ['definitive']
+    template_name_suffix = '_update_form'
+    success_url = reverse_lazy('website_analyzer:view_sequence')

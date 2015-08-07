@@ -1,4 +1,8 @@
 {% extends 'base.html' %}
+{% block navigation %}
+    {% include 'website_analyzer/analyst_nav.html' %}
+    {% include 'website_analyzer/website_analyzer_nav.html' %}
+{% endblock %}
 {% block content %}
 <h3>Edit  website analyst data for: {{ homepage.name }}</h3>
 <form action="{% url 'website_analyzer:edit_analyst' homepage.id %}"
