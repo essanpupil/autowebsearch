@@ -336,7 +336,7 @@ def view_analyst_domains(request):
                    flat=True).order_by('id').reverse()
 
     context = {'domains': domains, 'divided_domains': []}
-    paginator = Paginator(domains, 10)
+    paginator = Paginator(domains, 20)
     page = request.GET.get('page')
     try:
         context['pagebase'] = paginator.page(page)
