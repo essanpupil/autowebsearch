@@ -39,7 +39,7 @@ class GoogleSearch:
         # method to execute the query to google. The specified page and keyword
         # must already included in the url.
         self.request_page = requests.get(url)
-        self.request_page.raise_for_status()
+        #self.request_page.raise_for_status()
         self.current_html_page = self.request_page.text
         soup = BeautifulSoup(self.current_html_page, "html5lib")
         results = soup.find_all('a', class_=False)
