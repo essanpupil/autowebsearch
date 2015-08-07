@@ -12,11 +12,14 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         query = Query.objects.all().order_by('times_used')[0]
         search = GoogleSearch(query.keywords)
-        search.start_search()
-        add_list_url_to_webpage(search.search_result)
-        for url in search.search_result:
-            webpage = Webpage.objects.get(url=url)
-            saved_search = Search.objects.create(webpage=webpage,
-                                                 query=query) 
-        query.times_used += 1
-        query.save()
+        try:
+            search.start_search()
+            add_list_url_to_webpage(search.search_result)
+            for url in search.search_result:
+                webpage = Webpage.objects.get(url=url)
+                saved_search = Search.objects.create(webpage=webpage,
+                                                     query=query) 
+            query.times_used += 1
+            query.save()
+        except:
+            print "Search failed";

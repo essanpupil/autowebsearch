@@ -9,13 +9,15 @@ class Command(BaseCommand):
     help = "Search webpages with saved queries"
     
     def handle(self, *args, **options):
-        ext_doms = ExtendDomain.objects.filter(free=True)
+        ext_doms = ExtendDomain.objects.only('times_crawled',
+                                             'domain',
+                                             'free').filter(free=True)
         ext_dom = ext_doms.order_by('times_crawled')
         if len(ext_dom) > 0:
-            homepages = ext_dom[0].domain.homepage_set.all()
+            ext_dom[0].times_crawled += 1
+            ext_dom[0].save(update_fields=['times_crawled'])
+            homepages = ext_dom[0].domain.homepage_set.all()[:1]
             for homepage in homepages:
                 crawl_website(homepage)
-            ext_dom[0].times_crawled += 1
-            ext_dom[0].save()
         else:
             print "No free domain"

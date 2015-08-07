@@ -124,8 +124,6 @@ def string_analysist(homepage):
                 extw, created = ExtendWebpage.objects.get_or_create(
                         webpage=webpage)
                 if extw.text_body == None:
-                    crawl_website(extw.webpage.homepage)
-                else:
                     continue
                 if parameter.sentence in extw.text_body:
                     StringAnalysist.objects.create(webpage=webpage,
@@ -158,6 +156,9 @@ def crawl_website(homepage):
     webpages in the database. The only accepted argument in Homepage object."""
     keep_crawling = True
     while keep_crawling:
+    ext_hp = ExtendHomepage.objects.get(homepage=homepage).only('full_crawled')
+    ext_hp.full_crawled += 1
+    ext_hp.save(update_fields=['full_crawled'])
         for webpage in homepage.webpage_set.all():
             page = PageScraper()
             page.fetch_webpage(webpage.url)
@@ -165,12 +166,9 @@ def crawl_website(homepage):
             extw, created = ExtendWebpage.objects.get_or_create(
                     webpage=webpage)
             extw.text_body = page.get_text_body()
-            extw.save()
-            webpage.save()
+            extw.save(update_fields=['text_body'])
+            webpage.save(update_fields=['html_page'])
             add_list_url_to_webpage(page.ideal_urls())
         if not homepage.webpage_set.filter(html_page__isnull=True).exists():
             break
         keep_crawling = False
-    ext_hp = ExtendHomepage.objects.get(homepage=homepage)
-    ext_hp.full_crawled += 1
-    ext_hp.save()

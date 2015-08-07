@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block navigation %}
+    {% include 'website_management/website_nav.html' %}
+{% endblock %}
+{% block content %}
+<h3>View search result</h3>
+{{ error_message }}
+<table>
+    <tr>
+        <th>No.</th>
+        <th>Search Time</th>
+        <th>Keywords used</th>
+        <th>Webpage Result</th>
+    </tr>
+    {% for search in search_results %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ search.search_time }}</td>
+            <td>{{ search.keywords }}</td>
+            <td>{{ search.webpage }}</td>
+        </tr>
+    {% empty %}
+        <tr>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}

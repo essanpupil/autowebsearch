@@ -166,42 +166,75 @@ def view_websites(request):
     """display scam website"""
     websites = Homepage.objects.all().order_by('date_added').reverse()
     context = {'websites': []}
-    for hp in websites:
-        try:
-            exthp = ExtendHomepage.objects.get(homepage=hp)
-            context['websites'].append(
-                {'id': hp.id,
-                 'name': hp.name,
-                 'date_added': hp.date_added,
-                 'scam': exthp.scam,
-                 'times_analyzed': exthp.times_analyzed,
-                 'full_crawled': exthp.full_crawled,
-                 'whitelist': exthp.whitelist,
-                 'inspection': exthp.inspected,
-                 'report': exthp.reported,
-                 'access': exthp.access,
-                 'web_count': hp.webpage_set.all().count(),
-                 'matched_sequence': {'min': 0, 'max': 0},})
-        except ExtendHomepage.DoesNotExist:
-            context['websites'].append(
-                {'id': hp.id,
-                 'name': hp.name,
-                 'date_added': hp.date_added,
-                 'whitelist': 'n/a',
-                 'scam': 'n/a',
-                 'inspection': 'n/a',
-                 'report': 'n/a',
-                 'access': 'n/a',
-                 'web_count': hp.webpage_set.all().count(),
-                 'matched_sequence': {'min': 0, 'max': 0},})
+    form = SearchForm(request.GET)
+    if form.is_valid():
+        for hp in websites.filter(name__contains=form.cleaned_data['search']):
+            try:
+                exthp = ExtendHomepage.objects.get(homepage=hp)
+                context['websites'].append(
+                    {'id': hp.id,
+                     'name': hp.name,
+                     'date_added': hp.date_added,
+                     'scam': exthp.scam,
+                     'times_analyzed': exthp.times_analyzed,
+                     'full_crawled': exthp.full_crawled,
+                     'whitelist': exthp.whitelist,
+                     'inspection': exthp.inspected,
+                     'report': exthp.reported,
+                     'access': exthp.access,
+                     'web_count': hp.webpage_set.all().count(),
+                     'matched_sequence': {'min': 0, 'max': 0},})
+            except ExtendHomepage.DoesNotExist:
+                context['websites'].append(
+                    {'id': hp.id,
+                     'name': hp.name,
+                     'date_added': hp.date_added,
+                     'whitelist': 'n/a',
+                     'scam': 'n/a',
+                     'inspection': 'n/a',
+                     'report': 'n/a',
+                     'access': 'n/a',
+                     'web_count': hp.webpage_set.all().count(),
+                     'matched_sequence': {'min': 0, 'max': 0},})
+    else:
+        for hp in websites:
+            try:
+                exthp = ExtendHomepage.objects.get(homepage=hp)
+                context['websites'].append(
+                    {'id': hp.id,
+                     'name': hp.name,
+                     'date_added': hp.date_added,
+                     'scam': exthp.scam,
+                     'times_analyzed': exthp.times_analyzed,
+                     'full_crawled': exthp.full_crawled,
+                     'whitelist': exthp.whitelist,
+                     'inspection': exthp.inspected,
+                     'report': exthp.reported,
+                     'access': exthp.access,
+                     'web_count': hp.webpage_set.all().count(),
+                     'matched_sequence': {'min': 0, 'max': 0},})
+            except ExtendHomepage.DoesNotExist:
+                context['websites'].append(
+                    {'id': hp.id,
+                     'name': hp.name,
+                     'date_added': hp.date_added,
+                     'whitelist': 'n/a',
+                     'scam': 'n/a',
+                     'inspection': 'n/a',
+                     'report': 'n/a',
+                     'access': 'n/a',
+                     'web_count': hp.webpage_set.all().count(),
+                     'matched_sequence': {'min': 0, 'max': 0},})
     paginator = Paginator(context['websites'], 20)
     page = request.GET.get('page')
     try:
-        context['websites'] = paginator.page(page)
+        context['pagebase'] = paginator.page(page)
     except PageNotAnInteger:
-        context['websites'] = paginator.page(1)
+        context['pagebase'] = paginator.page(1)
     except EmptyPage:
-        context['websites'] = paginator.page(paginator.num_pages)
+        context['pagebase'] = paginator.page(paginator.num_pages)
+    context['form'] = SearchForm()
+    context['searchbase'] = "Website name"
     return render(request, 'website_analyzer/view_websites.html', context)
 
 
@@ -318,12 +351,11 @@ def view_analyst_domains(request):
     paginator = Paginator(context['domains'], 20)
     page = request.GET.get('page')
     try:
-        context['domains'] = paginator.page(page)
+        context['pagebase'] = paginator.page(page)
     except PageNotAnInteger:
-        context['domains'] = paginator.page(1)
+        context['pagebase'] = paginator.page(1)
     except EmptyPage:
-        context['domains'] = paginator.page(paginator.num_pages)
-
+        context['pagebase'] = paginator.page(paginator.num_pages)
     context['form'] = SearchForm()
     context['searchbase'] = "Domain"
     return render(request,

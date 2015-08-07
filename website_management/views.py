@@ -265,3 +265,17 @@ def view_all_keywords(request):
                                    'id': item.id})
     return render(request,
                   'website_management/view_all_keywords.html', context)
+
+
+@login_required
+def view_search_result(request):
+    "display all search result, times, & keyword"
+    searches = Search.objects.all().order_by('search_time').reverse()
+    context = {'search_results': []}
+    for search in searches:
+        search_data = {'keywords': search.query,
+                       'webpage': search.webpage,
+                       'search_time': search.search_time}
+        context['search_results'].append(search_data)
+    return render(request, 'website_management/view_search_result.html',
+                  context)

@@ -1,22 +1,6 @@
 {% extends 'base.html' %}
 {% block navigation %}
     {% include 'website_analyzer/analyst_nav.html' %}
-    <h4>Page Navigation</h4>
-<div class="pagination">
-    <span class="step-links">
-        {% if domains.has_previous %}
-            <a href="?page={{ domains.previous_page_number }}">previous</a>
-        {% endif %}
-
-        <span class="current">
-            Page {{ domains.number }} of {{ domains.paginator.num_pages }}.
-        </span>
-
-        {% if domains.has_next %}
-            <a href="?page={{ domains.next_page_number }}">next</a>
-        {% endif %}
-    </span>
-</div>
     {% include 'website_analyzer/search.html' %}
 {% endblock %}
 {% block content %}
