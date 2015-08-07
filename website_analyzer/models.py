@@ -110,7 +110,7 @@ class StringParameter(models.Model):
     """Store string parameter to be search during analysist"""
     sentence = models.CharField(max_length=255, unique=True)
     definitive = models.BooleanField(default=False)
-    date_added = models.DateField(auto_now=True)
+    date_added = models.DateField(auto_now_add=True)
 
     def __unicode__(self):  # lint:ok
         return self.sentence

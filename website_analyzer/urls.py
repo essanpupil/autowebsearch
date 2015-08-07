@@ -1,4 +1,5 @@
 from django.conf.urls import url, patterns
+from django.contrib.auth.decorators import login_required
 
 from website_analyzer import views
 
@@ -48,10 +49,10 @@ urlpatterns = patterns('',
                        url(r'^view_clients_analyst/$',
                            views.view_client_analyst,
                            name='view_client_analyst'),
-#                       url(r'^edit_client_analyst/(?P<dom_id>\d+)/$',
-#                           views.edit_analyst_domain,
-#                           name='edit_analyst_domain'),
                        url(r'^detail_client_analyst/(?P<client_id>\d+)/$',
                            views.detail_client_analyst,
                            name='detail_client_analyst'),
+                        url(r'^edit-sequence(?P<pk>\d+)/$',
+                            login_required(views.SequenceUpdate.as_view()),
+                            name='edit_sequence'),
                        )

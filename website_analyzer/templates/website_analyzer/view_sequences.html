@@ -38,7 +38,8 @@
     {% for parameter in parameters %}
         <tr>
             <td>{{ forloop.counter }}</td>
-            <td>{{ parameter.sentence }}</td>
+            <td><a href="{% url 'website_analyzer:edit_sequence' parameter.id %}" >
+                    {{ parameter.sentence }}</a></td>
             <td>{{ parameter.definitive }}</td>
             <td>{{ parameter.date_added }}</td>
         </tr>
