@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from website_management.models import Homepage
+from website_management.models import Homepage, Query
+from website_analyzer.models import StringParameter
 
 class Client(models.Model):
     "Place to save everybody that use this application service"
@@ -43,3 +44,22 @@ class Website(models.Model):
     event = models.ForeignKey(Event, null=True, blank=True)
     def __unicode__(self):
         return self.homepage.name
+
+
+class ClientKeyword(models.Model):
+    "save keyword for specific client"
+    query = models.OneToOneField(Query)
+    client = models.ForeignKey(Client)
+    
+    def __unicode__(self):
+        return self.query.keywords
+
+
+class ClientSequence(models.Model):
+    "save keyword for specific client"
+    string_parameter = models.OneToOneField(StringParameter)
+    client = models.ForeignKey(Client)
+    event = models.ForeignKey(Event, null=True, blank=True)
+    
+    def __unicode__(self):
+        return self.query.keywords

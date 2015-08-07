@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block pagetitle %}View client's keywords | ScamSearcher{% endblock %}
+{% block navigation %}
+    {% include 'administrative/admin_nav.html' %}
+    {% include 'administrative/client_detail_nav.html' %}
+    <h4>Page navigation</h4>
+    <div class="pagination">
+        <span class="step-links">
+            {% if keywords.has_previous %}
+                <a href="?page={{ keywords.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ keywords.number }} of {{ keywords.paginator.num_pages }}.
+            </span>
+
+            {% if keywords.has_next %}
+                <a href="?page={{ keywords.next_page_number }}">next</a>
+            {% endif %}
+        </span>
+    </div>
+{% endblock %}
+{% block content %}
+<h3>Keywords belong to: <a href="{% url 'administrative:detail_client' client.id %}" />{{ client.name }}</a></h3>
+{{ error_message }}
+<table>
+    <tr>
+        <th>No.</th>
+        <th>Keyword</th>
+    </tr>
+    {% for keyword in keywords %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ keyword.name }}</td>
+        </tr>
+    {% empty %}
+        <tr>
+            <td>-</td>
+            <td>-</td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}

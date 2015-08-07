@@ -41,14 +41,15 @@ class GoogleSearch:
         self.request_page = requests.get(url)
         self.request_page.raise_for_status()
         self.current_html_page = self.request_page.text
-        soup = BeautifulSoup(self.current_html_page)
+        soup = BeautifulSoup(self.current_html_page, "html5lib")
         results = soup.find_all('a', class_=False)
         links = []  # store the final url of search result, 10 links
         
         # this loop filter the search result links inside the search page
         for target in results:
             # filter only link from search result shoul be appended
-            if (target.get('href').find("/url?q") == 0) and not (target.get('href').find("/url?q=http://webcache.googleusercontent.com") == 0) and not (target.get('href').find("/url?q=/settings/") ==0):
+            if (target.get('href').find("/url?q") == 0) and not \
+                    (target.get('href').find("/url?q=http://webcache.googleusercontent.com") == 0) and not (target.get('href').find("/url?q=/settings/") ==0):
                 start_index = target.get('href').find('http')
                 end_index = target.get('href').find('&sa')
 

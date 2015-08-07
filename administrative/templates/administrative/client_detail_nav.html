@@ -1,10 +1,28 @@
 <h4>Client detail navigation</h4>
 <ul>
-    <li><a href="{% url 'administrative:add_homepage' client.id %}">Add homepage</a></li>
-    <li><a href="{% url 'administrative:edit_client' pk=client.id %}">Edit client</a></li>
-    <li><a href="{% url 'administrative:delete_client' client.id %}">Delete client</a></li>
-    <li><a href="{% url 'administrative:add_event' client.id %}">Add event</a></li>
-    <li><a href="{% url 'administrative:view_event' client.id %}">View event</a></li>
-    <li><a href="{% url 'administrative:add_operator' client.id %}">Add operator </a></li>
-    <li><a href="{% url 'administrative:view_operator' client.id %}">View Operator</a></li>
+    <li><a href="{% url 'administrative:detail_client' client.id %}">
+            Detail
+        </a></li>
+    <li><a href="{% url 'administrative:add_homepage' client.id %}">
+            Add homepage</a></li>
+    <li><a href="{% url 'administrative:edit_client' pk=client.id %}">
+            Edit client</a></li>
+    <li><a href="{% url 'administrative:delete_client' client.id %}">
+            Delete client</a></li>
+    <li><a href="{% url 'administrative:add_event' client.id %}">
+            Add event</a></li>
+    <li><a href="{% url 'administrative:view_event' client.id %}">
+            View event</a></li>
+    <li><a href="{% url 'administrative:add_operator' client.id %}">
+            Add operator </a></li>
+    <li><a href="{% url 'administrative:view_operator' client.id %}">
+            View Operator</a></li>
+    <li><a href="{% url 'administrative:add_client_keyword' client.id %}">
+            Add client keyword</a></li>
+    <li><a href="{% url 'administrative:view_client_keyword' client.id %}">
+            View client keyword</a></li>
+    <li><a href="{% url 'administrative:add_client_sequence' client.id %}">
+            Add client sequence</a></li>
+    <li><a href="{% url 'administrative:view_client_sequence' client.id %}">
+            View client sequence</a></li>
 </ul>

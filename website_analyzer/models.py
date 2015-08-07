@@ -5,12 +5,18 @@ from website_management.models import Webpage, Homepage, Domain
 
 
 class ExtendDomain(models.Model):
-
     """extend model Domain to add more information"""
+    WHITELIST_CHOICES = ((True, 'YES'),
+                         (False,  'NO'),
+                         (None, 'UNKNOWN'))
     domain = models.OneToOneField(Domain)
+    # True if the web should be whitelist, False if should not, None pending
+    whitelist = models.NullBooleanField(max_length=7, choices=WHITELIST_CHOICES,
+                                 blank=True, null=True)
 
     # True if the domain is freely available (blogspot, wordpress, etc).
     free = models.NullBooleanField(null=True, blank=True)
+    times_crawled = models.IntegerField(default=0)
 
 
 class ExtendHomepage(models.Model):
@@ -24,6 +30,8 @@ class ExtendHomepage(models.Model):
                          (None, 'UNKNOWN'))
 
     homepage = models.OneToOneField(Homepage)
+    full_crawled = models.IntegerField(default=0)
+    times_analyzed = models.IntegerField(default=0)
 
     # value: 'yes', 'no', 'unknown'
     scam = models.NullBooleanField(max_length=7, choices=SCAM_CHOICES,
@@ -87,7 +95,6 @@ class Token(models.Model):
 
 
 class Pieces(models.Model):
-
     """Token sequence number on webpage"""
     webpage = models.ForeignKey(Webpage)
     token = models.ForeignKey(Token)
@@ -95,7 +102,6 @@ class Pieces(models.Model):
 
 
 class SequenceDescription(models.Model):
-
     """store the description of each sequence"""
     name = models.CharField(max_length=255, unique=True)
 
@@ -111,7 +117,7 @@ class StringParameter(models.Model):
 
 
 class StringAnalysist(models.Model):
-    """Store analysist result of webpage's"""
+    """Store string parameter analysist result of webpage's"""
     webpage = models.ForeignKey(Webpage)
     parameter = models.ForeignKey(StringParameter)
     time = models.DateTimeField(auto_now=True)

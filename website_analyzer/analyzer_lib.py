@@ -15,6 +15,15 @@ def string_analyst(hp_id):
     exthp, created = ExtendHomepage.objects.get_or_create(homepage=hp)
     params = StringParameter.objects.all()
     for web in hp.webpage_set.all():
+        if web.extendwebpage.text_body == None:
+            page = PageScraper()
+            page.fetch_webpage(web.url)
+            web.html_page = page.html
+            extw = web.extendwebpage
+            extw.text_body = page.get_text_body()
+            extw.save()
+            web.save()
+            
         for param in params:
             if param.sentence in web.extendwebpage.text_body:
                 StringAnalysist.objects.create(webpage=web,
@@ -27,6 +36,8 @@ def string_analyst(hp_id):
                 StringAnalysist.objects.create(webpage=web,
                                                parameter=param,
                                                find=False)
+    exthp.times_analyzed += 1
+    exthp.save()
 
 
 def add_url_to_webpage(url):
@@ -44,11 +55,21 @@ def add_url_to_webpage(url):
                                                        domain=dom)
             ExtendHomepage.objects.create(homepage=hp)
     except:
-        pass
+            hp, crtd2 = Homepage.objects.get_or_create(name='.'.join(ext),
+                                                       domain=dom)
     try:
         with transaction.atomic():
-            web = Webpage.objects.create(url=url, homepage=hp)
-            ExtendWebpage.objects.create(webpage=web)
+            if len(url) > 255:
+                truncate_url = url[0:255]
+                web = Webpage.objects.create(url=truncate_url,
+                                             full_url=url,
+                                             homepage=hp)
+                ExtendWebpage.objects.create(webpage=web)
+            else:
+                web = Webpage.objects.create(url=url,
+                                             full_url=url,
+                                             homepage=hp)
+                ExtendWebpage.objects.create(webpage=web)
     except IntegrityError:
         raise IntegrityError
 
@@ -102,6 +123,10 @@ def string_analysist(homepage):
             if newest_string_analysist.count() == 0:
                 extw, created = ExtendWebpage.objects.get_or_create(
                         webpage=webpage)
+                if extw.text_body == None:
+                    crawl_website(extw.webpage.homepage)
+                else:
+                    continue
                 if parameter.sentence in extw.text_body:
                     StringAnalysist.objects.create(webpage=webpage,
                             parameter=parameter,
@@ -132,7 +157,7 @@ def crawl_website(homepage):
     """function to fetch html code and url of a website, start from available
     webpages in the database. The only accepted argument in Homepage object."""
     keep_crawling = True
-    while True:
+    while keep_crawling:
         for webpage in homepage.webpage_set.all():
             page = PageScraper()
             page.fetch_webpage(webpage.url)
@@ -145,5 +170,7 @@ def crawl_website(homepage):
             add_list_url_to_webpage(page.ideal_urls())
         if not homepage.webpage_set.filter(html_page__isnull=True).exists():
             break
-
-
+        keep_crawling = False
+    ext_hp = ExtendHomepage.objects.get(homepage=homepage)
+    ext_hp.full_crawled += 1
+    ext_hp.save()

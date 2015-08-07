@@ -3,7 +3,8 @@ from django.core import validators
 from django import forms
 from django.contrib.auth.models import User
 
-from .models import Client, Website, Event, Operator
+from .models import Client, Website, Event, Operator, ClientKeyword, \
+                    ClientSequence
 
 
 class AddClientForm(ModelForm):
@@ -32,12 +33,35 @@ class AddOperatorForm(ModelForm):
                   'client',)
         widgets = {'client': HiddenInput(),}
 
+
 class AddClientHomepageForm(ModelForm):
     "input client's homepage"
     url =  forms.URLField(validators=[validators.URLValidator])
     class Meta:
         model = Website
         fields = ['url', 'event', 'client']
+        widgets = {
+            'client': HiddenInput(),
+        }
+
+
+class AddClientKeywordForm(ModelForm):
+    "input client's keyword"
+    keywords =  forms.CharField()
+    class Meta:
+        model = ClientKeyword
+        fields = ['keywords', 'client']
+        widgets = {
+            'client': HiddenInput(),
+        }
+
+
+class AddClientSequenceForm(ModelForm):
+    "input client's sequence"
+    sequence =  forms.CharField()
+    class Meta:
+        model = ClientSequence
+        fields = ['sequence', 'client', 'event']
         widgets = {
             'client': HiddenInput(),
         }
@@ -74,7 +98,8 @@ class AddUserForm(ModelForm):
         return form_data
     class Meta:
         model = User
-        fields = ('username', 'password', 'password_again', 'first_name', 'last_name', 'email')
+        fields = ('username', 'password', 'password_again', 'first_name', 
+                  'last_name', 'email')
         widgets = {'password': PasswordInput(),}
 
 
