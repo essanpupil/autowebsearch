@@ -155,10 +155,10 @@ def crawl_website(homepage):
     """function to fetch html code and url of a website, start from available
     webpages in the database. The only accepted argument in Homepage object."""
     keep_crawling = True
-    while keep_crawling:
-    ext_hp = ExtendHomepage.objects.get(homepage=homepage).only('full_crawled')
+    ext_hp = ExtendHomepage.objects.only('full_crawled').get(homepage=homepage)
     ext_hp.full_crawled += 1
     ext_hp.save(update_fields=['full_crawled'])
+    while keep_crawling:
         for webpage in homepage.webpage_set.all():
             page = PageScraper()
             page.fetch_webpage(webpage.url)
