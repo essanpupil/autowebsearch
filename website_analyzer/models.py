@@ -120,7 +120,7 @@ class StringAnalysist(models.Model):
     """Store string parameter analysist result of webpage's"""
     webpage = models.ForeignKey(Webpage)
     parameter = models.ForeignKey(StringParameter)
-    time = models.DateTimeField(auto_now=True)
+    time = models.DateTimeField(auto_now=True, db_index=True)
     find = models.BooleanField(default=False)
 
 
