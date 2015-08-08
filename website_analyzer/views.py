@@ -82,7 +82,7 @@ def analyst_dashboard(request):
     exthp = ExtendHomepage.objects.all()
     context = {'scam_count': exthp.filter(scam=True).count(),
                'whitelist_count': exthp.filter(whitelist=True).count(),
-               'hp_count': exthp.count()}
+               'hp_count': Homepage.objects.all().count()}
     return render(request, 'website_analyzer/dashboard.html', context)
 
 
