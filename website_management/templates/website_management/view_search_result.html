@@ -15,7 +15,7 @@
     {% for search in search_results %}
         <tr>
             <td>{{ forloop.counter }}</td>
-            <td>{{ search.search_time }}</td>
+            <td>{{ search.search_time|date:"H:i d-M-Y" }}</td>
             <td>{{ search.keywords }}</td>
             <td>{{ search.webpage }}</td>
         </tr>

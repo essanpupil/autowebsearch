@@ -33,7 +33,11 @@
 <div class="pagination">
     <span class="step-links">
         {% if pagebase.has_previous %}
+            {% if request.GET|length == 0 %}
             <a href="?page={{ pagebase.previous_page_number }}">previous</a>
+            {% else %}
+            <a href="{{ request.get_full_path }}&page={{ pagebase.previous_page_number }}">previous</a>
+            {% endif %}
         {% endif %}
 
         <span class="current">
@@ -41,8 +45,11 @@
         </span>
 
         {% if pagebase.has_next %}
+            {% if request.GET|length == 0 %}
             <a href="?page={{ pagebase.next_page_number }}">next</a>
+            {% else %}
+            <a href="{{ request.get_full_path }}&page={{ pagebase.next_page_number }}">next</a>
+            {% endif %}
         {% endif %}
     </span>
 </div>
-{% endif %}

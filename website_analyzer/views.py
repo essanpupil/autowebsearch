@@ -12,6 +12,7 @@ from .analyzer_lib import add_scam_url_website, string_analysist, crawl_website
 from webscraper.pagescraper import PageScraper
 from .forms import AddScamWebsiteForm, AddSequenceForm, EditAnalystForm, \
                    EditAnalystDomainForm, SearchForm
+from .filters import ExtendDomainFilter
 
 
 @login_required
@@ -330,17 +331,12 @@ def view_analyst_result(request):
 @login_required
 def view_analyst_domains(request):
     "display more info about domains"
-    form = SearchForm(request.GET)
-    if form.is_valid():
-        domains = Domain.objects.filter(
-                name__contains=form.cleaned_data['search']).values_list(
-                        'id', flat=True).order_by('id').reverse()
-    else:
-        domains = Domain.objects.only('id').all().values_list('id',
-                   flat=True).order_by('id').reverse()
-
-    context = {'domains': domains, 'divided_domains': []}
-    paginator = Paginator(domains, 20)
+    filtered_domains = ExtendDomainFilter(request.GET,
+                           queryset=Domain.objects.only(
+                               'id').all().values_list('id',
+                                   flat=True).order_by('id').reverse())
+    context = {'divided_domains': [], 'filter': filtered_domains}
+    paginator = Paginator(filtered_domains, 20)
     page = request.GET.get('page')
     try:
         context['pagebase'] = paginator.page(page)
@@ -348,51 +344,26 @@ def view_analyst_domains(request):
         context['pagebase'] = paginator.page(1)
     except EmptyPage:
         context['pagebase'] = paginator.page(paginator.num_pages)
-    context['divided_id'] = context['pagebase'].object_list
-    divided_domains = Domain.objects.filter(
-                          id__in=context['pagebase'].object_list).order_by(
-                                  'id').reverse()
-    if form.is_valid():
-        for dom in divided_domains.filter(
-                        name__contains=form.cleaned_data['search']):
-            try:
-                extdom = ExtendDomain.objects.get(domain=dom)
-                context['divided_domains'].append(
-                    {'id': dom.id,
-                     'name': dom.name,
-                     'hp_count': dom.homepage_set.all().count(),
-                     'whitelist': extdom.whitelist,
-                     'free': extdom.free,
-                     'date_added': dom.date_added,})
-            except ExtendDomain.DoesNotExist:
-                context['divided_domains'].append(
-                    {'id': dom.id,
-                     'name': dom.name,
-                     'hp_count': dom.homepage_set.all().count(),
-                     'whitelist': 'N/A',
-                     'free': 'N/A',
-                     'date_added': dom.date_added,})
-    else:
-        for dom in divided_domains:
-            try:
-                extdom = ExtendDomain.objects.get(domain=dom)
-                context['divided_domains'].append(
-                    {'id': dom.id,
-                     'name': dom.name,
-                     'hp_count': dom.homepage_set.all().count(),
-                     'whitelist': extdom.whitelist,
-                     'free': extdom.free,
-                     'date_added': dom.date_added,})
-            except ExtendDomain.DoesNotExist:
-                context['divided_domains'].append(
-                    {'id': dom.id,
-                     'name': dom.name,
-                     'hp_count': dom.homepage_set.all().count(),
-                     'whitelist': 'N/A',
-                     'free': 'N/A',
-                     'date_added': dom.date_added,})
-    context['form'] = SearchForm()
-    context['searchbase'] = "Domain"
+    query_filtered_domains = Domain.objects.filter(
+                                id__in=context['pagebase'].object_list)
+    for dom in query_filtered_domains:
+        try:
+            extdom = ExtendDomain.objects.get(domain=dom)
+            context['divided_domains'].append(
+                {'id': dom.id,
+                 'name': dom.name,
+                 'hp_count': dom.homepage_set.all().count(),
+                 'whitelist': extdom.whitelist,
+                 'free': extdom.free,
+                 'date_added': dom.date_added,})
+        except ExtendDomain.DoesNotExist:
+            context['divided_domains'].append(
+                {'id': dom.id,
+                 'name': dom.name,
+                 'hp_count': dom.homepage_set.all().count(),
+                 'whitelist': 'N/A',
+                 'free': 'N/A',
+                 'date_added': dom.date_added,})
     return render(request,
                   'website_analyzer/view_analyst_domains.html',
                   context)
