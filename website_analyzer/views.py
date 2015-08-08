@@ -12,7 +12,7 @@ from .analyzer_lib import add_scam_url_website, string_analysist, crawl_website
 from webscraper.pagescraper import PageScraper
 from .forms import AddScamWebsiteForm, AddSequenceForm, EditAnalystForm, \
                    EditAnalystDomainForm, SearchForm
-from .filters import ExtendDomainFilter
+from .filters import ExtendDomainFilter, ExtendHomepageFilter
 
 
 @login_required
@@ -168,23 +168,13 @@ def add_scam_website(request):
 @login_required
 def view_websites(request):
     """display scam website"""
-    form = SearchForm(request.GET)
-#    if form.is_valid():
-#        domains = Domain.objects.filter(
-#                name__contains=form.cleaned_data['search']).values_list(
-#                        'id', flat=True).order_by('id').reverse()
-#    else:
-#        domains = Domain.objects.only('id').all().values_list('id',
-#                   flat=True).order_by('id').reverse()
-    if form.is_valid():
-        websites = Homepage.objects.filter(
-                name__contains=form.cleaned_data['search']).values_list(
-                        'id', flat=True).order_by('id').reverse()
-    else:
-        websites = Homepage.objects.only('id').all().values_list('id',
-                   flat=True).order_by('id').reverse()
+    websites = ExtendHomepageFilter(request.GET,
+            queryset=Homepage.objects.only('id').all().values_list('id',
+                   flat=True).order_by('id').reverse())
 
-    context = {'websites': websites, 'divided_websites': []}
+    context = {'websites': websites,
+               'divided_websites': [],
+               'filter': websites}
     paginator = Paginator(context['websites'], 20)
     page = request.GET.get('page')
     try:
@@ -196,65 +186,34 @@ def view_websites(request):
     divided_websites = Homepage.objects.filter(
                            id__in=context['pagebase'].object_list)
     context['searchbase'] = "Website name"
-    if form.is_valid():
-        for hp in divided_websites.filter(
-                                name__contains=form.cleaned_data['search']):
-            try:
-                exthp = ExtendHomepage.objects.get(homepage=hp)
-                context['divided_websites'].append(
-                    {'id': hp.id,
-                     'name': hp.name,
-                     'date_added': hp.date_added,
-                     'scam': exthp.scam,
-                     'times_analyzed': exthp.times_analyzed,
-                     'full_crawled': exthp.full_crawled,
-                     'whitelist': exthp.whitelist,
-                     'inspection': exthp.inspected,
-                     'report': exthp.reported,
-                     'access': exthp.access,
-                     'web_count': hp.webpage_set.all().count(),
-                     'matched_sequence': {'min': 0, 'max': 0},})
-            except ExtendHomepage.DoesNotExist:
-                context['divided_websites'].append(
-                    {'id': hp.id,
-                     'name': hp.name,
-                     'date_added': hp.date_added,
-                     'whitelist': 'n/a',
-                     'scam': 'n/a',
-                     'inspection': 'n/a',
-                     'report': 'n/a',
-                     'access': 'n/a',
-                     'web_count': hp.webpage_set.all().count(),
-                     'matched_sequence': {'min': 0, 'max': 0},})
-    else:
-        for hp in divided_websites:
-            try:
-                exthp = ExtendHomepage.objects.get(homepage=hp)
-                context['divided_websites'].append(
-                    {'id': hp.id,
-                     'name': hp.name,
-                     'date_added': hp.date_added,
-                     'scam': exthp.scam,
-                     'times_analyzed': exthp.times_analyzed,
-                     'full_crawled': exthp.full_crawled,
-                     'whitelist': exthp.whitelist,
-                     'inspection': exthp.inspected,
-                     'report': exthp.reported,
-                     'access': exthp.access,
-                     'web_count': hp.webpage_set.all().count(),
-                     'matched_sequence': {'min': 0, 'max': 0},})
-            except ExtendHomepage.DoesNotExist:
-                context['divided_websites'].append(
-                    {'id': hp.id,
-                     'name': hp.name,
-                     'date_added': hp.date_added,
-                     'whitelist': 'n/a',
-                     'scam': 'n/a',
-                     'inspection': 'n/a',
-                     'report': 'n/a',
-                     'access': 'n/a',
-                     'web_count': hp.webpage_set.all().count(),
-                     'matched_sequence': {'min': 0, 'max': 0},})
+    for hp in divided_websites:
+        try:
+            exthp = ExtendHomepage.objects.get(homepage=hp)
+            context['divided_websites'].append(
+                {'id': hp.id,
+                 'name': hp.name,
+                 'date_added': hp.date_added,
+                 'scam': exthp.scam,
+                 'times_analyzed': exthp.times_analyzed,
+                 'full_crawled': exthp.full_crawled,
+                 'whitelist': exthp.whitelist,
+                 'inspection': exthp.inspected,
+                 'report': exthp.reported,
+                 'access': exthp.access,
+                 'web_count': hp.webpage_set.all().count(),
+                 'matched_sequence': {'min': 0, 'max': 0},})
+        except ExtendHomepage.DoesNotExist:
+            context['divided_websites'].append(
+                {'id': hp.id,
+                 'name': hp.name,
+                 'date_added': hp.date_added,
+                 'whitelist': 'n/a',
+                 'scam': 'n/a',
+                 'inspection': 'n/a',
+                 'report': 'n/a',
+                 'access': 'n/a',
+                 'web_count': hp.webpage_set.all().count(),
+                 'matched_sequence': {'min': 0, 'max': 0},})
     context['form'] = SearchForm()
     return render(request, 'website_analyzer/view_websites.html', context)
 

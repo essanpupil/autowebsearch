@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
 {% block navigation %}
     {% include 'website_analyzer/analyst_nav.html' %}
+    <form action="" method="get">
+        {{ filter.form.as_p }}
+        <br />
+        <input type="submit" value="submit filter" />
+    </form>
     {% include 'website_analyzer/search.html' %}
 {% endblock %}
 {% block content %}
