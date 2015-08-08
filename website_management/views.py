@@ -154,8 +154,8 @@ def add_new_webpage(request):
 def view_all_webpages(request):
     """display all webpage"""
     filtering = WebpageFilter(request.GET,
-                      queryset=Webpage.objects.all().order_by('id').reverse())
-#    webs = Webpage.objects.all().order_by('id').reverse()
+                      queryset=Webpage.objects.all().order_by(
+                          'id').reverse())
     context = {'webs': [], 'filter': filtering}
     for item in filtering:#webs:
         context['webs'].append({
@@ -277,7 +277,8 @@ def view_search_result(request):
     context = {'search_results': []}
     for search in searches:
         search_data = {'keywords': search.query,
-                       'webpage': search.webpage,
+                       'webpage': {'id': search.webpage.id,
+                                   'name': search.webpage.url,},
                        'search_time': search.search_time}
         context['search_results'].append(search_data)
     return render(request, 'website_management/view_search_result.html',

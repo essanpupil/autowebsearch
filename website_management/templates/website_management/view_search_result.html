@@ -13,12 +13,13 @@
         <th>Webpage Result</th>
     </tr>
     {% for search in search_results %}
-        <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ search.search_time|date:"H:i d-M-Y" }}</td>
-            <td>{{ search.keywords }}</td>
-            <td>{{ search.webpage }}</td>
-        </tr>
+    <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ search.search_time|date:"H:i d-M-Y" }}</td>
+        <td>{{ search.keywords }}</td>
+        <td>
+            <a href="{% url 'website_management:webpage_detail' search.webpage.id %}">{{ search.webpage.name }}</a></td>
+    </tr>
     {% empty %}
         <tr>
             <td>-</td>
