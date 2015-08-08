@@ -154,10 +154,17 @@ def string_analysist(homepage):
 def crawl_website(homepage):
     """function to fetch html code and url of a website, start from available
     webpages in the database. The only accepted argument in Homepage object."""
+    add_url_to_webpage("http://"+homepage.name)
+    page = PageScraper()
+    page.fetch_webpage("http://"+homepage.name)
+    webpage = Webpage.objects.get(url="http://"+homepage.name)
+    webpage.html_page = page.html
+    extw, created = ExtendWebpage.objects.get_or_create(
+            webpage=webpage)
+    extw.text_body = page.get_text_body()
+    extw.save(update_fields=['text_body'])
+    webpage.save(update_fields=['html_page'])
     keep_crawling = True
-    ext_hp = ExtendHomepage.objects.only('full_crawled').get(homepage=homepage)
-    ext_hp.full_crawled += 1
-    ext_hp.save(update_fields=['full_crawled'])
     while keep_crawling:
         for webpage in homepage.webpage_set.all():
             page = PageScraper()
