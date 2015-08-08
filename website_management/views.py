@@ -1,12 +1,13 @@
 import tldextract
 
 from django.shortcuts import render, get_object_or_404, redirect
-from django.core.paginator import Paginator, PageNotAnInteger
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib.auth.decorators import login_required
 
 from .models import Webpage, Domain, Homepage, Search, Query
 from .forms import AddWebpageForm, SearchWebpageForm, AddNewKeywordForm
 from .management_lib import add_list_url_to_webpage, add_url_to_webpage
+from .filters import WebpageFilter
 from webscraper.pagescraper import PageScraper
 from search_extractor.google_search import GoogleSearch
 
@@ -152,16 +153,18 @@ def add_new_webpage(request):
 @login_required
 def view_all_webpages(request):
     """display all webpage"""
-    webs = Webpage.objects.all().order_by('id').reverse()
-    context = {'webs': []}
-    for item in webs:
+    filtering = WebpageFilter(request.GET,
+                      queryset=Webpage.objects.all().order_by('id').reverse())
+#    webs = Webpage.objects.all().order_by('id').reverse()
+    context = {'webs': [], 'filter': filtering}
+    for item in filtering:#webs:
         context['webs'].append({
             'url': item.url,
             'date_added': item.date_added,
             'last_response': item.last_response,
             'last_response_check': item.last_response_check,
             'id': item.id})
-    paginator = Paginator(context['webs'], 10)
+    paginator = Paginator(context['webs'], 20)
     page = request.GET.get('page')
     try:
         context['webs'] = paginator.page(page)

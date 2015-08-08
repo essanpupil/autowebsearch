@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'website_analyzer',
     'administrative',
     'django_extensions',
+    'django_filters',
 )
 
 MIDDLEWARE_CLASSES = (

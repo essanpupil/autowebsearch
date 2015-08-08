@@ -1,21 +1,33 @@
 {% extends 'base.html' %}
 {% block navigation %}
     {% include 'website_management/website_nav.html' %}
-    <h4>Page navigation</h4>
+    <form action"" method="get">
+        {{ filter.form.as_p }}
+        <br />
+        <input type="submit" value="submit filter" />
+    </form>
+<h4>Page Navigation</h4>
 <div class="pagination">
-    <span class="step-links">
-        {% if webs.has_previous %}
+<span class="step-links">
+{% if webs.has_previous %}
+    {% if "url" in request.get_full_path %}
+    <a href="?url={{ request.GET.url }}&page={{ webs.previous_page_number }}">
+        previous</a>
+        {% else %}
             <a href="?page={{ webs.previous_page_number }}">previous</a>
         {% endif %}
-
-        <span class="current">
-            Page {{ webs.number }} of {{ webs.paginator.num_pages }}.
-        </span>
-
-        {% if webs.has_next %}
+    {% endif %}
+    <span class="current">
+        Page {{ webs.number }} of {{ webs.paginator.num_pages }}.
+    </span>
+    {% if webs.has_next %}
+        {% if "url" in request.get_full_path %}
+        <a href="?url={{ request.GET.url }}&page={{ webs.next_page_number }}">next</a>
+        {% else %}
             <a href="?page={{ webs.next_page_number }}">next</a>
         {% endif %}
-    </span>
+    {% endif %}
+</span>
 </div>
 {% endblock %}
 {% block content %}
