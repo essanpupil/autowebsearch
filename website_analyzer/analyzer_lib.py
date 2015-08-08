@@ -154,7 +154,10 @@ def string_analysist(homepage):
 def crawl_website(homepage):
     """function to fetch html code and url of a website, start from available
     webpages in the database. The only accepted argument in Homepage object."""
-    add_url_to_webpage("http://"+homepage.name)
+    try:
+        add_url_to_webpage("http://"+homepage.name)
+    except:
+        pass
     page = PageScraper()
     page.fetch_webpage("http://"+homepage.name)
     webpage = Webpage.objects.get(url="http://"+homepage.name)
