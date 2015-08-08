@@ -111,6 +111,7 @@ class StringParameter(models.Model):
     sentence = models.CharField(max_length=255, unique=True)
     definitive = models.BooleanField(default=False)
     date_added = models.DateField(auto_now_add=True)
+    target_analyze = models.CharField(max_length=10, default="text_body")
 
     def __unicode__(self):  # lint:ok
         return self.sentence

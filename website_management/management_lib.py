@@ -6,10 +6,12 @@ from .models import Webpage, Homepage, Domain
 
 
 logging.basicConfig(level=logging.WARN)
+extract = tldextract.TLDExtract(
+        cache_file='/home/skripsi/tldextractcache/tldextract.cache')
 
 def add_url_to_webpage(url):
     """add url and its component to database"""
-    ext = tldextract.extract(url)
+    ext = extract(url)
     dom, crtd = Domain.objects.get_or_create(name=ext.registered_domain)
     hp, crtd2 = Homepage.objects.get_or_create(name='.'.join(ext),
                                                domain=dom)

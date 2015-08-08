@@ -12,6 +12,8 @@ from webscraper.pagescraper import PageScraper
 
 
 logging.basicConfig(level=logging.WARN)
+extract = tldextract.TLDExtract(
+        cache_file='/home/skripsi/tldextractcache/tldextract.cache')
 
 def string_analyst(hp_id):
     """function to do string analyst to homepage"""
