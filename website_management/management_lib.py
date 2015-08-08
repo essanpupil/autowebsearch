@@ -1,8 +1,11 @@
 from django.db import IntegrityError, transaction
 import tldextract
+import logging
 
 from .models import Webpage, Homepage, Domain
 
+
+logging.basicConfig(level=logging.WARN)
 
 def add_url_to_webpage(url):
     """add url and its component to database"""

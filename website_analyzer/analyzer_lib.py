@@ -1,4 +1,5 @@
 import tldextract
+import logging
 
 from django.utils import timezone
 from django.db import IntegrityError, transaction
@@ -8,6 +9,9 @@ from .models import ExtendHomepage, StringParameter, StringAnalysist
 from .models import ExtendWebpage, ExtendDomain
 
 from webscraper.pagescraper import PageScraper
+
+
+logging.basicConfig(level=logging.WARN)
 
 def string_analyst(hp_id):
     """function to do string analyst to homepage"""
