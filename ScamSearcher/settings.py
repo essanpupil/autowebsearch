@@ -20,17 +20,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = '4ku@i8ns-(2z!ia@%gih&bab+3=6^_b=i6*5)d#oz7n9$u(8&)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = True
-DEBUG = False
+DEBUG = True
+#DEBUG = False
 
-#TEMPLATE_DEBUG = True
-TEMPLATE_DEBUG = False
+TEMPLATE_DEBUG = True
+#TEMPLATE_DEBUG = False
 
-ALLOWED_HOSTS = ['*',
-#    '.scamsearcher.com',
-#    '.scamsearcher.com.',
-]
-#ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = ['localhost']
 
 
 # Application definition
@@ -96,9 +92,9 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
-#STATICFILES_DIRS = (os.path.join(os.path.dirname(__file__), 'static').replace('\\', '/'),)
+STATICFILES_DIRS = (os.path.join(os.path.dirname(__file__), 'static').replace('\\', '/'),)
 STATIC_URL = '/static/'
-STATIC_ROOT = '/home/skripsi/ScamSearcher/ScamSearcher/static/'
+#STATIC_ROOT = '/home/skripsi/ScamSearcher/ScamSearcher/static/'
 
 
 
