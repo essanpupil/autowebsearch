@@ -124,7 +124,7 @@ def string_analysist(homepage):
     """function to doing string analysist on to website/homepage model object.
     required website_management.models.Homepage as argument"""
     hari_ini = timezone.now()
-    parameters = StringParameter.objects.all()
+    parameters = StringParameter.objects.filter(target_analyze='text_body')
     webpages = homepage.webpage_set.all()
     for parameter in parameters:
         for webpage in webpages:

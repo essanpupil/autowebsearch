@@ -13,6 +13,7 @@ from webscraper.pagescraper import PageScraper
 from .forms import AddScamWebsiteForm, AddSequenceForm, EditAnalystForm, \
                    EditAnalystDomainForm, SearchForm
 from .filters import ExtendDomainFilter, ExtendHomepageFilter
+from administrative.models import ClientSequence
 
 
 @login_required
@@ -221,16 +222,24 @@ def view_websites(request):
 @login_required
 def view_sequence(request):
     """display sequence parameter used for analyze website"""
-    parameters = StringParameter.objects.all().order_by('date_added')
+    parameters = StringParameter.objects.all().order_by('id')
     context = {'parameters': []}
     for parameter in parameters.reverse():
-        context['parameters'].append(
-                {'sentence': parameter.sentence,
-                 'id': parameter.id,
-                 'times_used': parameter.times_used,
-                 'target_analyze': parameter.target_analyze,
-                 'date_added': parameter.date_added,
-                 'definitive': parameter.definitive})
+        parameter_data = {'sentence': parameter.sentence,
+                     'id': parameter.id,
+                     'times_used': parameter.times_used,
+                     'target_analyze': parameter.target_analyze,
+                     'date_added': parameter.date_added,
+                     'clients': [],
+                     'definitive': parameter.definitive}
+        try:
+            cs = ClientSequence.objects.filter(string_parameter=parameter)
+            for item in cs:
+                parameter_data['clients'].append(item.client)
+        except:
+            parameter_data['clients'] = "N/A"
+        context['parameters'].append(parameter_data)
+
     paginator = Paginator(context['parameters'], 10)
     page = request.GET.get('page')
     try:
@@ -457,4 +466,5 @@ class SequenceUpdate(UpdateView):
 def report_website(request, hp_id):
     "submit report to domain hosting"
     website = Homepage.objects.get(id=hp_id)
+
 

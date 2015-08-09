@@ -40,6 +40,9 @@
         <th>
           Times used 
         </th>
+        <th>
+          Connected client 
+        </th>
     </tr>
     {% for parameter in parameters %}
         <tr>
@@ -50,6 +53,13 @@
             <td>{{ parameter.definitive }}</td>
             <td>{{ parameter.date_added }}</td>
             <td>{{ parameter.times_used }}</td>
+            <td><ul>
+                {% for client in  parameter.clients %}
+                    <li>{{ client }}</li>
+                {% empty %}
+                    No client connected
+                {% endfor %}
+            </ul></td>
         </tr>
     {% empty %}
         String Parameter database is empty

@@ -8,7 +8,7 @@ from django.views.generic.edit import DeleteView, UpdateView
 from django.core.urlresolvers import reverse_lazy, reverse
 
 from .models import Client, Event, Operator, Website, ClientKeyword,\
-                    ClientSequence
+                    ClientSequence, SentEmail
 from .form import AddClientForm, AddClientHomepageForm, DeleteClientForm, \
                   AddEventForm, DeleteEventForm, AddOperatorForm, \
                   AddUserForm, AddClientKeywordForm, AddClientSequenceForm
@@ -618,3 +618,25 @@ def add_client_sequence(request, client_id):
                    'client': {'id': client.id,
                               'name': client.name}
                   })
+
+                  
+@login_required
+def view_sent_mail(request):
+    "display sent emails"
+    sent_mails = SentEmail.objects.all()
+    context = {}
+    context['sent_mail_data'] = []
+    for sent_mail in sent_mails:
+        mail_data = {'id': sent_mail.id,
+                     'recipient': sent_mail.recipient,
+                     'website': sent_mail.homepage,}
+        context['sent_mail_data'].append(mail_data)
+    paginator = Paginator(context['sent_mail_data'], 10)
+    page = request.GET.get('page')
+    try:
+        context['sent_mail_data'] = paginator.page(page)
+    except PageNotAnInteger:
+        context['sent_mail_data'] = paginator.page(1)
+    except EmptyPage:
+        context['sent_mail_data'] = paginator.page(paginator.num_pages)
+    return render(request, 'administrative/view_sent_mail.html', context)

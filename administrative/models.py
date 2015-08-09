@@ -62,4 +62,11 @@ class ClientSequence(models.Model):
     event = models.ForeignKey(Event, null=True, blank=True)
     
     def __unicode__(self):
-        return self.query.keywords
+        return self.string_parameter.sentence
+
+
+class SentEmail(models.Model):
+    "Stored sent email to client or staff"
+    recipient = models.ForeignKey(User)
+    homepage = models.ForeignKey(Homepage)
+    sent_time = models.DateTimeField(auto_now_add=True)
