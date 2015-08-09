@@ -17,6 +17,7 @@ class ExtendDomain(models.Model):
     # True if the domain is freely available (blogspot, wordpress, etc).
     free = models.NullBooleanField(null=True, blank=True)
     times_crawled = models.IntegerField(default=0)
+    report_feature = models.BooleanField(default=False)
 
 
 class ExtendHomepage(models.Model):
@@ -112,6 +113,7 @@ class StringParameter(models.Model):
     definitive = models.BooleanField(default=False)
     date_added = models.DateField(auto_now_add=True)
     target_analyze = models.CharField(max_length=10, default="text_body")
+    times_used = models.IntegerField(default=0)
 
     def __unicode__(self):  # lint:ok
         return self.sentence

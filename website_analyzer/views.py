@@ -185,7 +185,6 @@ def view_websites(request):
         context['pagebase'] = paginator.page(paginator.num_pages)
     divided_websites = Homepage.objects.filter(
                            id__in=context['pagebase'].object_list)
-    context['searchbase'] = "Website name"
     for hp in divided_websites:
         try:
             exthp = ExtendHomepage.objects.get(homepage=hp)
@@ -214,7 +213,6 @@ def view_websites(request):
                  'access': 'n/a',
                  'web_count': hp.webpage_set.all().count(),
                  'matched_sequence': {'min': 0, 'max': 0},})
-    context['form'] = SearchForm()
     return render(request, 'website_analyzer/view_websites.html', context)
 
 
@@ -253,6 +251,13 @@ def start_sequence_analysist(request, homepage_id):
     result to StringAnalysist model"""
     homepage = get_object_or_404(Homepage, id=homepage_id)
     string_analysist(homepage)
+    string_analysist_result = StringAnalysist.objects.filter(
+            find=True, 
+            webpage__in=homepage.webpage_set.all())
+    if string_analysist_result.filter(parameter__definitive=True).count() > 0:
+        exthp = homepage.extendhomepage
+        exthp.scam=True
+        exthp.save()
     return redirect('website_analyzer:analyze_website', hp_id=homepage.id)
 
 
@@ -440,3 +445,11 @@ class SequenceUpdate(UpdateView):
     fields = ['definitive']
     template_name_suffix = '_update_form'
     success_url = reverse_lazy('website_analyzer:view_sequence')
+
+
+
+@login_required
+def report_website(request, hp_id):
+    "submit report to domain hosting"
+    website = Homepage.objects.get(id=hp_id)
+

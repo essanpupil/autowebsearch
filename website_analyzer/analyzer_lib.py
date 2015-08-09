@@ -155,6 +155,13 @@ def string_analysist(homepage):
                                 find=False)
             continue
         continue
+    string_analysist_result = StringAnalysist.objects.filter(
+            find=True, 
+            webpage__in=homepage.webpage_set.all())
+    if string_analysist_result.filter(parameter__definitive=True).count() > 0:
+        exthp = homepage.extendhomepage
+        exthp.scam=True
+        exthp.save()
 
 
 def crawl_website(homepage):
