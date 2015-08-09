@@ -7,8 +7,9 @@ from django.views.generic.edit import UpdateView
 from .models import ExtendHomepage, StringParameter, StringAnalysist,\
                     ExtendDomain
 from website_management.models import Homepage, Webpage, Domain
-from .analyzer_lib import string_analyst, add_list_url_to_webpage
-from .analyzer_lib import add_scam_url_website, string_analysist, crawl_website
+from .analyzer_lib import string_analyst, add_list_url_to_webpage,\
+                          send_email_website_analyze, add_scam_url_website,\
+                          string_analysist, crawl_website
 from webscraper.pagescraper import PageScraper
 from .forms import AddScamWebsiteForm, AddSequenceForm, EditAnalystForm, \
                    EditAnalystDomainForm, SearchForm
@@ -468,3 +469,21 @@ def report_website(request, hp_id):
     website = Homepage.objects.get(id=hp_id)
 
 
+@login_required
+def send_email_notification(request, hp_id):
+    "sent email to clients and their operator"
+    homepage = Homepage.objects.get(id=hp_id)
+    sa = StringAnalysist.objects.filter(webpage__in=homepage.webpage_set.all())
+    client_recipients = []
+    for item in sa.distinct('parameter'):
+        cs = ClientSequence.objects.filter(string_parameter=item.parameter)
+        for item2 in cs:
+            client_recipients.append(item2.client)
+    email_recipients = []
+    for client in client_recipients:
+        email_recipients.append(client.email)
+        for operator in client.operator_set.all():
+            email_recipients.append(operator.user.email)
+                                        
+    send_email_website_analyze(homepage, email_recipients)
+    return redirect('website_analyzer:analyze_website', homepage.id)

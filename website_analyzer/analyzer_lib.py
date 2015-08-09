@@ -3,6 +3,9 @@ import logging
 
 from django.utils import timezone
 from django.db import IntegrityError, transaction
+from django.core.mail import send_mail
+from django.template.loader import get_template
+from django.template import Context
 
 from website_management.models import Homepage, Webpage, Domain
 from .models import ExtendHomepage, StringParameter, StringAnalysist
@@ -200,3 +203,11 @@ def crawl_website(homepage):
         if not homepage.webpage_set.filter(html_page__isnull=True).exists():
             break
         keep_crawling = False
+
+
+def send_email_website_analyze(homepage, recipient_list):
+    "Send website analyze to recipient list"
+    subject_mail = "ScamSearcher scam notification"
+    
+    send_mail('test subject', 'test message', 'support@scamsearcher.com',
+              ['jakethitam1985@gmail.com'], fail_silently=False)
