@@ -595,7 +595,8 @@ def add_client_sequence(request, client_id):
                     sentence=form.cleaned_data['sequence'])
             else:
                 StringParameter.objects.create(
-                    sentence=form.cleaned_data['sequence'])
+                    sentence=form.cleaned_data['sequence'],
+                    target_analyze=form.cleaned_data['target_analyze'])
             str_prm = StringParameter.objects.get(
                           sentence=form.cleaned_data['sequence'])
             try:

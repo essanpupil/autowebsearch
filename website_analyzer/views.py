@@ -23,8 +23,10 @@ def add_sequence(request):
             form = AddSequenceForm(request.POST)
             if form.is_valid():
                 sentence = form.cleaned_data['sentence'].lower()
+                target_analyze = form.cleaned_data['targer_analyze'].lower()
                 definitive = form.cleaned_data['definitive']
                 StringParameter.objects.create(sentence=sentence.strip(),
+                                               target_analyze=trget_analyze,
                                                definitive=definitive)
                 return redirect('website_analyzer:view_sequence')
         else:
@@ -222,10 +224,13 @@ def view_sequence(request):
     parameters = StringParameter.objects.all().order_by('date_added')
     context = {'parameters': []}
     for parameter in parameters.reverse():
-        context['parameters'].append({'sentence': parameter.sentence,
-                                      'id': parameter.id,
-                                      'date_added': parameter.date_added,
-                                      'definitive': parameter.definitive})
+        context['parameters'].append(
+                {'sentence': parameter.sentence,
+                 'id': parameter.id,
+                 'times_used': parameter.times_used,
+                 'target_analyze': parameter.target_analyze,
+                 'date_added': parameter.date_added,
+                 'definitive': parameter.definitive})
     paginator = Paginator(context['parameters'], 10)
     page = request.GET.get('page')
     try:
@@ -442,7 +447,7 @@ def detail_client_analyst(request, dom_id):
 class SequenceUpdate(UpdateView):
     "edit definitive status of a string parameter"
     model = StringParameter
-    fields = ['definitive']
+    fields = ['definitive', 'target_analyze']
     template_name_suffix = '_update_form'
     success_url = reverse_lazy('website_analyzer:view_sequence')
 

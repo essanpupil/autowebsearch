@@ -29,10 +29,16 @@
            String parameter
         </th>
         <th>
-           Definitive
+           Target analyze
+        </th>
+        <th>
+            Definitive
         </th>
         <th>
            Date Added
+        </th>
+        <th>
+          Times used 
         </th>
     </tr>
     {% for parameter in parameters %}
@@ -40,8 +46,10 @@
             <td>{{ forloop.counter }}</td>
             <td><a href="{% url 'website_analyzer:edit_sequence' parameter.id %}" >
                     {{ parameter.sentence }}</a></td>
+            <td>{{ parameter.target_analyze }}</td>
             <td>{{ parameter.definitive }}</td>
             <td>{{ parameter.date_added }}</td>
+            <td>{{ parameter.times_used }}</td>
         </tr>
     {% empty %}
         String Parameter database is empty

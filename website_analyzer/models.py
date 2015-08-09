@@ -112,7 +112,7 @@ class StringParameter(models.Model):
     sentence = models.CharField(max_length=255, unique=True)
     definitive = models.BooleanField(default=False)
     date_added = models.DateField(auto_now_add=True)
-    target_analyze = models.CharField(max_length=10, default="text_body")
+    target_analyze = models.CharField(max_length=10, default="text body")
     times_used = models.IntegerField(default=0)
 
     def __unicode__(self):  # lint:ok

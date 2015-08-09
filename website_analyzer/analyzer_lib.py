@@ -19,7 +19,7 @@ def string_analyst(hp_id):
     """function to do string analyst to homepage"""
     hp = Homepage.objects.get(id=hp_id)
     exthp, created = ExtendHomepage.objects.get_or_create(homepage=hp)
-    params = StringParameter.objects.all()
+    params = StringParameter.objects.filter(target_analyze='text_body')
     for web in hp.webpage_set.all():
         if web.extendwebpage.text_body == None:
             page = PageScraper()
@@ -31,6 +31,8 @@ def string_analyst(hp_id):
             web.save()
             
         for param in params:
+            param.times_used += 1
+            param.save(update_fields=['times_used'])
             if param.sentence in web.extendwebpage.text_body:
                 StringAnalysist.objects.create(webpage=web,
                                                parameter=param,
@@ -48,6 +50,9 @@ def string_analyst(hp_id):
 
 def add_url_to_webpage(url):
     """add url and its component to database"""
+    logging.basicConfig(level=logging.WARN)
+    extract = tldextract.TLDExtract(
+        cache_file='/home/skripsi/tldextractcache/tldextract.cache')
     ext = tldextract.extract(url)
     try:
         with transaction.atomic():
