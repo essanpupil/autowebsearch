@@ -16,23 +16,19 @@
         <th style="padding:2px;">Website name</th>
         <th style="padding:2px;">Scam?</th>
         <th style="padding:2px;">Whitelist?</th>
-        <th style="padding:1px;">Date added</th>
-        <th style="padding:2px;">Times analyzed?</th>
-        <th style="padding:2px;">Times full crawled</th>
-        <th style="padding:2px;">Webpages count</th>
+        <th style="padding:2px;">Emailed to staff</th>
+        <th style="padding:2px;">Emailed to client</th>
     </tr>
     {% for web in divided_websites %}
     <tr>
         <td>{{ forloop.counter }}</td>
         <td><span title="{{ web.name }}">
                 <a href="{% url 'website_analyzer:analyze_website' web.id %}">
-                    {{ web.name|truncatechars:25 }}</a></span></td>
+                    {{ web.name|truncatechars:50 }}</a></span></td>
         <td>{{ web.scam }}</td>
         <td>{{ web.whitelist }}</td>
-        <td>{{ web.date_added|date:"d-m-Y" }}</td>
-        <td>{{ web.times_analyzed }}</td>
-        <td>{{ web.full_crawled }}</td>
-        <td>{{ web.web_count }}</td>
+        <td>{{ web.emailed_to_staff }}</td>
+        <td>{{ web.emailed_to_client }}</td>
     </tr>
     {% empty %}
         Website database is empty
