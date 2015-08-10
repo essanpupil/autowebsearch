@@ -1,0 +1,12 @@
+Website Analyze Notification
+-------------------------------------------------------------
+Homepage name: {{ name }}
+Domain name: {{ domain }}
+Scam status: {{ scam|yesno:"Yes, No, Unknown" }}
+List of sequence:
+----------------
+{% for seq in params %}
++ {{ seq.parameter }}
+{% empty %}
+This website does not have matching sequence
+{% endfor %}

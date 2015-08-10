@@ -479,11 +479,10 @@ def send_email_notification(request, hp_id):
         cs = ClientSequence.objects.filter(string_parameter=item.parameter)
         for item2 in cs:
             client_recipients.append(item2.client)
-    email_recipients = []
+    operator_recipients = []
     for client in client_recipients:
-        email_recipients.append(client.email)
         for operator in client.operator_set.all():
-            email_recipients.append(operator.user.email)
+            operator_recipients.append(operator)
                                         
-    send_email_website_analyze(homepage, email_recipients)
+    send_email_website_analyze(homepage, operator_recipients)
     return redirect('website_analyzer:analyze_website', homepage.id)

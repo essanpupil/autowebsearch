@@ -10,6 +10,7 @@ from django.template import Context
 from website_management.models import Homepage, Webpage, Domain
 from .models import ExtendHomepage, StringParameter, StringAnalysist
 from .models import ExtendWebpage, ExtendDomain
+from administrative.models import SentEmail
 
 from webscraper.pagescraper import PageScraper
 
@@ -205,9 +206,24 @@ def crawl_website(homepage):
         keep_crawling = False
 
 
-def send_email_website_analyze(homepage, recipient_list):
+def send_email_website_analyze(homepage, operator_recipients):
     "Send website analyze to recipient list"
     subject_mail = "ScamSearcher scam notification"
-    
-    send_mail('test subject', 'test message', 'support@scamsearcher.com',
-              ['jakethitam1985@gmail.com'], fail_silently=False)
+    for operator in operator_recipients:
+        params = StringAnalysist.objects.filter(
+                webpage__in=homepage.webpage_set.all(),
+                find=True).distinct('parameter')
+        list_params = []
+        for item in params:
+            list_params.append({'parameter':item.parameter.sentence,})
+        send_mail(subject_mail,
+                  get_template('website_analyzer/send_email_notification.txt'
+                      ).render(
+                          Context({'name': homepage.name,
+                                   'domain': homepage.domain,
+                                   'scam': homepage.extendhomepage.scam,
+                                   'params': list_params,})),
+                  'support@scamsearcher.com',
+                  [operator.user.email,],
+                  fail_silently=False)
+        SentEmail.objects.create(recipient=operator.user, homepage=homepage)

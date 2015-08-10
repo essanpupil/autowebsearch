@@ -5,7 +5,7 @@
     <h4>Page navigation</h4>
     <div class="pagination">
         <span class="step-links">
-            {% if clients.has_previous %}
+            {% if sent_mail_data.has_previous %}
                 <a href="?page={{ sent_mail_data.previous_page_number }}">previous</a>
             {% endif %}
 
@@ -13,7 +13,7 @@
                 Page {{ sent_mail_data.number }} of {{ sent_mail_data.paginator.num_pages }}.
             </span>
 
-            {% if clients.has_next %}
+            {% if sent_mail_data.has_next %}
                 <a href="?page={{ sent_mail_data.next_page_number }}">next</a>
             {% endif %}
         </span>
@@ -34,7 +34,7 @@
             <td>{{ forloop.counter }}</td>
             <td>{{ mail.sent_time}}</td>
             <td>{{ mail.recipient }}</td>
-            <td>{{ mail.homepage }}</td>
+            <td>{{ mail.website }}</td>
         </tr>
     {% empty %}
         <tr>

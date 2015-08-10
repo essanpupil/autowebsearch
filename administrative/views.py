@@ -629,7 +629,8 @@ def view_sent_mail(request):
     for sent_mail in sent_mails:
         mail_data = {'id': sent_mail.id,
                      'recipient': sent_mail.recipient,
-                     'website': sent_mail.homepage,}
+                     'sent_time': sent_mail.sent_time,
+                     'website': sent_mail.homepage.name,}
         context['sent_mail_data'].append(mail_data)
     paginator = Paginator(context['sent_mail_data'], 10)
     page = request.GET.get('page')
