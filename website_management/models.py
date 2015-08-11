@@ -18,6 +18,7 @@ class Homepage(models.Model):
     domain = models.ForeignKey(Domain, blank=True, null=True)
     date_added = models.DateField(auto_now=True)
     crawl_completed = models.BooleanField(default=False)
+    times_analyzed = models.IntegerField(default=0)
 
     def __unicode__(self):
         return self.name

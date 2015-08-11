@@ -1,5 +1,7 @@
 import tldextract
 import logging
+import time
+import timeout_decorator
 
 from django.utils import timezone
 from django.db import IntegrityError, transaction
@@ -169,6 +171,7 @@ def string_analysist(homepage):
         exthp.save()
 
 
+#@timeout_decorator.timeout(30)
 def crawl_website(homepage):
     """function to fetch html code and url of a website, start from available
     webpages in the database. The only accepted argument in Homepage object."""
@@ -186,8 +189,11 @@ def crawl_website(homepage):
     extw.save(update_fields=['text_body'])
     webpage.save(update_fields=['html_page'])
     keep_crawling = True
+    homepages_nogif = homepage.webpage_set.exclude(url__endswith='.gif')
+    homepages_nojpg = homepages_nogif.exclude(url__iendswith='.jpg')
+    homepages_nopng = homepages_nojpg.exclude(url__endswith='.png')
     while keep_crawling:
-        for webpage in homepage.webpage_set.all():
+        for webpage in homepages_nopng:
             page = PageScraper()
             page.fetch_webpage(webpage.url)
             webpage.html_page = page.html
