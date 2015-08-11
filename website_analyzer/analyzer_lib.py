@@ -15,10 +15,6 @@ from administrative.models import SentEmail
 from webscraper.pagescraper import PageScraper
 
 
-logging.basicConfig(level=logging.WARN)
-extract = tldextract.TLDExtract(
-        cache_file='/home/skripsi/tldextractcache/tldextract.cache')
-
 def string_analyst(hp_id):
     """function to do string analyst to homepage"""
     hp = Homepage.objects.get(id=hp_id)
@@ -57,7 +53,7 @@ def add_url_to_webpage(url):
     logging.basicConfig(level=logging.WARN)
     extract = tldextract.TLDExtract(
         cache_file='/home/skripsi/tldextractcache/tldextract.cache')
-    ext = tldextract.extract(url)
+    ext = extract(url)
     try:
         with transaction.atomic():
             dom, crtd = Domain.objects.get_or_create(name=ext.registered_domain)
