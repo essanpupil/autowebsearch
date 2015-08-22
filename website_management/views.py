@@ -55,7 +55,7 @@ def webpage_detail(request, web_id):
         page = PageScraper()
         extw, created = ExtendWebpage.objects.get_or_create(webpage=web)
         fill_text_body(extw)
-        web_data['text_body'] = extw.text_body
+        web_data['text_body'] = "%s" % extw.text_body
     else:
         web_data['text_body'] = None
     if web.homepage is None:
