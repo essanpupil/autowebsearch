@@ -33,6 +33,7 @@ class ExtendHomepage(models.Model):
     homepage = models.OneToOneField(Homepage)
     full_crawled = models.IntegerField(default=0)
     times_analyzed = models.IntegerField(default=0)
+    use_as_parameter = models.BooleanField(default=False)
 
     # value: 'yes', 'no', 'unknown'
     scam = models.NullBooleanField(max_length=7, choices=SCAM_CHOICES,
@@ -85,7 +86,6 @@ class ExtendWebpage(models.Model):
 
 
 class Token(models.Model):
-
     """ store tokens used in webpages. tokens used to create keyword search
     and analisis parameter """
     id = models.AutoField(primary_key=True)  # lint:ok
@@ -128,7 +128,6 @@ class StringAnalysist(models.Model):
 
 
 class Sequence(models.Model):
-
     """store sequence token, use as parameter for analyzing website"""
     id = models.AutoField(primary_key=True)  # lint:ok
     token = models.ForeignKey(Token)
@@ -147,7 +146,6 @@ class Sequence(models.Model):
 
 
 class Searching(models.Model):
-
     """information on each searching activity"""
     id = models.AutoField(primary_key=True)  # lint:ok
     keyword = models.CharField(max_length=255)

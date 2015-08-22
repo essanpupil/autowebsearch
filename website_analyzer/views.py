@@ -462,7 +462,6 @@ class SequenceUpdate(UpdateView):
     success_url = reverse_lazy('website_analyzer:view_sequence')
 
 
-
 @login_required
 def report_website(request, hp_id):
     "submit report to domain hosting"

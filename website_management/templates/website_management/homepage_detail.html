@@ -30,14 +30,14 @@
     </tr>
     <tr>
         <th align="left">Webpages</th>
-        <td>
+        <td><ul>
         {% for web in hpweb %}
-            <a href="{% url 'website_management:webpage_detail' web.id %}">
+        <li><a href="{% url 'website_management:webpage_detail' web.id %}">
                 {{ web.url }}
-            </a>
+            </a></li>
         {% empty %}
             No webpage use this homepage
-        {% endfor %}
+            {% endfor %}</ul>
         </td>
     </tr>
 </table>

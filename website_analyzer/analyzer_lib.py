@@ -114,6 +114,7 @@ def add_list_url_to_webpage(urls):
         except IntegrityError:
             continue
 
+
 def fill_text_body(extw):
     "Function to fill text_body of an ExtendWebpage object"
     page = PageScraper()
@@ -171,7 +172,6 @@ def string_analysist(homepage):
         exthp.save()
 
 
-#@timeout_decorator.timeout(30)
 def crawl_website(homepage):
     """function to fetch html code and url of a website, start from available
     webpages in the database. The only accepted argument in Homepage object."""
