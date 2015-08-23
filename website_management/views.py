@@ -49,15 +49,11 @@ def webpage_detail(request, web_id):
                 'status': web.last_response,
                 'last_check': web.last_response_check,
                 'html_page': bool(web.html_page),
-                'text_body': '',
                 'id': web.id, }
     if web.html_page != None:
         page = PageScraper()
         extw, created = ExtendWebpage.objects.get_or_create(webpage=web)
         fill_text_body(extw)
-        web_data['text_body'] = "%s" % extw.text_body
-    else:
-        web_data['text_body'] = None
     if web.homepage is None:
         web_data['hp'] = None
         web_data['idhp'] = None
