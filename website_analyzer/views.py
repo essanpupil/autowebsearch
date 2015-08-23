@@ -5,11 +5,11 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import UpdateView
 
 from .models import ExtendHomepage, StringParameter, StringAnalysist,\
-                    ExtendDomain
+                    ExtendDomain, ExtendWebpage, Pieces
 from website_management.models import Homepage, Webpage, Domain
 from .analyzer_lib import string_analyst, add_list_url_to_webpage,\
                           send_email_website_analyze, add_scam_url_website,\
-                          string_analysist, crawl_website
+                          string_analysist, crawl_website, webpage_word_tokenizer
 from webscraper.pagescraper import PageScraper
 from .forms import AddScamWebsiteForm, AddSequenceForm, EditAnalystForm, \
                    EditAnalystDomainForm, SearchForm
@@ -486,3 +486,38 @@ def send_email_notification(request, hp_id):
                                         
     send_email_website_analyze(homepage, operator_recipients)
     return redirect('website_analyzer:analyze_website', homepage.id)
+
+
+@login_required
+def analyze_webpage(request, webpage_id):
+    "display webpage's analyst data"
+    webpage = Webpage.objects.get(id=webpage_id)
+    exwebpage, created = ExtendWebpage.objects.get_or_create(webpage=webpage)
+    context = {'webpage': {},}
+    context['webpage'] = {'url': webpage.url,
+                          'hp_id': webpage.homepage.id,
+                          'id': webpage.id,
+                          'word_tokens': [],
+                          'text_body': webpage.extendwebpage.text_body,
+                         }
+    pieces = Pieces.objects.filter(webpage=webpage).order_by('number')
+    for piece in pieces:
+        context['webpage']['word_tokens'].append(piece.token.name)
+    return render(request, 'website_analyzer/analyze_webpage.html', context)
+
+
+@login_required
+def get_word_token_website(request, homepage_id):
+    "extract word token from website"
+    homepage = Homepage.objects.get(id=homepage_id)
+    for webpage in homepage.webpage_set.all().only('id'):
+        webpage_word_tokenizer(webpage.id)
+    return redirect('website_analyzer:analyze_website', homepage_id)
+
+
+@login_required
+def get_word_token_webpage(request, webpage_id):
+    "extract word token from webpage"
+    webpage = Webpage.objects.only('id').get(id=webpage_id)
+    webpage_word_tokenizer(webpage.id)
+    return redirect('website_analyzer:analyze_webpage', webpage_id)

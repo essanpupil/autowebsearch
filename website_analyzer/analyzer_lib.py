@@ -10,8 +10,8 @@ from django.template.loader import get_template
 from django.template import Context
 
 from website_management.models import Homepage, Webpage, Domain
-from .models import ExtendHomepage, StringParameter, StringAnalysist
-from .models import ExtendWebpage, ExtendDomain
+from .models import ExtendHomepage, StringParameter, StringAnalysist, \
+                    ExtendWebpage, ExtendDomain, Token, Pieces
 from administrative.models import SentEmail
 
 from webscraper.pagescraper import PageScraper
@@ -232,3 +232,16 @@ def send_email_website_analyze(homepage, operator_recipients):
                   [operator.user.email,],
                   fail_silently=False)
         SentEmail.objects.create(recipient=operator.user, homepage=homepage)
+
+
+def webpage_word_tokenizer(webpage_id):
+    "execute word tokenizer onto webpage's html code"
+    webpage = Webpage.objects.only('html_page').get(id=webpage_id)
+    pagescraper = PageScraper()
+    number = 0
+    for word in pagescraper.word_tokens(html=webpage.html_page):
+        token,created = Token.objects.get_or_create(name=word)
+        pieces = Pieces.objects.create(webpage=webpage,
+                                       token=token,
+                                       number=number)
+        number += 1

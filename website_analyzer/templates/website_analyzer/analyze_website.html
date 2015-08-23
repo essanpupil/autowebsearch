@@ -43,7 +43,7 @@
         <th align="left" valign="top">List of webpages</th>
         <td>
             {% for web in webpages %}
-                <a href="{% url 'website_management:webpage_detail' web.id %}"
+                <a href="{% url 'website_analyzer:analyze_webpage' web.id %}"
                     title="{{ web.url }}">
                     {{ web.url|truncatechars:80 }}<br />
                 </a>

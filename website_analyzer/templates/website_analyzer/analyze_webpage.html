@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block navigation %}
+    {% include 'website_analyzer/analyst_nav.html' %}
+    {% include 'website_analyzer/webpage_analyzer_nav.html' %}
+{% endblock %}
+{% block content %}
+<h3>Analyze webpage</h3>
+<table>
+    <tr>
+        <th align="left">Webpage url</th><td>{{ webpage.url }}</td>
+    </tr>
+    <tr>
+        <th align="left">Text body</th><td>{{ webpage.text_body }}</td>
+    </tr>
+    <tr>
+        <th align="left">Word tokens</th>
+        <td>
+            {% for word in  webpage.word_tokens %}
+            <div style="float: left;border:1px solid black;padding:3px;">
+                {{ word }}</div> 
+            {% empty %}
+            Word tokens empty
+            {% endfor %}
+        </td>
+    </tr>
+</table>
+{% endblock %}

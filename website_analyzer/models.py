@@ -89,7 +89,7 @@ class Token(models.Model):
     """ store tokens used in webpages. tokens used to create keyword search
     and analisis parameter """
     id = models.AutoField(primary_key=True)  # lint:ok
-    name = models.CharField(max_length=20, unique=True)
+    name = models.CharField(max_length=250, unique=True)
 
     def __unicode__(self):  # lint:ok
         return self.name

@@ -1,13 +1,13 @@
 <h4>Webpage analyzer navigation</h4>
 <ul>
     <li>
-        <a href="{% url website_analyzer:extract_links %}">
-            Extract links
+        <a href="{% url 'website_analyzer:analyze_website' webpage.hp_id %}">
+            Analyze website
         </a>
     </li>
     <li>
-        <a href="{% url website_analyzer:view_tokens %}">
-            View tokens
+        <a href="{% url 'website_analyzer:get_word_token_webpage' webpage.id %}">
+            Get word tokens webpage
         </a>
     </li>
 </ul>
