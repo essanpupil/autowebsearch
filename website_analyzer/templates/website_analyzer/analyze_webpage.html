@@ -7,7 +7,8 @@
 <h3>Analyze webpage</h3>
 <table>
     <tr>
-        <th align="left">Webpage url</th><td>{{ webpage.url }}</td>
+        <th align="left">Webpage url</th>
+        <td><a href="{{ webpage.url }}" target="_blank">{{ webpage.url }}</a></td>
     </tr>
     <tr>
         <th align="left">Text body</th><td>{{ webpage.text_body }}</td>
