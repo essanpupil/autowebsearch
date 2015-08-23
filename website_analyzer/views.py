@@ -116,6 +116,7 @@ def edit_analyst(request, homepage_id):
             exth.reported = form.cleaned_data['reported']
             exth.access = form.cleaned_data['access']
             exth.whitelist = form.cleaned_data['whitelist']
+            exth.use_as_parameter = form.cleaned_data['use_as_parameter']
             exth.save()
             website.save()
             return redirect('website_analyzer:analyze_website',
