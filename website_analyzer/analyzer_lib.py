@@ -206,6 +206,9 @@ def crawl_website(homepage):
         if not homepage.webpage_set.filter(html_page__isnull=True).exists():
             break
         keep_crawling = False
+    exhp,created = ExtendHomepage.objects.get_or_create(homepage=homepage)
+    exhp.full_crawled += 1
+    exhp.save(update_fields=['full_crawled'])
 
 
 def send_email_website_analyze(homepage, operator_recipients):
