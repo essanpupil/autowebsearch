@@ -31,7 +31,10 @@
         <th align="left">Whitelist status</th><td>{{ whitelist|yesno:"Yes, No, Unknown" }}</td>
     </tr>
     <tr>
-        <th align="left">Times analyzed</th><td>{{ times_analyzed }}</td>
+        <th align="left">Times string analyzed</th><td>{{ times_string_analyzed }}</td>
+    </tr>
+    <tr>
+        <th align="left">Times ratio analyzed</th><td>{{ times_ratio_analyzed }}</td>
     </tr>
     <tr>
         <th align="left">Full crawl</th><td>{{ full_crawl }}</td>
@@ -64,6 +67,21 @@
             </div>
             {% empty %}
                 This website does not have matching sequence
+            {% endfor %}
+        </td>
+    </tr>
+    <tr>
+        <th align="left">Ratio comparison</th>
+        <td>
+            {% for compare in webpage_compare_ratio %}
+            <div style="border:1px solid black;">
+                <p>{{ compare.parameter }}</p>
+                <p>{{ compare.target }}</p>
+                <p>{{ compare.ratio }}</p>
+                <p>{{ compare.compare_time }}</p>
+            </div>
+            {% empty %}
+                This website does not have comparison ratio data
             {% endfor %}
         </td>
     </tr>

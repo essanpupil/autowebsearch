@@ -69,4 +69,7 @@ urlpatterns = patterns('',
                        url(r'^get_word_token_webpage/(?P<webpage_id>\d+)/$',
                             views.get_word_token_webpage,
                             name='get_word_token_webpage'),
+                       url(r'^start_ratio_analysist/(?P<homepage_id>\d+)$',
+                           views.start_ratio_analysist,
+                           name='start_ratio_analysist'),
                        )

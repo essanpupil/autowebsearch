@@ -5,11 +5,12 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import UpdateView
 
 from .models import ExtendHomepage, StringParameter, StringAnalysist,\
-                    ExtendDomain, ExtendWebpage, Pieces
+                    ExtendDomain, ExtendWebpage, Pieces, WebpageComparison
 from website_management.models import Homepage, Webpage, Domain
 from .analyzer_lib import string_analyst, add_list_url_to_webpage,\
                           send_email_website_analyze, add_scam_url_website,\
-                          string_analysist, crawl_website, webpage_word_tokenizer
+                          string_analysist, crawl_website, \
+                          webpage_word_tokenizer, ratio_analysist
 from webscraper.pagescraper import PageScraper
 from .forms import AddScamWebsiteForm, AddSequenceForm, EditAnalystForm, \
                    EditAnalystDomainForm, SearchForm
@@ -57,9 +58,11 @@ def analyze_website(request, hp_id):
                'access': hp.extendhomepage.access,
                'whitelist': hp.extendhomepage.whitelist,
                'full_crawl': hp.extendhomepage.full_crawled,
-               'times_analyzed': hp.extendhomepage.times_analyzed,
+               'times_ratio_analyzed': hp.extendhomepage.times_ratio_analyzed,
+               'times_string_analyzed': hp.extendhomepage.times_string_analyzed,
                'as_parameter': hp.extendhomepage.use_as_parameter,
                'webpages': [],
+               'webpage_compare_ratio': [],
                'params': []}
     for web in my_webpage:
         context['webpages'].append({'id': web.id, 'url': web.url})
@@ -71,6 +74,13 @@ def analyze_website(request, hp_id):
         temp['find'] = item.find
         temp['time'] = item.time
         context['params'].append(temp)
+    for ratio in WebpageComparison.objects.filter(
+                                            target__in=hp.webpage_set.all()):
+        ratio_data = {'parameter': ratio.parameter,
+                      'target': ratio.target,
+                      'compare_time': ratio.compare_time,
+                      'ratio': ratio.ratio,}
+        context['webpage_compare_ratio'].append(ratio_data)
     return render(request, 'website_analyzer/analyze_website.html', context)
 
 
@@ -199,7 +209,8 @@ def view_websites(request):
                  'name': hp.name,
                  'date_added': hp.date_added,
                  'scam': exthp.scam,
-                 'times_analyzed': exthp.times_analyzed,
+                 'use_as_parameter': exthp.use_as_parameter,
+                 'times_seq_analyzed': exthp.times_string_analyzed,
                  'full_crawled': exthp.full_crawled,
                  'whitelist': exthp.whitelist,
                  'inspection': exthp.inspected,
@@ -214,6 +225,7 @@ def view_websites(request):
                  'date_added': hp.date_added,
                  'whitelist': 'n/a',
                  'scam': 'n/a',
+                 'use_as_parameter': 'n/a',
                  'inspection': 'n/a',
                  'report': 'n/a',
                  'access': 'n/a',
@@ -525,3 +537,11 @@ def get_word_token_webpage(request, webpage_id):
     webpage = Webpage.objects.only('id').get(id=webpage_id)
     webpage_word_tokenizer(webpage.id)
     return redirect('website_analyzer:analyze_webpage', webpage_id)
+
+
+@login_required
+def start_ratio_analysist(request, homepage_id):
+    """start executing ratio analysist on to homepage and then save the
+    result to WebpageCompare model"""
+    ratio_analysist(homepage_id)
+    return redirect('website_analyzer:analyze_website', hp_id=homepage_id)

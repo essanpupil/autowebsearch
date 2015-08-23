@@ -15,8 +15,8 @@
         <th style="padding:2px;">No</th>
         <th style="padding:2px;">Website name</th>
         <th style="padding:2px;">Scam?</th>
+        <th style="padding:2px;">Use as parameter?</th>
         <th style="padding:2px;">Whitelist?</th>
-        <th style="padding:2px;">Emailed to staff</th>
         <th style="padding:2px;">Emailed to client</th>
     </tr>
     {% for web in divided_websites %}
@@ -26,8 +26,8 @@
                 <a href="{% url 'website_analyzer:analyze_website' web.id %}">
                     {{ web.name|truncatechars:50 }}</a></span></td>
         <td>{{ web.scam }}</td>
+        <td>{{ web.use_as_parameter }}</td>
         <td>{{ web.whitelist }}</td>
-        <td>{{ web.emailed_to_staff }}</td>
         <td>{{ web.emailed_to_client }}</td>
     </tr>
     {% empty %}

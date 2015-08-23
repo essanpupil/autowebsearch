@@ -1,4 +1,5 @@
 import tldextract
+import difflib
 import logging
 import time
 import timeout_decorator
@@ -11,7 +12,8 @@ from django.template import Context
 
 from website_management.models import Homepage, Webpage, Domain
 from .models import ExtendHomepage, StringParameter, StringAnalysist, \
-                    ExtendWebpage, ExtendDomain, Token, Pieces
+                    ExtendWebpage, ExtendDomain, Token, Pieces, \
+                    WebpageComparison
 from administrative.models import SentEmail
 
 from webscraper.pagescraper import PageScraper
@@ -46,7 +48,7 @@ def string_analyst(hp_id):
                 StringAnalysist.objects.create(webpage=web,
                                                parameter=param,
                                                find=False)
-    exthp.times_analyzed += 1
+    exthp.times_string_analyzed += 1
     exthp.save()
 
 
@@ -246,3 +248,30 @@ def webpage_word_tokenizer(webpage_id):
                                        token=token,
                                        number=number)
         number += 1
+
+
+def ratio_analysist(homepage_id):
+    """function to doing string analysist on to website/homepage model object.
+    required website_management.models.Homepage as argument"""
+    SequenceMatcher = difflib.SequenceMatcher
+    target_hp = Homepage.objects.get(id=homepage_id)
+    target_webpages = target_hp.webpage_set.all()
+    parameter_hps = Homepage.objects.filter(
+                                    extendhomepage__use_as_parameter=True)
+    for hp in parameter_hps:
+        parameter_webpages = hp.webpage_set.all()
+        for webpage in parameter_webpages:
+            parameter_token = Pieces.objects.filter(
+                    webpage=webpage).values_list('token', flat=True)
+            for t_webpage in target_webpages:
+                target_token = Pieces.objects.filter(
+                    webpage=t_webpage).values_list('token', flat=True)
+                compare = SequenceMatcher(None, parameter_token, target_token)
+                cmp_ratio = compare.ratio()
+                wp_compare = WebpageComparison(parameter=webpage,
+                                               target=t_webpage,
+                                               ratio=cmp_ratio)
+                wp_compare.save()
+    ex_target_hp = target_hp.extendhomepage
+    ex_target_hp.times_ratio_analyzed += 1
+    ex_target_hp.save()

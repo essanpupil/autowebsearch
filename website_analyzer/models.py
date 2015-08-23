@@ -31,9 +31,10 @@ class ExtendHomepage(models.Model):
                          (None, 'UNKNOWN'))
 
     homepage = models.OneToOneField(Homepage)
-    full_crawled = models.IntegerField(default=0)
-    times_analyzed = models.IntegerField(default=0)
     use_as_parameter = models.BooleanField(default=False)
+    full_crawled = models.IntegerField(default=0)
+    times_string_analyzed = models.IntegerField(default=0)
+    times_ratio_analyzed = models.IntegerField(default=0)
 
     # value: 'yes', 'no', 'unknown'
     scam = models.NullBooleanField(max_length=7, choices=SCAM_CHOICES,

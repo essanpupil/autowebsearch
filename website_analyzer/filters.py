@@ -16,4 +16,5 @@ class ExtendHomepageFilter(django_filters.FilterSet):
         model = Homepage
         fields = ['name',
                   'extendhomepage__scam',
+                  'extendhomepage__use_as_parameter',
                   'extendhomepage__whitelist']
