@@ -58,6 +58,7 @@ def analyze_website(request, hp_id):
                'whitelist': hp.extendhomepage.whitelist,
                'full_crawl': hp.extendhomepage.full_crawled,
                'times_analyzed': hp.extendhomepage.times_analyzed,
+               'as_parameter': hp.extendhomepage.use_as_parameter,
                'webpages': [],
                'params': []}
     for web in my_webpage:
