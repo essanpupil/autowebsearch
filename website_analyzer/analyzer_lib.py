@@ -239,6 +239,7 @@ def webpage_word_tokenizer(webpage_id):
     webpage = Webpage.objects.only('html_page').get(id=webpage_id)
     pagescraper = PageScraper()
     number = 0
+    Pieces.objects.filter(webpage=webpage).delete()
     for word in pagescraper.word_tokens(html=webpage.html_page):
         token,created = Token.objects.get_or_create(name=word)
         pieces = Pieces.objects.create(webpage=webpage,

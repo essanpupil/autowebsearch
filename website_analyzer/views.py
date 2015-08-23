@@ -511,7 +511,10 @@ def get_word_token_website(request, homepage_id):
     "extract word token from website"
     homepage = Homepage.objects.get(id=homepage_id)
     for webpage in homepage.webpage_set.all().only('id'):
-        webpage_word_tokenizer(webpage.id)
+        if webpage.html_page != None:
+            webpage_word_tokenizer(webpage.id)
+        else:
+            continue
     return redirect('website_analyzer:analyze_website', homepage_id)
 
 
