@@ -160,5 +160,5 @@ class WebpageComparison(models.Model):
     "Website comparison result"
     parameter = models.ForeignKey(Webpage, related_name='webpage_parameter')
     target = models.ForeignKey(Webpage, related_name='webpage_target')
-    ndiff_result = models.ForeignKey(Token)
+    ratio = models.FloatField()
     compare_time = models.DateTimeField(auto_now_add=True)
