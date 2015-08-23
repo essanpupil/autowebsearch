@@ -154,3 +154,11 @@ class Searching(models.Model):
 
     def __unicode__(self):  # lint:ok
         return self.date
+
+
+class WebpageComparison(models.Model):
+    "Website comparison result"
+    parameter = models.ForeignKey(Webpage, related_name='webpage_parameter')
+    target = models.ForeignKey(Webpage, related_name='webpage_target')
+    ndiff_result = models.ForeignKey(Token)
+    compare_time = models.DateTimeField(auto_now_add=True)
