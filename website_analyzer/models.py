@@ -126,6 +126,7 @@ class StringAnalysist(models.Model):
     parameter = models.ForeignKey(StringParameter)
     time = models.DateTimeField(auto_now=True, db_index=True)
     find = models.BooleanField(default=False)
+    duration = models.FloatField(default=0)
 
 
 class Sequence(models.Model):
@@ -163,3 +164,4 @@ class WebpageComparison(models.Model):
     target = models.ForeignKey(Webpage, related_name='webpage_target')
     ratio = models.FloatField()
     compare_time = models.DateTimeField(auto_now_add=True)
+    duration = models.FloatField(default=0)

@@ -37,16 +37,21 @@ def string_analyst(hp_id):
         for param in params:
             param.times_used += 1
             param.save(update_fields=['times_used'])
+            start_time = time.time()
             if param.sentence in web.extendwebpage.text_body:
+                duration = time.time() - start_time
                 StringAnalysist.objects.create(webpage=web,
                                                parameter=param,
+                                               duration=duration,
                                                find=True)
                 if param.definitive:
                     exthp.scam = True
                     exthp.save()
             else:
+                duration = time.time() - start_time
                 StringAnalysist.objects.create(webpage=web,
                                                parameter=param,
+                                               duration=duration,
                                                find=False)
     exthp.times_string_analyzed += 1
     exthp.save()
@@ -264,12 +269,25 @@ def ratio_analysist(homepage_id):
             parameter_token = Pieces.objects.filter(
                     webpage=webpage).values_list('token', flat=True)
             for t_webpage in target_webpages:
+                ext_wp, created = ExtendWebpage.objects.get_or_create(
+                                                            webpage=t_webpage)
+                if t_webpage.extendwebpage.text_body == None:
+                    page = PageScraper()
+                    page.fetch_webpage(t_webpage.url)
+                    t_webpage.html_page = page.html
+                    extw = t_webpage.extendwebpage
+                    extw.text_body = page.get_text_body()
+                    extw.save()
+                    t_webpage.save()
                 target_token = Pieces.objects.filter(
                     webpage=t_webpage).values_list('token', flat=True)
+                start_time = time.time()
                 compare = SequenceMatcher(None, parameter_token, target_token)
                 cmp_ratio = compare.ratio()
+                duration = time.time() - start_time
                 wp_compare = WebpageComparison(parameter=webpage,
                                                target=t_webpage,
+                                               duration=duration,
                                                ratio=cmp_ratio)
                 wp_compare.save()
     ex_target_hp = target_hp.extendhomepage
