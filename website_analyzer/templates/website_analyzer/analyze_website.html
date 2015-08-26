@@ -31,6 +31,11 @@
         <th align="left">Whitelist status</th><td>{{ whitelist|yesno:"Yes, No, Unknown" }}</td>
     </tr>
     <tr>
+        <th align="left">String analys result</th>
+        <td>True = {{ string_analyst_result.tru }}<br />False = {{ string_analyst_result.fals }}<br />None = {{ string_analyst_result.non }}</td>
+    <tr>
+        <th align="left">Average ratio compare</th><td>{{ average_ratio_compare }}</td>
+    <tr>
         <th align="left">Times string analyzed</th><td>{{ times_string_analyzed }}</td>
     </tr>
     <tr>

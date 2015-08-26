@@ -25,7 +25,8 @@ def string_analyst(hp_id):
     exthp, created = ExtendHomepage.objects.get_or_create(homepage=hp)
     params = StringParameter.objects.filter(target_analyze='text_body')
     for web in hp.webpage_set.all():
-        if web.extendwebpage.text_body == None:
+        ex_web, created = ExtendWebpage.objects.get_or_create(webpage=web)
+        if ex_web.text_body == None:
             page = PageScraper()
             page.fetch_webpage(web.url)
             web.html_page = page.html
@@ -243,8 +244,10 @@ def send_email_website_analyze(homepage, operator_recipients):
 
 def webpage_word_tokenizer(webpage_id):
     "execute word tokenizer onto webpage's html code"
-    webpage = Webpage.objects.only('html_page').get(id=webpage_id)
+    webpage = Webpage.objects.get(id=webpage_id)
     pagescraper = PageScraper()
+    pagescraper.fetch_webpage(webpage.url)
+    webpage.html_page = pagescraper.html
     number = 0
     Pieces.objects.filter(webpage=webpage).delete()
     for word in pagescraper.word_tokens(html=webpage.html_page):

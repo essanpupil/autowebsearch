@@ -26,10 +26,10 @@ def add_sequence(request):
             form = AddSequenceForm(request.POST)
             if form.is_valid():
                 sentence = form.cleaned_data['sentence'].lower()
-                target_analyze = form.cleaned_data['targer_analyze'].lower()
+                target_analyze = form.cleaned_data['target_analyze'].lower()
                 definitive = form.cleaned_data['definitive']
                 StringParameter.objects.create(sentence=sentence.strip(),
-                                               target_analyze=trget_analyze,
+                                               target_analyze=target_analyze,
                                                definitive=definitive)
                 return redirect('website_analyzer:view_sequence')
         else:
@@ -61,13 +61,20 @@ def analyze_website(request, hp_id):
                'times_ratio_analyzed': hp.extendhomepage.times_ratio_analyzed,
                'times_string_analyzed': hp.extendhomepage.times_string_analyzed,
                'as_parameter': hp.extendhomepage.use_as_parameter,
+               'average_ratio_compare': [],
+               'string_analyst_result': {'tru': 0, 'fals':0, 'non': 0},
                'webpages': [],
                'webpage_compare_ratio': [],
                'params': []}
     for web in my_webpage:
         context['webpages'].append({'id': web.id, 'url': web.url})
-    for item in StringAnalysist.objects.filter(webpage__in=my_webpage,
-            find=True):
+    for item in StringAnalysist.objects.filter(webpage__in=my_webpage):
+        if item.find == True:
+            context['string_analyst_result']['tru'] += 1
+        elif item.find == False:
+            context['string_analyst_result']['fals'] += 1
+        else:
+            context['string_analyst_result']['non'] += 1
         temp = {'parameter': '', 'webpage': '', 'find': ''}
         temp['parameter'] = item.parameter.sentence
         temp['webpage'] = item.webpage.url
@@ -76,11 +83,18 @@ def analyze_website(request, hp_id):
         context['params'].append(temp)
     for ratio in WebpageComparison.objects.filter(
                                             target__in=hp.webpage_set.all()):
+        context['average_ratio_compare'].append(ratio.ratio)
         ratio_data = {'parameter': ratio.parameter,
                       'target': ratio.target,
                       'compare_time': ratio.compare_time,
                       'ratio': ratio.ratio,}
         context['webpage_compare_ratio'].append(ratio_data)
+    if len(context['average_ratio_compare']) <= 0:
+        context['average_ratio_compare'] = 0
+    else:
+        context['average_ratio_compare'] = sum(
+                            context['average_ratio_compare']) / float(len(
+                                            context['average_ratio_compare']))
     return render(request, 'website_analyzer/analyze_website.html', context)
 
 
@@ -279,14 +293,9 @@ def start_sequence_analysist(request, homepage_id):
     """start executing string parameter analysist on to homepage and then save
     result to StringAnalysist model"""
     homepage = get_object_or_404(Homepage, id=homepage_id)
-    string_analysist(homepage)
-    string_analysist_result = StringAnalysist.objects.filter(
-            find=True, 
-            webpage__in=homepage.webpage_set.all())
-    if string_analysist_result.filter(parameter__definitive=True).count() > 0:
-        exthp = homepage.extendhomepage
-        exthp.scam=True
-        exthp.save()
+    StringAnalysist.objects.filter(
+                                webpage__in=homepage.webpage_set.all()).delete()
+    string_analyst(homepage.id)
     return redirect('website_analyzer:analyze_website', hp_id=homepage.id)
 
 
@@ -524,10 +533,7 @@ def get_word_token_website(request, homepage_id):
     "extract word token from website"
     homepage = Homepage.objects.get(id=homepage_id)
     for webpage in homepage.webpage_set.all().only('id'):
-        if webpage.html_page != None:
-            webpage_word_tokenizer(webpage.id)
-        else:
-            continue
+        webpage_word_tokenizer(webpage.id)
     return redirect('website_analyzer:analyze_website', homepage_id)
 
 
