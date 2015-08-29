@@ -6,6 +6,15 @@
 {% block content %}
 <h3>Analyze website</h3>
 <table>
+    {% if error_warning == "error" %}
+        <tr>
+            <th align="left"><strong>website ini mengandung informasi palsu</strong></th>
+            <td><ul>{% for err in error_warning_msg %}
+                    <li><strong>{{ err.parameter }}</strong></li>
+                    {% endfor %}
+            </ul></td>
+        </tr>
+    {% endif %}
     <tr>
         <th align="left">Homepage name</th><td>{{ name }}</td>
     </tr>
@@ -33,9 +42,16 @@
     <tr>
         <th align="left">String analys result</th>
         <td>True = {{ string_analyst_result.tru }}<br />False = {{ string_analyst_result.fals }}<br />None = {{ string_analyst_result.non }}</td>
+    </tr>
+    <tr>
+        <th align="left">String Analist duration</th><td>{{ duration }}</td>
+    </tr>
     <tr>
         <th align="left">Average ratio compare</th><td>{{ average_ratio_compare }}</td>
+    </tr>
     <tr>
+        <th align="left">Ratio Analist duration</th><td>{{ ratio_duration }}</td>
+    </tr>
         <th align="left">Times string analyzed</th><td>{{ times_string_analyzed }}</td>
     </tr>
     <tr>

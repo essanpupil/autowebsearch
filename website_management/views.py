@@ -279,3 +279,13 @@ def view_search_result(request):
         context['search_results'].append(search_data)
     return render(request, 'website_management/view_search_result.html',
                   context)
+
+
+def test_skripsi(request):
+    "hanya untuk testing soal sidang isi"
+    if request.method == "POST":
+        context = {'url_input': request.POST['url_skripsi'],}
+        return render(request, 'website_management/test_skripsi.html', context)
+        
+    else:
+        return render(request, 'website_management/test_skripsi.html')

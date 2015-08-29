@@ -13,4 +13,6 @@ class Command(BaseCommand):
                 extendhomepage__whitelist=True,
                 extendhomepage__use_as_parameter=True).order_by(
                     'extendhomepage__times_string_analyzed').only('id')
+        if homepages[0].extendhomepage.full_crawled == 0:
+            crawl_website(homepages[0])
         string_analyst(homepages[0].id)

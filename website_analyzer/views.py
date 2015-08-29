@@ -64,8 +64,27 @@ def analyze_website(request, hp_id):
                'average_ratio_compare': [],
                'string_analyst_result': {'tru': 0, 'fals':0, 'non': 0},
                'webpages': [],
+               'duration': '',
+               'error_warning': '',
+               'error_warning_msg': '',
+               'ratio_duration': '',
                'webpage_compare_ratio': [],
                'params': []}
+    if StringAnalysist.objects.filter(webpage__in=my_webpage,
+                                      find=True,
+                                      parameter__definitive=True).count() > 0:
+        context['error_warning'] = 'error'
+        context['error_warning_msg'] = StringAnalysist.objects.filter(
+                webpage__in=my_webpage,
+                find=True,
+                parameter__definitive=True)
+
+    sum_dur = StringAnalysist.objects.filter(
+            webpage__in=my_webpage).values_list('duration', flat=True)
+    context['duration'] = sum(sum_dur)
+    sum_rat_dur = WebpageComparison.objects.filter(
+            target__in=my_webpage).values_list('duration', flat=True)
+    context['ratio_duration'] = sum(sum_rat_dur)
     for web in my_webpage:
         context['webpages'].append({'id': web.id, 'url': web.url})
     for item in StringAnalysist.objects.filter(webpage__in=my_webpage):

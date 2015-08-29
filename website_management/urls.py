@@ -41,4 +41,7 @@ urlpatterns = patterns('',
                        url(r'^view-search-result/$',
                            views.view_search_result,
                            name='view_search_result'),
+                       url(r'^test-skripsi/$',
+                           views.test_skripsi,
+                           name='test_skripsi'),
                        )
