@@ -405,7 +405,8 @@ def edit_analyst_domain(request, dom_id):
             my_homepages = domain_origin.homepage_set.all()
             if extdom.whitelist == True:
                 for my_hp in my_homepages:
-                    ext_hp = ExtendHomepage.objects.get(homepage=my_hp)
+                    ext_hp,created = ExtendHomepage.objects.get_or_create(
+                                                            homepage=my_hp)
                     ext_hp.whitelist = True
                     ext_hp.save()
             domain.save()
