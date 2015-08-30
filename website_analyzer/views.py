@@ -233,7 +233,7 @@ def view_websites(request):
     except EmptyPage:
         context['pagebase'] = paginator.page(paginator.num_pages)
 
-    if len(context['divided_websites']) == 0:
+    if len(context['pagebase'].object_list) == 0:
         return render(request, 'website_analyzer/view_websites.html', context)
 
     divided_websites = Homepage.objects.filter(
