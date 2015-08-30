@@ -232,8 +232,13 @@ def view_websites(request):
         context['pagebase'] = paginator.page(1)
     except EmptyPage:
         context['pagebase'] = paginator.page(paginator.num_pages)
+
+    if len(context['divided_websites']) == 0:
+        return render(request, 'website_analyzer/view_websites.html', context)
+
     divided_websites = Homepage.objects.filter(
                            id__in=context['pagebase'].object_list)
+
     for hp in divided_websites:
         try:
             exthp = ExtendHomepage.objects.get(homepage=hp)
