@@ -261,12 +261,12 @@ def view_websites(request):
                 {'id': hp.id,
                  'name': hp.name,
                  'date_added': hp.date_added,
-                 'whitelist': 'n/a',
-                 'scam': 'n/a',
-                 'use_as_parameter': 'n/a',
-                 'inspection': 'n/a',
-                 'report': 'n/a',
-                 'access': 'n/a',
+                 'whitelist': None,
+                 'scam': None,
+                 'use_as_parameter': None,
+                 'inspection': None,
+                 'report': None,
+                 'access': None,
                  'web_count': hp.webpage_set.all().count(),
                  'matched_sequence': {'min': 0, 'max': 0},})
     return render(request, 'website_analyzer/view_websites.html', context)

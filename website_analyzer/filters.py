@@ -11,7 +11,7 @@ class ExtendDomainFilter(django_filters.FilterSet):
 
 
 class ExtendHomepageFilter(django_filters.FilterSet):
-    name = django_filters.CharFilter(lookup_type='icontains')
+    name = django_filters.CharFilter(label='Nama website', lookup_type='icontains')
     class Meta:
         model = Homepage
         fields = ['name',

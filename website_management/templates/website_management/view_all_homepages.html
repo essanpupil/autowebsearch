@@ -3,30 +3,30 @@
     {% include 'website_management/website_nav.html' %}
 <div class="pagination">
     <span class="step-links">
-        {% if websites.has_previous %}
-            <a href="?page={{ homes.previous_page_number }}">previous</a>
+        {% if homes.has_previous %}
+            <a href="?page={{ homes.previous_page_number }}">sebelumnya</a>
         {% endif %}
 
         <span class="current">
-            Page {{ homes.number }} of {{ homes.paginator.num_pages }}.
+            Halaman {{ homes.number }} dari {{ homes.paginator.num_pages }}.
         </span>
 
         {% if homes.has_next %}
-            <a href="?page={{ homes.next_page_number }}">next</a>
+            <a href="?page={{ homes.next_page_number }}">selanjutnya</a>
         {% endif %}
     </span>
 </div>
 {% endblock %}
 {% block content %}
-<h3>View all homepages</h3>
+<h3>Lihat semua website</h3>
 {{ error_message }}
 <table>
     <tr>
         <th>No.</th>
-        <th>Homepage name</th>
-        <th>Domain name</th>
-        <th>Last Response</th>
-        <th>Action</th>
+        <th>Nama homepage</th>
+        <th>Nama domain</th>
+        <th>Tanggal ditambahkan ke database</th>
+        <th>Tindakan selanjutnya</th>
     </tr>
     {% for hp in homes %}
         <tr>

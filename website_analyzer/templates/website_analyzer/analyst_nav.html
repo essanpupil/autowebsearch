@@ -1,37 +1,37 @@
-<h4>Analyst navigation</h4>
+<h4>Navigasi menu analisa</h4>
 <ul>
     <li>
         <a href="{% url 'website_analyzer:view_websites' %}">
-            View analyst websites
+            Lihat data analisa situs
         </a>
     </li>
     <li>
         <a href="{% url 'website_analyzer:view_analyst_domains' %}">
-            View analyst domains
+            Lihat data analisa domain
         </a>
     </li>
 {% if user.is_superuser %}
     <li>
         <a href="{% url 'website_analyzer:add_scam_website' %}">
-            Add new scam websites
+            Tambahkan situs penipuan
         </a>
     </li>
 {% endif %}
     <li>
         <a href="{% url 'website_analyzer:view_sequence' %}">
-            View sequence parameter
+            Lihat parameter analisa
         </a>
     </li>
 {% if user.is_superuser %}
     <li>
         <a href="{% url 'website_analyzer:add_sequence' %}">
-            Add sequence parameter
+            Tambah parameter analisa
         </a>
     </li>
 {% endif %}
     <li>
         <a href="{% url 'website_analyzer:view_analyst_result' %}">
-            View analyst result
+            Lihat hasil analisa
         </a>
     </li>
 </ul>

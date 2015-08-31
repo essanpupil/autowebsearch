@@ -22,13 +22,13 @@ class ExtendDomain(models.Model):
 
 class ExtendHomepage(models.Model):
     """extending homepage model to add more field"""
-    SCAM_CHOICES = ((True, 'YES'),
-                    (False,  'NO'),
-                    (None, 'UNKNOWN'))
+    SCAM_CHOICES = ((True, 'Ya'),
+                    (False,  'Tidak'),
+                    (None, 'Belum ditentukan'))
 
-    WHITELIST_CHOICES = ((True, 'YES'),
-                         (False,  'NO'),
-                         (None, 'UNKNOWN'))
+    WHITELIST_CHOICES = ((True, 'Ya'),
+                         (False,  'Tidak'),
+                         (None, 'Belum ditentukan'))
 
     homepage = models.OneToOneField(Homepage)
     use_as_parameter = models.BooleanField(default=False)

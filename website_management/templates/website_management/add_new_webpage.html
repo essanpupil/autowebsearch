@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 {% block navigation %}{% include 'website_management/website_nav.html' %}{% endblock %}
-{% block pagetitle %}Add new web page manualy | ScamSearcher{% endblock %}
+{% block pagetitle %}Tambahkan halaman web secara manual | ScamSearcher{% endblock %}
 {% block content %}
-<h3>Add new webpage</h3>
+<h3>Tambahkan halaman web</h3>
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 <form action="{% url 'website_management:add_new_webpage' %}" method="post">
 {% csrf_token %}
 {{ form.as_p }}
 <br />
 <br />
-<input type="submit" value="Save new webpage" />
-<input type="reset" value="Clear input area" />
+<input type="submit" value="Simpan halaman web baru" />
+<input type="reset" value="Bersihkan area input" />
 </form>
 {% endblock %}

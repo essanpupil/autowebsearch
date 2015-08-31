@@ -18,7 +18,7 @@
 
 <div id="header">
     <h1>SCAM SEARCHER</h1>
-    <h2>Search for scam website, automatically</h2>
+    <h2>Pencarian situs penipuan secara otomatis</h2>
     <ul>
     {% block mainmenu %}
         {% if user.is_authenticated %}
@@ -29,12 +29,12 @@
         </li>
         <li>
             <a href="{% url 'website_analyzer:analyst_dashboard' %}">
-                Analyst
+                Analisa
             </a>
         </li>
         <li>
             <a href="{% url 'administrative:admin_dashboard' %}">
-                Administrative
+                Administratif
             </a>
         </li>
             <li>
@@ -44,13 +44,13 @@
             </li>
             <li>
                 <a href="{% url 'logout' %}">
-                    Logout
+                    Keluar
                 </a>
             </li>
         {% else %}
             <li>
                 <a href="{% url 'login' %}">
-                    Login
+                    Masuk
                 </a>
             </li>
         {% endif %}

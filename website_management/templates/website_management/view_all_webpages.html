@@ -4,17 +4,17 @@
     <form action"" method="get">
         {{ filter.form.as_p }}
         <br />
-        <input type="submit" value="submit filter" />
+        <input type="submit" value="terapkan filter" />
     </form>
-<h4>Page Navigation</h4>
+<h4>Navigasi halaman</h4>
 <div class="pagination">
 <span class="step-links">
 {% if webs.has_previous %}
     {% if "url" in request.get_full_path %}
     <a href="?url={{ request.GET.url }}&page={{ webs.previous_page_number }}">
-        previous</a>
+        sebelumnya</a>
         {% else %}
-            <a href="?page={{ webs.previous_page_number }}">previous</a>
+            <a href="?page={{ webs.previous_page_number }}">sebelumnya</a>
         {% endif %}
     {% endif %}
     <span class="current">
@@ -22,33 +22,29 @@
     </span>
     {% if webs.has_next %}
         {% if "url" in request.get_full_path %}
-        <a href="?url={{ request.GET.url }}&page={{ webs.next_page_number }}">next</a>
+        <a href="?url={{ request.GET.url }}&page={{ webs.next_page_number }}">selanjutnya</a>
         {% else %}
-            <a href="?page={{ webs.next_page_number }}">next</a>
+            <a href="?page={{ webs.next_page_number }}">selanjutnya</a>
         {% endif %}
     {% endif %}
 </span>
 </div>
 {% endblock %}
 {% block content %}
-<h3>View all webpages</h3>
+<h3>Lihat semua halaman web</h3>
 {{ error_message }}
 <table>
     <tr>
         <th>No.</th>
-        <th>URL</th>
-        <th>Date Added</th>
-        <th>Last Response</th>
-        <th>Last Response Check</th>
-        <th>Action</th>
+        <th>Alamat halaman web</th>
+        <th>Tanggal ditambahkan ke database</th>
+        <th>Tindakan selanjutnya</th>
     </tr>
     {% for web in webs %}
         <tr>
             <td>{{ forloop.counter }}</td>
             <td>{{ web.url|truncatechars:50 }}</td>
             <td>{{ web.date_added }}</td>
-            <td>{{ web.last_response }}</td>
-            <td>{{ web.last_response_check }}</td>
             <td>
                 <a href="{% url 'website_management:webpage_detail' web.id %}">
                     Detail

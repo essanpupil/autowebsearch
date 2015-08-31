@@ -3,16 +3,16 @@
 {% include 'website_analyzer/analyst_nav.html' %}
 {% endblock %}
 {% block content %}
-<h3>Analyst summary information</h3>
+<h3>Rangkuman hasil analisa</h3>
 <table>
     <tr>
-        <th align="left">Total scam websites</th><td>{{ scam_count }}</td>
+        <th align="left">Jumlah situs penipuan</th><td>{{ scam_count }}</td>
     </tr>
     <tr>
-        <th align="left">Total whitelist websites</th><td>{{ whitelist_count }}</td>
+        <th align="left">Jumlah situs yang masuk datar putih</th><td>{{ whitelist_count }}</td>
     </tr>
     <tr>
-        <th align="left">Total Websites</th><td>{{ hp_count }}</td>
+        <th align="left">Jumlah seluruh website</th><td>{{ hp_count }}</td>
     </tr>
 </table>
 {% comment %}

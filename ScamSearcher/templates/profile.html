@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h4>User profile:{{ user.username }}</h4>
+<h4>Profile user:{{ user.username }}</h4>
 <table>
 <tr><th>Username</th><td>{{ user.get_username }}</td></tr>
-<tr><th>Fullname</th><td>{{ user.get_full_name }}</td></tr>
+<tr><th>Nama lengkap</th><td>{{ user.get_full_name }}</td></tr>
 <tr><th>Email</th><td>{{ user.email }}</td></tr>
-<tr><th>Is Staff</th><td>{{ user.is_staff }}</td></tr>
-<tr><th>Is Superuser</th><td>{{ user.is_superuser }}</td></tr>
-<tr><th>Action</th><td><a href="{% url 'password_change' %}">Change password</a></td></tr>
+<tr><th>Apakah user ini termasuk staff?</th><td>{{ user.is_staff|yesno:"ya,tidak" }}</td></tr>
+<tr><th>Apakah user ini termasuk superuser</th><td>{{ user.is_superuser|yesno:"Ya,tidak" }}</td></tr>
+<tr><th>Tindakan</th><td><a href="{% url 'password_change' %}">Ubah password</a></td></tr>
 </table>
 {% endblock %}
