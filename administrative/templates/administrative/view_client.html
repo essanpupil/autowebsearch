@@ -1,36 +1,36 @@
 {% extends 'base.html' %}
-{% block pagetitle %}View all client | ScamSearcher{% endblock %}
+{% block pagetitle %}Lihat daftar klien | ScamSearcher{% endblock %}
 {% block navigation %}
     {% include 'administrative/admin_nav.html' %}
-    <h4>Page navigation</h4>
+    <h4>Navigasi halaman</h4>
     <div class="pagination">
         <span class="step-links">
             {% if clients.has_previous %}
-                <a href="?page={{ clients.previous_page_number }}">previous</a>
+                <a href="?page={{ clients.previous_page_number }}">sebelumnya</a>
             {% endif %}
 
             <span class="current">
-                Page {{ clients.number }} of {{ clients.paginator.num_pages }}.
+                Halaman {{ clients.number }} dari {{ clients.paginator.num_pages }}.
             </span>
 
             {% if clients.has_next %}
-                <a href="?page={{ clients.next_page_number }}">next</a>
+                <a href="?page={{ clients.next_page_number }}">Selanjutnya</a>
             {% endif %}
         </span>
     </div>
 {% endblock %}
 {% block content %}
-<h3>View all client</h3>
+<h3>Daftar klien</h3>
 {{ error_message }}
 <table>
     <tr>
         <th>No.</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Phone</th>
-        <th>Status</th>
-        <th>Address</th>
-        <th>Action</th>
+        <th>Nama klien</th>
+        <th>Alamat email klien</th>
+        <th>Nomor telepon klien</th>
+        <th>Status klien</th>
+        <th>Alamat klien</th>
+        <th>Tindakan selanjutnya</th>
     </tr>
     {% for client in clients %}
         <tr>

@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 {% block navigation %}{% include 'administrative/admin_nav.html' %}{% endblock %}
-{% block pagetitle %}Add new client | ScamSearcher{% endblock %}
+{% block pagetitle %}Tambah klien baru | ScamSearcher{% endblock %}
 {% block content %}
-<h3>Add new client</h3>
+<h3>Tambah klien baru</h3>
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 <form action="{% url 'administrative:add_client' %}" method="post">
 {% csrf_token %}
 {{ form.as_p }}
 <br />
 <br />
-<input type="submit" value="Add new client" />
-<input type="reset" value="Clear input area" />
+<input type="submit" value="Simpan data klien" />
+<input type="reset" value="Bersihkan area input" />
 </form>
 {% endblock %}

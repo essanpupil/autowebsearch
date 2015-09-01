@@ -6,9 +6,9 @@ from website_management.models import Webpage, Homepage, Domain
 
 class ExtendDomain(models.Model):
     """extend model Domain to add more information"""
-    WHITELIST_CHOICES = ((True, 'YES'),
-                         (False,  'NO'),
-                         (None, 'UNKNOWN'))
+    WHITELIST_CHOICES = ((True, 'Ya'),
+                         (False,  'Tidak'),
+                         (None, 'Belum diketahui'))
     domain = models.OneToOneField(Domain)
     # True if the web should be whitelist, False if should not, None pending
     whitelist = models.NullBooleanField(max_length=7, choices=WHITELIST_CHOICES,

@@ -2,6 +2,7 @@ from django.forms import ModelForm, URLInput, HiddenInput, PasswordInput
 from django.core import validators
 from django import forms
 from django.contrib.auth.models import User
+from django.utils.translation import ugettext_lazy as _
 
 from .models import Client, Website, Event, Operator, ClientKeyword, \
                     ClientSequence
@@ -12,6 +13,11 @@ class AddClientForm(ModelForm):
     class Meta:
         model = Client
         fields = ('name', 'email', 'phone', 'address') 
+        labels = {'name': _('Nama klien'),
+                  'email': _('Alamat email klien'),
+                  'phone': _('Nomor telepon klien'),
+                  'address': _('Alamat klien'),
+                 }
 
 
 class AddOperatorForm(ModelForm):
@@ -88,7 +94,8 @@ class AddEventForm(ModelForm):
 
 class AddUserForm(ModelForm):
     "Add new user"
-    password_again = forms.CharField(widget=forms.PasswordInput)
+    password_again = forms.CharField(label='Masukan password lagi',
+                                     widget=forms.PasswordInput)
 
     def clean(self):
         'custom clean to match password & password_again field'
@@ -102,6 +109,13 @@ class AddUserForm(ModelForm):
         fields = ('username', 'password', 'password_again', 'first_name', 
                   'last_name', 'email')
         widgets = {'password': PasswordInput(),}
+        labels = {'username': _('Username'),
+                  'Password': _('Password'),
+                  'first_name': _('Nama depan'),
+                  'last_name': _('Nama belakang'),
+                  'email': _('Alamat email user'),
+                 }
+        help_texts = {'username': _(""),}
 
 
 #class EditUserForm(ModelForm):

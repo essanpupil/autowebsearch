@@ -1,5 +1,6 @@
 from django.forms import ModelForm
 from django import forms
+from django.utils.translation import ugettext_lazy as _
 
 from website_management.models import Webpage, Homepage
 from .models import StringParameter, ExtendHomepage, ExtendDomain
@@ -10,6 +11,7 @@ class AddScamWebsiteForm(ModelForm):
     class Meta:  # lint:ok
         model = Webpage
         fields = ['url']
+        labels = {'url': _('Alamat halaman web'),}
 
 
 class AddSequenceForm(ModelForm):
@@ -17,6 +19,10 @@ class AddSequenceForm(ModelForm):
     class Meta:  # lint:ok
         model = StringParameter
         fields = ['sentence', 'definitive','target_analyze']
+        labels = {'sentence': _('Parameter analisa'),
+                  'definitive': _('Apakah definitif'),
+                  'target_analyze': _('Target analisa'),
+                 }
 
 
 class EditAnalystForm(ModelForm):
@@ -24,7 +30,6 @@ class EditAnalystForm(ModelForm):
     date_added = ''
     def __init__(self, *args, **kwargs):
         super(EditAnalystForm, self).__init__(*args, **kwargs)
-        
     class Meta:
         model = ExtendHomepage
         exclude = ['homepage']

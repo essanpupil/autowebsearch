@@ -1,23 +1,23 @@
-    <h4>Page Navigation</h4>
+    <h4>Navigasi halaman</h4>
 <div class="pagination">
     <span class="step-links">
         {% if pagebase.has_previous %}
             {% if request.GET|length == 0 %}
-            <a href="?page={{ pagebase.previous_page_number }}">previous</a>
+            <a href="?page={{ pagebase.previous_page_number }}">sebelumnya</a>
             {% else %}
-            <a href="{{ request.get_full_path }}&page={{ pagebase.previous_page_number }}">previous</a>
+            <a href="{{ request.get_full_path }}&page={{ pagebase.previous_page_number }}">sebelumnya</a>
             {% endif %}
         {% endif %}
 
         <span class="current">
-            Page {{ pagebase.number }} of {{ pagebase.paginator.num_pages }}.
+            Halaman {{ pagebase.number }} dari {{ pagebase.paginator.num_pages }}.
         </span>
 
         {% if pagebase.has_next %}
             {% if request.GET|length == 0 %}
-            <a href="?page={{ pagebase.next_page_number }}">next</a>
+            <a href="?page={{ pagebase.next_page_number }}">selanjutnya</a>
             {% else %}
-            <a href="{{ request.get_full_path }}&page={{ pagebase.next_page_number }}">next</a>
+            <a href="{{ request.get_full_path }}&page={{ pagebase.next_page_number }}">selanjutnya</a>
             {% endif %}
         {% endif %}
     </span>

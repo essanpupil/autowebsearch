@@ -4,34 +4,34 @@
     <form action="" method="get">
         {{ filter.form.as_p }}
         <br />
-        <input type="submit" value="submit edit" />
+        <input type="submit" value="terapkan filter" />
     </form>
     {% include 'website_analyzer/search.html' %}
 {% endblock %}
 {% block content %}
-<h3>View Analyst Domain</h3>
+<h3>Data analisa domain</h3>
 <table>
     <tr>
         <th style="padding:3px;">No</th>
-        <th style="padding:3px;">Domain
-        <th style="padding:3px;">Date Added</th>
-        <th style="padding:3px;">Whitelist</th>
-        <th style="padding:3px;">Free</th>
-        <th style="padding:3px;">Homepage<br />Count?</th>
-        <th style="padding:3px;">Action</th>
+        <th style="padding:3px;">Nama domain</th>
+        <th style="padding:3px;">Tanggal input</th>
+        <th style="padding:3px;">Apakah masuk daftar putih?</th>
+        <th style="padding:3px;">Gratis atau berbayar?</th>
+        <th style="padding:3px;">Jumlah homepage</th>
+        <th style="padding:3px;">Tindakan selanjutnya</th>
     </tr>
     {% for dom in divided_domains %}
     <tr>
         <td>{{ forloop.counter }}</td>
         <td><span title="{{ dom.name }}">{{ dom.name|truncatechars:25 }}</span></td>
         <td>{{ dom.date_added|date:"b d, Y" }}</td>
-        <td>{{ dom.whitelist }}</td>
-        <td>{{ dom.free }}</td>
+        <td>{{ dom.whitelist|yesno:"Ya, Tidak, Belum diketahui" }}</td>
+        <td>{{ dom.free|yesno:"Gratis, Berbayar, Belum diketahui" }}</td>
         <td>{{ dom.hp_count }}</td>
         <td><a href="{% url 'website_analyzer:detail_analyst_domain' dom.id %}">Detail</a></td>
     </tr>
     {% empty %}
-        Analyst Domain database is empty
+        Data analisa domain kosong
     {% endfor %}
 </table>
 {% endblock %}

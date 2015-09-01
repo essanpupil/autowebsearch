@@ -4,7 +4,7 @@ from website_management.models import Domain, Homepage
 
 
 class ExtendDomainFilter(django_filters.FilterSet):
-    name = django_filters.CharFilter(lookup_type='icontains')
+    name = django_filters.CharFilter(label='Nama domain', lookup_type='icontains')
     class Meta:
         model = Domain
         fields = ['name','extenddomain__free', 'extenddomain__whitelist']

@@ -10,13 +10,6 @@
             Lihat data analisa domain
         </a>
     </li>
-{% if user.is_superuser %}
-    <li>
-        <a href="{% url 'website_analyzer:add_scam_website' %}">
-            Tambahkan situs penipuan
-        </a>
-    </li>
-{% endif %}
     <li>
         <a href="{% url 'website_analyzer:view_sequence' %}">
             Lihat parameter analisa

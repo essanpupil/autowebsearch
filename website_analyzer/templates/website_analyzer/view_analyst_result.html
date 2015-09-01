@@ -1,33 +1,33 @@
 {% extends 'base.html' %}
 {% block navigation %}
     {% include 'website_analyzer/analyst_nav.html' %}
-    <h4>Page Navigation</h4>
+    <h4>Navigasi halaman</h4>
 <div class="pagination">
     <span class="step-links">
         {% if analyst_results.has_previous %}
-            <a href="?page={{ analyst_results.previous_page_number }}">previous</a>
+            <a href="?page={{ analyst_results.previous_page_number }}">sebelumnya</a>
         {% endif %}
 
         <span class="current">
-            Page {{ analyst_results.number }} of {{ analyst_results.paginator.num_pages }}.
+            Halaman {{ analyst_results.number }} dari {{ analyst_results.paginator.num_pages }}.
         </span>
 
         {% if analyst_results.has_next %}
-            <a href="?page={{ analyst_results.next_page_number }}">next</a>
+            <a href="?page={{ analyst_results.next_page_number }}">selanjutnya</a>
         {% endif %}
     </span>
 </div>
 {% endblock %}
 {% block content %}
-<h3>View Analyst Result</h3>
+<h3>Daftar hasil analisa</h3>
 <table>
     <tr>
         <th style="padding:3px;">No</th>
-        <th style="padding:3px;">Webpage</th>
-        <th style="padding:3px;">Analyze Time</th>
-        <th style="padding:3px;">String Parameter</th>
-        <th style="padding:3px;">Find</th>
-        <th style="padding:3px;">Analyze</th>
+        <th style="padding:3px;">Halaman web</th>
+        <th style="padding:3px;">Waktu analisa</th>
+        <th style="padding:3px;">Parameter analisa</th>
+        <th style="padding:3px;">Apakah ditemukan?</th>
+        <th style="padding:3px;">Tindakan selanjutnya</th>
     </tr>
     {% for result in filtered_results %}
     <tr>
@@ -37,9 +37,9 @@
                     {{ result.webpage.url|truncatechars:60 }}</span></a></td>
         <td>{{ result.analyze_time|date:"H:i d-m-Y" }}</td>
         <td>{{ result.string_parameter }}</td>
-        <td>{{ result.find }}</td>
+        <td>{{ result.find|yesno:"Ya, Tidak" }}</td>
         <td><a href="{% url 'website_analyzer:analyze_website' result.webpage.homepage_id %}">
-                Analyze</a></td>
+                Analisa</a></td>
     </tr>
     {% empty %}
         <td> - </td>

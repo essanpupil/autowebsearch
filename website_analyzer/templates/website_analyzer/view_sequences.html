@@ -1,47 +1,47 @@
 {% extends 'base.html' %}
 {% block navigation %}
     {% include 'website_analyzer/analyst_nav.html' %}
-    <h4>Page Navigation</h4>
+    <h4>Navigasi halaman</h4>
 <div class="pagination">
     <span class="step-links">
         {% if parameters.has_previous %}
-            <a href="?page={{ parameters.previous_page_number }}">previous</a>
+            <a href="?page={{ parameters.previous_page_number }}">sebelumnya</a>
         {% endif %}
 
         <span class="current">
-            Page {{ parameters.number }} of {{ parameters.paginator.num_pages }}.
+            Halaman {{ parameters.number }} dari {{ parameters.paginator.num_pages }}.
         </span>
 
         {% if parameters.has_next %}
-            <a href="?page={{ parameters.next_page_number }}">next</a>
+            <a href="?page={{ parameters.next_page_number }}">selanjutnya</a>
         {% endif %}
     </span>
 </div>
 {% endblock %}
 {% block content %}
-<h3>View String parameters</h3>
+<h3>Daftar parameter analisa</h3>
 <table>
     <tr>
         <th>
            No.
         </th>
         <th>
-           String parameter
+           Parameter analisa
         </th>
         <th>
-           Target analyze
+           Target analisa
         </th>
         <th>
-            Definitive
+            Definitif
         </th>
         <th>
-           Date Added
+           Tanggal ditambahkan
         </th>
         <th>
-          Times used 
+          Jumlah penggunaan
         </th>
         <th>
-          Connected client 
+          Klien penggguna
         </th>
     </tr>
     {% for parameter in parameters %}
@@ -50,19 +50,19 @@
             <td><a href="{% url 'website_analyzer:edit_sequence' parameter.id %}" >
                     {{ parameter.sentence }}</a></td>
             <td>{{ parameter.target_analyze }}</td>
-            <td>{{ parameter.definitive }}</td>
+            <td>{{ parameter.definitive|yesno:"Ya, Tidak" }}</td>
             <td>{{ parameter.date_added }}</td>
             <td>{{ parameter.times_used }}</td>
             <td><ul>
                 {% for client in  parameter.clients %}
                     <li>{{ client }}</li>
                 {% empty %}
-                    No client connected
+                    Tidak ada klien pengguna
                 {% endfor %}
             </ul></td>
         </tr>
     {% empty %}
-        String Parameter database is empty
+        Data parameter kosong
     {% endfor %}
 </table>
 {% endblock %}
