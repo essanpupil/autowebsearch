@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from . import views
 
 
+app_name = 'administrative'
 urlpatterns = [
     url(r'^$', views.admin_dashboard, name='admin_dashboard'),
     # client url section

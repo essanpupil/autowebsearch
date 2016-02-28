@@ -3,12 +3,10 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 
 from .views import login, logout, welcome
-
 from .views import welcome, user_profile, password_changed
 
 urlpatterns = patterns('',
                        url(r'^admin/', include(admin.site.urls)),
-                       url(r'^$', welcome, name='welcome'),
                        url(r'^login$', login, name='login'),
                        url(r'^logout$', logout, name='logout'),
                        url(r'^login/', auth_views.login, name='login'),
@@ -26,15 +24,9 @@ urlpatterns = patterns('',
                        url(r'^$', welcome, name='welcome'),
                        url(r'^profile/$', user_profile, name='user_profile'),
                        url(r'^website_management/',
-                           include('website_management.urls',
-                                   namespace='website_management',
-                                   app_name='website_management')),
+                           include('website_management.urls')),
                        url(r'^website_analyzer/',
-                           include('website_analyzer.urls',
-                                   namespace='website_analyzer',
-                                   app_name='website_analyzer')),
+                           include('website_analyzer.urls')),
                        url(r'^administrative/',
-                           include('administrative.urls',
-                                   namespace='administrative',
-                                   app_name='administrative')),
+                           include('administrative.urls')),
                        )

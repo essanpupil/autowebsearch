@@ -3,6 +3,7 @@ from django.conf.urls import url, patterns
 from website_analyzer import views
 
 
+app_name = 'website_analyzer'
 urlpatterns = patterns('',
                        url(r'^$', views.analyst_dashboard,
                            name='analyst_dashboard'),
