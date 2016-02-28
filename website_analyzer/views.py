@@ -103,7 +103,7 @@ def edit_analyst(request, homepage_id):
     exth = ExtendHomepage.objects.get(homepage=website)
     if request.method == 'POST':
         form = EditAnalystForm(request.POST)
-	if form.is_valid():
+        if form.is_valid():
             exth.scam = form.cleaned_data['scam']
             exth.inspected = form.cleaned_data['inspected']
             exth.reported = form.cleaned_data['reported']
@@ -112,7 +112,7 @@ def edit_analyst(request, homepage_id):
             exth.save()
             website.save()
             return redirect('website_analyzer:analyze_website',
-                            hp_id = website.id)
+            hp_id = website.id)
     else:
         form = EditAnalystForm()
     context = {'form': form,
@@ -401,7 +401,7 @@ def edit_analyst_domain(request, dom_id):
     extdom = ExtendDomain.objects.get(domain=domain)
     if request.method == 'POST':
         form = EditAnalystDomainForm(request.POST)
-	if form.is_valid():
+        if form.is_valid():
             extdom.free = form.cleaned_data['free']
             extdom.whitelist = form.cleaned_data['whitelist']
             extdom.save()

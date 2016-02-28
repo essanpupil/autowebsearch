@@ -45,7 +45,6 @@ INSTALLED_APPS = (
     'website_management',
     'website_analyzer',
     'administrative',
-    'django_extensions',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -68,14 +67,13 @@ WSGI_APPLICATION = 'ScamSearcher.wsgi.application'
 
 DATABASES = {
     'default': {
-        #'ENGINE': 'django.db.backends.sqlite3',
-        #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        #'ENGINE': 'django.db.backends.mysql',
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'scam_db',
-        'USER': 'scam_user',
-        'PASSWORD': 'semuapenipu',
-        'HOST': 'localhost',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#        'NAME': 'scam_db',
+#        'USER': 'scam_user',
+#        'PASSWORD': 'semuapenipu',
+#        'HOST': 'localhost',
 
     }
 }
