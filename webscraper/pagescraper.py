@@ -1,5 +1,5 @@
 import requests
-from urlparse import urlparse
+from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from nltk.tokenize import word_tokenize
 

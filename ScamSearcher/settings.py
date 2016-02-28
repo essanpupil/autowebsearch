@@ -20,17 +20,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = '4ku@i8ns-(2z!ia@%gih&bab+3=6^_b=i6*5)d#oz7n9$u(8&)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = True
-DEBUG = False
+DEBUG = True
 
-#TEMPLATE_DEBUG = True
-TEMPLATE_DEBUG = False
-
-ALLOWED_HOSTS = ['*',
-#    '.scamsearcher.com',
-#    '.scamsearcher.com.',
-]
-#ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -45,7 +37,6 @@ INSTALLED_APPS = (
     'website_management',
     'website_analyzer',
     'administrative',
-    'django_extensions',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -68,15 +59,8 @@ WSGI_APPLICATION = 'ScamSearcher.wsgi.application'
 
 DATABASES = {
     'default': {
-        #'ENGINE': 'django.db.backends.sqlite3',
-        #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        #'ENGINE': 'django.db.backends.mysql',
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'scam_db',
-        'USER': 'scam_user',
-        'PASSWORD': 'semuapenipu',
-        'HOST': 'localhost',
-
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
@@ -96,9 +80,11 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
-#STATICFILES_DIRS = (os.path.join(os.path.dirname(__file__), 'static').replace('\\', '/'),)
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'ScamSearcher/static'),
+]
 STATIC_URL = '/static/'
-STATIC_ROOT = '/home/skripsi/ScamSearcher/ScamSearcher/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 
 
@@ -111,9 +97,12 @@ LOGOUT_URL = 'logout'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS':  (os.path.join(os.path.dirname(__file__), 'templates').replace('\\', '/'),),
+        'DIRS':  [
+            os.path.join(BASE_DIR, 'ScamSearcher/templates')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
+            'debug': True,
             'context_processors': [
                 'django.contrib.auth.context_processors.auth',
                 'django.template.context_processors.request',

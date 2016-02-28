@@ -104,14 +104,16 @@ def get_domain_homepage(request, web_id):
 
 @login_required
 def homepage_detail(request, hp_id):
-    """display detail info of selected homepage"""
+    "display detail info of selected homepage"
     hp = get_object_or_404(Homepage, id=hp_id)
-    context = {'hpname': hp.name,
-               'hpid': hp.id,
-               'hpadded': hp.date_added,
-               'hpdomain': hp.domain.name,
-               'iddom': hp.domain.id,
-               'hpweb': []}
+    context = {
+        'hpname': hp.name,
+        'hpid': hp.id,
+        'hpadded': hp.date_added,
+        'hpdomain': hp.domain.name,
+        'iddom': hp.domain.id,
+        'hpweb': []
+    }
     for item in hp.webpage_set.all():
         context['hpweb'].append({'url': item.url, 'id': item.id})
     return render(request, 'website_management/homepage_detail.html', context)

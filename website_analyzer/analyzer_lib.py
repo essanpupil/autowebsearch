@@ -156,9 +156,9 @@ def crawl_website(homepage):
     webpages in the database. The only accepted argument in Homepage object."""
     keep_crawling = True
     while keep_crawling:
-    ext_hp = ExtendHomepage.objects.get(homepage=homepage).only('full_crawled')
-    ext_hp.full_crawled += 1
-    ext_hp.save(update_fields=['full_crawled'])
+        ext_hp = ExtendHomepage.objects.get(homepage=homepage).only('full_crawled')
+        ext_hp.full_crawled += 1
+        ext_hp.save(update_fields=['full_crawled'])
         for webpage in homepage.webpage_set.all():
             page = PageScraper()
             page.fetch_webpage(webpage.url)
