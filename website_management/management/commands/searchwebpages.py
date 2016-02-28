@@ -22,4 +22,4 @@ class Command(BaseCommand):
             query.times_used += 1
             query.save()
         except:
-            print "Search failed";
+            print ("Search failed");
