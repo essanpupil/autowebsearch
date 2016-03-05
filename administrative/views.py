@@ -23,7 +23,6 @@ def admin_dashboard(request):
     "Display summary administrative info"
     if request.user.is_staff:
         context = {}
-        users = User.objects.all()
         clients = Client.objects.all().order_by('date_start')
         operators = Operator.objects.all().order_by('date_start')
         events = Event.objects.all().order_by('time_start')
@@ -34,15 +33,15 @@ def admin_dashboard(request):
                            'name': client.name,}
             context['clients']['last_added'].append(client_data)
         context['operators'] = {'count': operators.count(),
-                              'last_added': [],}
+                                'last_added': [],}
         for operator in operators[:5]:
             operator_data = {'name': operator.user.get_username(),}
             context['operators']['last_added'].append(operator_data)
         context['events'] = {'count': events.count(),
-                              'last_added': [],}
+                             'last_added': [],}
         for event in events[:5]:
             event_data = {'id': event.id,
-                           'name': event.name,}
+                          'name': event.name,}
             context['events']['last_added'].append(event_data)
         return render(request, 'administrative/dashboard.html', context)
     else:
@@ -81,7 +80,7 @@ def view_client(request):
                        'phone': item.phone,
                        'status': '',
                        'address': item.address}
-        if item.date_end == None:
+        if item.date_end is None:
             client_data['status'] = 'Active'
         else:
             client_data['status'] = 'Not Active'
@@ -96,7 +95,7 @@ def view_client(request):
         context['clients'] = paginator.page(paginator.num_pages)
     return render(request,
                   'administrative/view_client.html', context)
-        
+
 
 @login_required
 def detail_client(request, client_id):
@@ -111,7 +110,7 @@ def detail_client(request, client_id):
                    'status': '',
                    'websites': [],
                    'address': client.address,}
-    if client_data['date_end'] == None:
+    if client_data['date_end'] is None:
         client_data['status'] = 'Active'
     else:
         client_data['status'] = 'Not Active'
@@ -138,13 +137,13 @@ def add_homepage(request, client_id):
             webpage = Webpage.objects.get(url=form.cleaned_data['url'])
             try:
                 Website.objects.create(client=form.cleaned_data['client'],
-                    homepage=webpage.homepage,
-                    event=form.cleaned_data['event'])
+                                       homepage=webpage.homepage,
+                                       event=form.cleaned_data['event'])
                 return redirect('administrative:detail_client',
-                            client_id=client_id)
+                                client_id=client_id)
             except:
                 return redirect('administrative:detail_client',
-                            client_id=client_id)
+                                client_id=client_id)
     else:
         form = AddClientHomepageForm(initial={'client':client, 'event':None})
         form.fields['event'].queryset = Event.objects.filter(client=client)
@@ -187,7 +186,7 @@ def delete_client(request, client_id):
                   {'form':form,
                    'client': {'id': client.id,
                               'name': client.name}
-              })
+                  })
 
 
 @login_required
@@ -331,8 +330,8 @@ def add_user(request):
         form = AddUserForm(request.POST)
         if form.is_valid():
             user = User.objects.create_user(
-                       username = form.cleaned_data['username'],
-                       password = form.cleaned_data['password'])
+                username=form.cleaned_data['username'],
+                password=form.cleaned_data['password'])
             user.first_name = form.cleaned_data['first_name']
             user.last_name = form.cleaned_data['last_name']
             user.email = form.cleaned_data['email']
@@ -343,7 +342,7 @@ def add_user(request):
         form = AddUserForm()
     context = {'form': form,}
     return render(request, 'administrative/add_user.html', context)
-    
+
 
 class EditUser(UpdateView):
     model = User
@@ -402,9 +401,9 @@ def add_event(request, client_id):
         if form.is_valid():
             client = form.cleaned_data['client']
             event = Event.objects.create(
-                        client=client,
-                        name=form.cleaned_data['name'],
-                        time_end=form.cleaned_data['time_end'])
+                client=client,
+                name=form.cleaned_data['name'],
+                time_end=form.cleaned_data['time_end'])
             return redirect('administrative:view_event', client_id=client_id)
     else:
         client = Client.objects.get(id=client_id)
@@ -465,8 +464,8 @@ def detail_event(request, event_id):
         event_data['status'] = 'Ended'
     for website in Website.objects.filter(event=event):
         event_data['websites'].append({'name': website.homepage.name,
-                                     'id': website.homepage.id,})
-    context['event'] = event_data                                     
+                                       'id': website.homepage.id,})
+    context['event'] = event_data
     return render(request, 'administrative/detail_event.html', context)
 
 
@@ -528,7 +527,7 @@ def view_client_keyword(request, client_id):
                           'name': client.name}}
     for keyword in keywords:
         keyword_data = {'name': keyword.query.keywords,
-                      'id': keyword.id,}
+                        'id': keyword.id,}
         context['keywords'].append(keyword_data)
     return render(request, 'administrative/view_client_keyword.html', context)
 
@@ -540,8 +539,7 @@ def add_client_keyword(request, client_id):
     if request.method == 'POST':
         form = AddClientKeywordForm(request.POST)
         if form.is_valid():
-            if Query.objects.filter(
-                   keywords=form.cleaned_data['keywords']).exists():
+            if Query.objects.filter(keywords=form.cleaned_data['keywords']).exists():
                 client_keyword = Query.objects.get(
                     keywords=form.cleaned_data['keywords'])
             else:
@@ -549,12 +547,12 @@ def add_client_keyword(request, client_id):
             query = Query.objects.get(keywords=form.cleaned_data['keywords'])
             try:
                 ClientKeyword.objects.create(client=form.cleaned_data['client'],
-                    query=query)
+                                             query=query)
                 return redirect('administrative:detail_client',
-                            client_id=client_id)
+                                client_id=client_id)
             except:
                 return redirect('administrative:detail_client',
-                            client_id=client_id)
+                                client_id=client_id)
     else:
         form = AddClientKeywordForm(initial={'client':client,})
     return render(request,
@@ -575,9 +573,9 @@ def view_client_sequence(request, client_id):
                           'name': client.name}}
     for sequence in sequences:
         sequence_data = {'name': sequence.string_parameter.sentence,
-                      'id': sequence.id,
-                      'event': sequence.event,
-                      'definitive': sequence.string_parameter.definitive,}
+                         'id': sequence.id,
+                         'event': sequence.event,
+                         'definitive': sequence.string_parameter.definitive,}
         context['sequences'].append(sequence_data)
     return render(request, 'administrative/view_client_sequence.html', context)
 
@@ -591,13 +589,10 @@ def add_client_sequence(request, client_id):
         if form.is_valid():
             if StringParameter.objects.filter(
                    sentence=form.cleaned_data['sequence']).exists():
-                client_sequence = StringParameter.objects.get(
-                    sentence=form.cleaned_data['sequence'])
+                client_sequence = StringParameter.objects.get(sentence=form.cleaned_data['sequence'])
             else:
-                StringParameter.objects.create(
-                    sentence=form.cleaned_data['sequence'])
-            str_prm = StringParameter.objects.get(
-                          sentence=form.cleaned_data['sequence'])
+                StringParameter.objects.create(sentence=form.cleaned_data['sequence'])
+                str_prm = StringParameter.objects.get(sentence=form.cleaned_data['sequence'])
             try:
                 ClientSequence.objects.create(
                     client=form.cleaned_data['client'],
@@ -607,7 +602,7 @@ def add_client_sequence(request, client_id):
                             client_id=client_id)
             except:
                 return redirect('administrative:view_client_sequence',
-                            client_id=client_id)
+                                client_id=client_id)
     else:
         form = AddClientSequenceForm(initial={'client':client,})
         form.fields['event'].queryset = Event.objects.filter(client=client)

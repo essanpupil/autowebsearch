@@ -12,6 +12,7 @@ class GoogleSearch:
         self.current_html_page = ''
         self.search_result = []
         self.google = "http://www.google.com/search?"
+        self.request_page = None
 
     def start_search(self, max_page=1):
         # method to start send query to google. Search start from page 1.
@@ -48,8 +49,10 @@ class GoogleSearch:
         # this loop filter the search result links inside the search page
         for target in results:
             # filter only link from search result shoul be appended
-            if (target.get('href').find("/url?q") == 0) and not \
-                    (target.get('href').find("/url?q=http://webcache.googleusercontent.com") == 0) and not (target.get('href').find("/url?q=/settings/") ==0):
+            if target.get('href').find("/url?q") == 0 \
+                    and not \
+                    target.get('href').find("/url?q=http://webcache.googleusercontent.com") == 0 \
+                    and not target.get('href').find("/url?q=/settings/") == 0:
                 start_index = target.get('href').find('http')
                 end_index = target.get('href').find('&sa')
 

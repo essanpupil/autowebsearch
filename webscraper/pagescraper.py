@@ -1,5 +1,6 @@
-import requests
 from urllib.parse import urlparse
+
+import requests
 from bs4 import BeautifulSoup
 from nltk.tokenize import word_tokenize
 
@@ -11,6 +12,7 @@ class PageScraper:
         self.html = None
         self.response = None
         self.redirect_url = None
+        self.soup = None
 
     def fetch_webpage(self, url):
         """start fetching webpage"""
@@ -33,14 +35,13 @@ class PageScraper:
         [x.extract() for x in self.soup.find_all('script')]
         [x.extract() for x in self.soup.find_all('style')]
         page_text = self.soup.body.get_text()
-        linedPageText = page_text.splitlines()
+        lined_page_text = page_text.splitlines()
         line2 = []
-        for line in linedPageText:
-#            line_a = line.strip()
+        for line in lined_page_text:
             line_b = line.lower()
             if len(line) != 0:
                 line2.append(line_b.encode('ascii', 'ignore'))
-        return page_text.lower()#"\n".join(line2)
+        return page_text.lower()
 
     def word_tokens(self, html=None):
         """return word tokens of webpage"""
@@ -63,7 +64,7 @@ class PageScraper:
             try:
                 e = urlparse(item.get('href'))
                 if (e.scheme == 'http') or (e.scheme == 'https'):
-                   proper_link.append(item.get('href'))
+                    proper_link.append(item.get('href'))
                 else:
                     continue
             except:

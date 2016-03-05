@@ -1,4 +1,4 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
 from website_analyzer.models import ExtendDomain
 from website_analyzer.analyzer_lib import crawl_website
@@ -20,4 +20,4 @@ class Command(BaseCommand):
             for homepage in homepages:
                 crawl_website(homepage)
         else:
-            print "No free domain"
+            print("No free domain")

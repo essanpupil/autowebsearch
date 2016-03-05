@@ -20,8 +20,8 @@ class TestNoJavascriptWebpage(unittest.TestCase):
 
     def test_nojshtml_word_list(self):
         """get text from html without javacript"""
-        w = PageScraper()
-        text = w.word_tokens(self.nojshtml)
+        webpage = PageScraper()
+        text = webpage.word_tokens(self.nojshtml)
         text.sort()
         self.assertEqual(text, ['!', '.', 'better', 'feel', 'hello',
                                 'make', 'the', 'together', 'we',
@@ -44,11 +44,11 @@ class ExtractUrlTestCase(unittest.TestCase):
                     """
 
     def test_extract_ideal_link(self):
-        ps = PageScraper()
+        pagescraper = PageScraper()
         ideal = ['http://www.pupil.com/profile',
                  'https://www.pupil.com/profile']
         ideal.sort()
-        self.assertEqual(ps.ideal_urls(self.html), ideal)
+        self.assertEqual(pagescraper.ideal_urls(self.html), ideal)
 
 if __name__ == 'main':
     unittest.main()

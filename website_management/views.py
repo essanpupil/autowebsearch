@@ -26,47 +26,47 @@ def website_dashboard(request):
                'newest_5_web': [],
                'newest_5_dom': [],
                'newest_5_hp': []}
-    for web in webs.order_by('id').reverse()[0:5]:
-        context['newest_5_web'].append({'url': web.url, 'id': web.id})
-    for hp in homepages.order_by('id').reverse()[0:5]:
-        context['newest_5_hp'].append({'name': hp.name, 'id': hp.id})
-    for dom in domains.order_by('id').reverse()[0:5]:
-        context['newest_5_dom'].append({'name': dom.name, 'id': dom.id})
+    for webage in webs.order_by('id').reverse()[0:5]:
+        context['newest_5_web'].append({'url': webage.url, 'id': webage.id})
+    for homepage in homepages.order_by('id').reverse()[0:5]:
+        context['newest_5_hp'].append(
+            {'name': homepage.name, 'id': homepage.id})
+    for domain in domains.order_by('id').reverse()[0:5]:
+        context['newest_5_dom'].append({'name': domain.name, 'id': domain.id})
     return render(request, 'website_management/dashboard.html', context)
 
 
 @login_required
 def webpage_detail(request, web_id):
     """display detail info of selected webpage"""
-    web = get_object_or_404(Webpage, id=web_id)
-    web_data = {'url': web.url,
+    webpage = get_object_or_404(Webpage, id=web_id)
+    web_data = {'url': webpage.url,
                 'hp': '',
                 'idhp': '',
                 'iddom': '',
                 'dom': '',
-                'added': web.date_added,
-                'status': web.last_response,
-                'last_check': web.last_response_check,
-                'html_page': bool(web.html_page),
+                'added': webpage.date_added,
+                'status': webpage.last_response,
+                'last_check': webpage.last_response_check,
+                'html_page': bool(webpage.html_page),
                 'text_body': '',
-                'id': web.id, }
-    if web.html_page != None:
-        page = PageScraper()
-        extw, created = ExtendWebpage.objects.get_or_create(webpage=web)
+                'id': webpage.id, }
+    if webpage.html_page != None:
+        extw, _ = ExtendWebpage.objects.get_or_create(webpage=webpage)
         fill_text_body(extw)
         web_data['text_body'] = extw.text_body
     else:
         web_data['text_body'] = None
-    if web.homepage is None:
+    if webpage.homepage is None:
         web_data['hp'] = None
         web_data['idhp'] = None
         web_data['iddom'] = None
         web_data['dom'] = None
     else:
-        web_data['hp'] = web.homepage.name
-        web_data['idhp'] = web.homepage.id
-        web_data['iddom'] = web.homepage.domain.id
-        web_data['dom'] = web.homepage.domain.name
+        web_data['hp'] = webpage.homepage.name
+        web_data['idhp'] = webpage.homepage.id
+        web_data['iddom'] = webpage.homepage.domain.id
+        web_data['dom'] = webpage.homepage.domain.name
     return render(request,
                   'website_management/web_detail.html',
                   {'web': web_data})
@@ -75,46 +75,46 @@ def webpage_detail(request, web_id):
 @login_required
 def fetch_html_page(request, web_id):
     """downloading html source code of webpage"""
-    web = get_object_or_404(Webpage, id=web_id)
-    ext = tldextract.extract(web.url)
-    dom, created = Domain.objects.get_or_create(name=".".join(ext[1:]))
-    hp, created2 = Homepage.objects.get_or_create(name=".".join(ext),
-                                                  domain=dom)
-    web.homepage = hp
-    web.save()
+    webpage = get_object_or_404(Webpage, id=web_id)
+    ext = tldextract.extract(webpage.url)
+    domain, _ = Domain.objects.get_or_create(name=".".join(ext[1:]))
+    homepage, _ = Homepage.objects.get_or_create(name=".".join(ext),
+                                                 domain=domain)
+    webpage.homepage = homepage
+    webpage.save()
     page_scraper = PageScraper()
-    page_scraper.fetch_webpage(web.url)
-    web.html_page = page_scraper.html
-    web.save()
-    return redirect('website_management:webpage_detail', web_id=web.id)
+    page_scraper.fetch_webpage(webpage.url)
+    webpage.html_page = page_scraper.html
+    webpage.save()
+    return redirect('website_management:webpage_detail', web_id=webpage.id)
 
 
 @login_required
 def get_domain_homepage(request, web_id):
     """extract domain and homepage from webpage's url"""
-    web = get_object_or_404(Webpage, id=web_id)
-    ext = tldextract.extract(web.url)
-    dom, created = Domain.objects.get_or_create(name=".".join(ext[1:]))
-    hp, created2 = Homepage.objects.get_or_create(name=".".join(ext),
-                                                  domain=dom)
-    web.homepage = hp
-    web.save()
-    return redirect('website_management:webpage_detail', web_id=web.id)
+    webpage = get_object_or_404(Webpage, id=web_id)
+    ext = tldextract.extract(webpage.url)
+    domain, _ = Domain.objects.get_or_create(name=".".join(ext[1:]))
+    homepage, _ = Homepage.objects.get_or_create(name=".".join(ext),
+                                                 domain=domain)
+    webpage.homepage = homepage
+    webpage.save()
+    return redirect('website_management:webpage_detail', web_id=webpage.id)
 
 
 @login_required
 def homepage_detail(request, hp_id):
     "display detail info of selected homepage"
-    hp = get_object_or_404(Homepage, id=hp_id)
+    homepage = get_object_or_404(Homepage, id=hp_id)
     context = {
-        'hpname': hp.name,
-        'hpid': hp.id,
-        'hpadded': hp.date_added,
-        'hpdomain': hp.domain.name,
-        'iddom': hp.domain.id,
+        'hpname': homepage.name,
+        'hpid': homepage.id,
+        'hpadded': homepage.date_added,
+        'hpdomain': homepage.domain.name,
+        'iddom': homepage.domain.id,
         'hpweb': []
     }
-    for item in hp.webpage_set.all():
+    for item in homepage.webpage_set.all():
         context['hpweb'].append({'url': item.url, 'id': item.id})
     return render(request, 'website_management/homepage_detail.html', context)
 
@@ -122,12 +122,12 @@ def homepage_detail(request, hp_id):
 @login_required
 def domain_detail(request, dom_id):
     """display detail info of selected domain"""
-    dom = get_object_or_404(Domain, id=dom_id)
-    context = {'domname': dom.name,
-               'domid': dom.id,
-               'domadded': dom.date_added,
+    domain = get_object_or_404(Domain, id=dom_id)
+    context = {'domname': domain.name,
+               'domid': domain.id,
+               'domadded': domain.date_added,
                'domhp': []}
-    for item in dom.homepage_set.all():
+    for item in domain.homepage_set.all():
         context['domhp'].append({'name': item.name, 'id': item.id})
     return render(request, 'website_management/domain_detail.html', context)
 
@@ -222,16 +222,16 @@ def search_webpage(request):
             # start saving new webpage url
             search = GoogleSearch(form.cleaned_data['keyword'])
             query_object = Query.objects.get_or_create(
-                                        keywords=form.cleaned_data['keyword'],
-                                        times_used=1)
+                keywords=form.cleaned_data['keyword'],
+                times_used=1
+            )
             search.start_search(max_page=form.cleaned_data['page'])
             add_list_url_to_webpage(search.search_result)
             for url in search.search_result:
                 webpage = Webpage.objects.get(url=url)
                 query_object = Query.objects.get(
-                                   keywords=form.cleaned_data['keyword'])
-                saved_search = Search.objects.create(webpage=webpage,
-                                                     query=query_object)
+                    keywords=form.cleaned_data['keyword'])
+                Search.objects.create(webpage=webpage, query=query_object)
             return redirect('website_management:view_all_webpages')
     else:
         form = SearchWebpageForm()
@@ -246,7 +246,7 @@ def add_new_keyword(request):
     if request.method == 'POST':
         form = AddNewKeywordForm(request.POST)
         if form.is_valid():
-            query = Query.objects.create(keywords=form.cleaned_data['keywords'])
+            Query.objects.create(keywords=form.cleaned_data['keywords'])
             return redirect('website_management:view_all_keywords')
     else:
         form = AddNewKeywordForm()

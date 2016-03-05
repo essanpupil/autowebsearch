@@ -12,14 +12,15 @@ from .analyzer_lib import add_list_url_to_webpage
 from website_management.models import Homepage, Domain, Webpage
 
 
-now = datetime.datetime.now()
+TIME_NOW = datetime.datetime.now()
 
 
 def analye_website_setup():
     """prepare data for AnalyzeWebsiteViewTest"""
-    dom = Domain.objects.create(name='pupil.com')
-    hp = Homepage.objects.create(name='www.pupil.com', domain=dom)
-    web0 = Webpage.objects.create(url='http://www.pupil.com/', homepage=hp)
+    domain = Domain.objects.create(name='pupil.com')
+    homepage = Homepage.objects.create(name='www.pupil.com', domain=domain)
+    web0 = Webpage.objects.create(url='http://www.pupil.com/',
+                                  homepage=homepage)
     ExtendWebpage.objects.create(webpage=web0,
                                  text_body="""
                                            This is a homepage.
@@ -27,7 +28,8 @@ def analye_website_setup():
                                            this is a dummy test page.
                                            """)
     web0.save()
-    web1 = Webpage.objects.create(url='http://www.pupil.com/scam', homepage=hp)
+    web1 = Webpage.objects.create(url='http://www.pupil.com/scam',
+                                  homepage=homepage)
     ExtendWebpage.objects.create(webpage=web1,
                                  text_body="""
                                            This is the obviously scam webpage.
@@ -37,7 +39,8 @@ def analye_website_setup():
                                            is a scam. this is scam.
                                            """)
     web1.save()
-    web2 = Webpage.objects.create(url='http://www.pupil.com/two', homepage=hp)
+    web2 = Webpage.objects.create(url='http://www.pupil.com/two',
+                                  homepage=homepage)
     ExtendWebpage.objects.create(webpage=web2,
                                  text_body="""
                                            This is also part of scam homepage.
@@ -117,8 +120,8 @@ class ExtendDomainModelTest(TestCase):
 
     def setUp(self):
         "setup dummy homepage"
-        hp = Homepage.objects.create(name='www.pupil.com')
-        ext = ExtendHomepage.objects.create(homepage=hp)
+        homepage = Homepage.objects.create(name='www.pupil.com')
+        ext = ExtendHomepage.objects.create(homepage=homepage)
         ext.save()
 
     def test_extendhomepage_scam_value_none(self):
@@ -136,7 +139,6 @@ class ExtendDomainModelTest(TestCase):
         self.assertEqual(ext2.whitelist, False)
 
     def test_extendhomepage_scam_whitelist_same_value(self):
-        ""
         ext3 = ExtendHomepage.objects.get(homepage__name='www.pupil.com')
         ext3.scam = True
         ext3.whitelist = True
@@ -196,15 +198,15 @@ class AnalyzeWebsiteViewTest(TestCase):
         webpages (id & url) from this homepage, any matching string parameter,
         scam, report, access, whitelist, date added & domain name"""
         analye_website_setup()
-        hp = Homepage.objects.get(name='www.pupil.com')
+        homepage = Homepage.objects.get(name='www.pupil.com')
         resp = self.client.get(reverse('website_analyzer:analyze_website',
-                                       args=[hp.id]))
+                                       args=[homepage.id]))
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.context['name'], 'www.pupil.com')
         self.assertEqual(resp.context['scam'], None)
         self.assertEqual(resp.context['report'], False)
         self.assertEqual(resp.context['whitelist'], None)
-        self.assertEqual(resp.context['date_added'], now.date())
+        self.assertEqual(resp.context['date_added'], TIME_NOW.date())
         self.assertEqual(resp.context['inspection'], False)
         self.assertEqual(resp.context['access'], True)
         self.assertEqual(resp.context['domain'], 'pupil.com')
@@ -216,30 +218,21 @@ class AnalyzeWebsiteViewTest(TestCase):
         webpages (id & url) from this homepage, any matching string parameter,
         scam, report, access, whitelist, date added & domain name"""
         analye_website_setup()
-        hp = Homepage.objects.get(name='www.pupil.com')
+        homepage = Homepage.objects.get(name='www.pupil.com')
         resp = self.client.get(reverse('website_analyzer:analyze_website',
-                                       kwargs={'hp_id': hp.id}))
+                                       kwargs={'hp_id': homepage.id}))
         self.assertEqual(resp.status_code, 200)
-
         # pupil.com will appear in: domain, homepage + 3 webpages
         self.assertContains(resp, 'pupil.com', 5)
-
-        # None will appear in scam, report, whitelist
-        # self.assertContains(resp, 'None', 3)
-        # self.assertContains(resp, now.strftime('%d %b %Y'), 1)
-
-        # False will appear for inspection
-        # self.assertContains(resp, 'False', 1)
-
         # True will appear for access
         # self.assertContains(resp, 'True', 1)
         # make sure crawling url is the correct homepage id
-        href = "/website_analyzer/crawl_website/%s/" % (hp.id)
+        href = "/website_analyzer/crawl_website/%s/" % (homepage.id)
+        self.assertContains(resp, href, 1)
+        # make sure edit analyst data is the correct homepage id
+        href = "/website_analyzer/edit_analyst/%s/" % (homepage.id)
         self.assertContains(resp, href, 1)
 
-        # make sure edit analyst data is the correct homepage id
-        href = "/website_analyzer/edit_analyst/%s/" % (hp.id)
-        self.assertContains(resp, href, 1)
 
 class StartAnalyzeTestCase(TestCase):
     """Test analyst proces execution"""
@@ -247,23 +240,22 @@ class StartAnalyzeTestCase(TestCase):
     def test_view_start_analyze_website_find_sequence(self):
         "Test passed context from view to template"
         analye_website_setup()
-        hp = Homepage.objects.get(name='www.pupil.com')
+        homepage = Homepage.objects.get(name='www.pupil.com')
         resp = self.client.get(reverse('website_analyzer:start_analyze',
-                                       kwargs={'hp_id': hp.id}))
+                                       kwargs={'hp_id': homepage.id}))
         self.assertEqual(resp.status_code, 302)
-        string_analyst(hp.id)
-        self.assertEqual(hp.extendhomepage.scam, True)
-        self.assertEqual(hp.extendhomepage.whitelist, False)
+        string_analyst(homepage.id)
+        self.assertEqual(homepage.extendhomepage.scam, True)
+        self.assertEqual(homepage.extendhomepage.whitelist, False)
 
 
 class ExtractLinksTestCase(TransactionTestCase):
     "Test extract links from webpage"
     def setUp(self):
         "setup dummy webpage"
-        response = self.client.get
         add_url_to_webpage('http://www.pupil.com/scam')
-        web = Webpage.objects.get(url='http://www.pupil.com/scam')
-        web.html_page = """
+        webpage = Webpage.objects.get(url='http://www.pupil.com/scam')
+        webpage.html_page = """
                         <html>
                         <head><title>Dummy url extract html</title></head>
                         <body>
@@ -274,23 +266,23 @@ class ExtractLinksTestCase(TransactionTestCase):
                         </body>
                         </html>
                         """
-        web.save()
+        webpage.save()
 
     def test_view_extract_url(self):
         """does the view realy save url inside webpage to database?"""
-        web = Webpage.objects.get(url='http://www.pupil.com/scam')
+        webpage = Webpage.objects.get(url='http://www.pupil.com/scam')
         resp = self.client.get(reverse('website_analyzer:extract_links',
-                                       args=[web.id]))
+                                       args=[webpage.id]))
         self.assertEqual(resp.status_code, 302)
         webs = Webpage.objects.all()
-        hp = Homepage.objects.all()
-        dom = Domain.objects.all()
+        homepage = Homepage.objects.all()
+        domain = Domain.objects.all()
         self.assertEqual(webs.filter(url='http://www.ppl.com/prof').count(),
                          1)
         self.assertEqual(webs.filter(url='https://www.ppl.com/prof').count(),
                          1)
-        self.assertEqual(hp.filter(name='www.ppl.com').count(), 1)
-        self.assertEqual(dom.filter(name='ppl.com').count(), 1)
+        self.assertEqual(homepage.filter(name='www.ppl.com').count(), 1)
+        self.assertEqual(domain.filter(name='ppl.com').count(), 1)
 
 
 class AddStringParameterTestCase(WebTest):
@@ -313,7 +305,7 @@ class AddStringParameterTestCase(WebTest):
 class ViewStringParameterTestCase(TestCase):
     """test to display all string parameter"""
 
-    def view_string_parameter_setup(self):
+    def setUp(self):
         """preparing data to test view_string_parameter"""
         StringParameter.objects.create(sentence='This is a scam',
                                        definitive=True)
@@ -335,7 +327,6 @@ class ViewStringParameterTestCase(TestCase):
 
     def test_context_view_non_empty_database_view_sequence(self):
         """test passed context when the database is not empty"""
-        self.view_string_parameter_setup()
         resp = self.client.get(reverse('website_analyzer:view_sequence'))
         self.assertEqual(resp.status_code, 200)  # response test
         self.assertEqual(len(resp.context['parameters']), 2)
@@ -343,7 +334,7 @@ class ViewStringParameterTestCase(TestCase):
         self.assertIn('definitive', list(resp.context['parameters'][0].keys()))
         self.assertIn('date_added', list(resp.context['parameters'][0].keys()))
         self.assertEqual(resp.context['parameters'][0]['date_added'],
-                         now.date())
+                         TIME_NOW.date())
         self.assertContains(resp, 'This is a scam', count=1)
         self.assertContains(resp, 'scam warning', count=1)
 
@@ -351,11 +342,12 @@ class ViewStringParameterTestCase(TestCase):
 class EditAnalystDataTestCase(WebTest):
     """Testing the edit_analyst view"""
     def setUp(self):  # lint:ok
-        dom = Domain.objects.create(name='pupil.com')
-        ExtendDomain.objects.create(domain=dom)
-        hp = Homepage.objects.create(name='www.pupil.com', domain=dom)
-        ExtendHomepage.objects.create(homepage=hp)
-        web0 = Webpage.objects.create(url='http://www.pupil.com/', homepage=hp)
+        domain = Domain.objects.create(name='pupil.com')
+        ExtendDomain.objects.create(domain=domain)
+        homepage = Homepage.objects.create(name='www.pupil.com', domain=domain)
+        ExtendHomepage.objects.create(homepage=homepage)
+        web0 = Webpage.objects.create(url='http://www.pupil.com/',
+                                      homepage=homepage)
         ExtendWebpage.objects.create(webpage=web0,
                                      text_body="""
                                                This is a homepage.
@@ -364,7 +356,7 @@ class EditAnalystDataTestCase(WebTest):
                                                """)
         web0.save()
         web1 = Webpage.objects.create(url='http://www.pupil.com/scam',
-                                      homepage=hp)
+                                      homepage=homepage)
         ExtendWebpage.objects.create(webpage=web1,
                                      text_body="""
                                          This is the obviously scam webpage.
@@ -375,7 +367,7 @@ class EditAnalystDataTestCase(WebTest):
                                          """)
         web1.save()
         web2 = Webpage.objects.create(url='http://www.pupil.com/two',
-                                      homepage=hp)
+                                      homepage=homepage)
         ExtendWebpage.objects.create(webpage=web2,
                                      text_body="""
                                          This is also part of scam homepage.
@@ -397,10 +389,10 @@ class EditAnalystDataTestCase(WebTest):
         """test passed context for view: edit_analyst"""
         homepage = Homepage.objects.get(name='www.pupil.com')
         resp = self.app.get(reverse('website_analyzer:edit_analyst',
-                                       kwargs={'homepage_id': homepage.id}))
+                                    kwargs={'homepage_id': homepage.id}))
         self.assertEqual(resp.status_code, 200)
-	self.assertIn('homepage', resp.context.keys())
-	self.assertIn('form', resp.context.keys())
+        self.assertIn('homepage', resp.context.keys())
+        self.assertIn('form', resp.context.keys())
         self.assertIn('id', resp.context['homepage'])
         self.assertIn('scam_status', resp.context['homepage'])
         self.assertIn('inspected', resp.context['homepage'])
@@ -425,11 +417,10 @@ class EditAnalystDataTestCase(WebTest):
         "testing the rendered webpage of edit analyst form"
         homepage = Homepage.objects.get(name='www.pupil.com')
         resp = self.app.get(reverse('website_analyzer:edit_analyst',
-                                       args=[homepage.id]))
+                                    args=[homepage.id]))
         self.assertEqual(resp.status_code, 200)
-        form = resp.form
         self.assertIn('scam', resp.context['form'].fields)
-	self.assertIn('form', resp.context.keys())
+        self.assertIn('form', resp.context.keys())
         self.assertIn('inspected', resp.context['form'].fields)
         self.assertIn('reported', resp.context['form'].fields)
         self.assertIn('access', resp.context['form'].fields)
@@ -439,16 +430,9 @@ class EditAnalystDataTestCase(WebTest):
         "testing when the edit form is submitted"
         website = Homepage.objects.get(name='www.pupil.com')
         resp = self.app.get(reverse('website_analyzer:edit_analyst',
-            args=[website.id]))
+                                    args=[website.id]))
         self.assertEqual(resp.status_code, 200)
         form = resp.form
         form['scam'] = 'True'
         form['inspected'] = 'Inspected'
         form['reported'] = 'Reported'
-
-
-#class CrawlWebsiteTest(TestCase):
-#    "testcase for crawling website feature"
-#    website = 
-#    resp = self.get(reverse('website_analyzer:crawl_website',
-#        args=[website.id]))

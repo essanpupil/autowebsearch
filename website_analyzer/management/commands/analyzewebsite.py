@@ -1,7 +1,7 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
 from website_analyzer.models import ExtendHomepage
-from website_analyzer.analyzer_lib import string_analyst, crawl_website
+from website_analyzer.analyzer_lib import string_analyst
 
 
 class Command(BaseCommand):

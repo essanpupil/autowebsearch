@@ -6,8 +6,8 @@ class Domain(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(unique=True, max_length=75)
     date_added = models.DateField(auto_now=True)
-
-    def __unicode__(self):
+    
+    def __str__(self):
         return self.name
 
 
@@ -18,8 +18,8 @@ class Homepage(models.Model):
     domain = models.ForeignKey(Domain, blank=True, null=True)
     date_added = models.DateField(auto_now=True)
     crawl_completed = models.BooleanField(default=False)
-
-    def __unicode__(self):
+    
+    def __str__(self):
         return self.name
 
 
@@ -35,8 +35,8 @@ class Webpage(models.Model):
     last_response_check = models.DateField(blank=True, null=True)
     redirect_url = models.URLField(null=True, blank=True)
     times_crawled = models.IntegerField(default=0)
-
-    def __unicode__(self):
+    
+    def __str__(self):
         return self.url
 
 
@@ -45,8 +45,8 @@ class Query(models.Model):
     keywords = models.CharField(max_length=255)
     date_added = models.DateTimeField(auto_now=True)
     times_used = models.IntegerField(default=0)
-    
-    def __unicode__(self):
+                
+    def __str__(self):
         return self.keywords
 
 
@@ -55,6 +55,6 @@ class Search(models.Model):
     query = models.ForeignKey(Query, blank=False, null=False)
     webpage = models.ForeignKey(Webpage, blank=False, null=False)
     search_time = models.DateTimeField(auto_now=True)
-
-    def __unicode__(self):
+    
+    def __str__(self):
         return self.search_time

@@ -1,7 +1,7 @@
 from django.forms import ModelForm
 from django import forms
 
-from website_management.models import Webpage, Homepage
+from website_management.models import Webpage 
 from .models import StringParameter, ExtendHomepage, ExtendDomain
 
 

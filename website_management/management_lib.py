@@ -7,12 +7,12 @@ from .models import Webpage, Homepage, Domain
 def add_url_to_webpage(url):
     """add url and its component to database"""
     ext = tldextract.extract(url)
-    dom, crtd = Domain.objects.get_or_create(name=ext.registered_domain)
-    hp, crtd2 = Homepage.objects.get_or_create(name='.'.join(ext),
-                                               domain=dom)
+    domain, _ = Domain.objects.get_or_create(name=ext.registered_domain)
+    homepage, _ = Homepage.objects.get_or_create(name='.'.join(ext),
+                                                 domain=domain)
     try:
         with transaction.atomic():
-            web = Webpage.objects.create(url=url, homepage=hp)
+            Webpage.objects.create(url=url, homepage=homepage)
     except IntegrityError:
         raise IntegrityError
 

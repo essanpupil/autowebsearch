@@ -7,12 +7,14 @@ from website_management.models import Webpage, Homepage, Domain
 class ExtendDomain(models.Model):
     """extend model Domain to add more information"""
     WHITELIST_CHOICES = ((True, 'YES'),
-                         (False,  'NO'),
+                         (False, 'NO'),
                          (None, 'UNKNOWN'))
     domain = models.OneToOneField(Domain)
     # True if the web should be whitelist, False if should not, None pending
-    whitelist = models.NullBooleanField(max_length=7, choices=WHITELIST_CHOICES,
-                                 blank=True, null=True)
+    whitelist = models.NullBooleanField(max_length=7,
+                                        choices=WHITELIST_CHOICES,
+                                        blank=True,
+                                        null=True)
 
     # True if the domain is freely available (blogspot, wordpress, etc).
     free = models.NullBooleanField(null=True, blank=True)
@@ -22,11 +24,11 @@ class ExtendDomain(models.Model):
 class ExtendHomepage(models.Model):
     """extending homepage model to add more field"""
     SCAM_CHOICES = ((True, 'YES'),
-                    (False,  'NO'),
+                    (False, 'NO'),
                     (None, 'UNKNOWN'))
 
     WHITELIST_CHOICES = ((True, 'YES'),
-                         (False,  'NO'),
+                         (False, 'NO'),
                          (None, 'UNKNOWN'))
 
     homepage = models.OneToOneField(Homepage)
@@ -47,8 +49,10 @@ class ExtendHomepage(models.Model):
     access = models.BooleanField(default=True)
 
     # True if the web should be whitelist, False if should not, None pending
-    whitelist = models.NullBooleanField(max_length=7, choices=WHITELIST_CHOICES,
-                                 blank=True, null=True)
+    whitelist = models.NullBooleanField(max_length=7,
+                                        choices=WHITELIST_CHOICES,
+                                        blank=True,
+                                        null=True)
 
     # method to validate form data input when editing homepage value
     def clean(self):
@@ -90,7 +94,7 @@ class Token(models.Model):
     id = models.AutoField(primary_key=True)  # lint:ok
     name = models.CharField(max_length=20, unique=True)
 
-    def __unicode__(self):  # lint:ok
+    def __str__(self):  # lint:ok
         return self.name
 
 
@@ -112,7 +116,7 @@ class StringParameter(models.Model):
     definitive = models.BooleanField(default=False)
     date_added = models.DateField(auto_now=True)
 
-    def __unicode__(self):  # lint:ok
+    def __str__(self):  # lint:ok
         return self.sentence
 
 
@@ -139,7 +143,7 @@ class Sequence(models.Model):
     # short description about the sequence.
     description = models.ForeignKey(SequenceDescription)
 
-    def __unicode__(self):  # lint:ok
+    def __str__(self):  # lint:ok
         return self.description
 
 
@@ -151,5 +155,5 @@ class Searching(models.Model):
     webpages = models.ForeignKey(Webpage)
     date = models.DateField(auto_now=True)
 
-    def __unicode__(self):  # lint:ok
+    def __str__(self):  # lint:ok
         return self.date

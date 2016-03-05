@@ -37,4 +37,4 @@ urlpatterns = patterns('',
                            name='view_all_keywords'),
                        url(r'^view-search-result/$', views.view_search_result,
                            name='view_search_result'),
-                       )
+                      )
