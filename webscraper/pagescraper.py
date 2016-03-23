@@ -21,8 +21,10 @@ class PageScraper(object):
         try:
             req = requests.get(self.url)
             self.html = req.text
-        except:
-            self.html = "Failed to fetch webpage."
+        except requests.Timeout:
+            self.html = "Failed to fetch webpage. Connection Timeout"
+        except requests.ConnectionError:
+            self.html = "Failed to fetch webpage. Connection error."
 
     def get_text_body(self, html=None):
         """

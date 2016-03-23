@@ -1,8 +1,9 @@
+"""forms module for website_analyzer app."""
 from django.forms import ModelForm
 from django import forms
 
-from website_management.models import Webpage 
-from .models import StringParameter, ExtendHomepage, ExtendDomain
+from website_management.models import Webpage
+from website_analyzer.models import StringParameter, ExtendHomepage, ExtendDomain
 
 
 class AddScamWebsiteForm(ModelForm):
@@ -24,7 +25,7 @@ class EditAnalystForm(ModelForm):
     date_added = ''
     def __init__(self, *args, **kwargs):
         super(EditAnalystForm, self).__init__(*args, **kwargs)
-        
+
     class Meta:
         model = ExtendHomepage
         exclude = ['homepage']
@@ -35,7 +36,7 @@ class EditAnalystDomainForm(ModelForm):
     date_added = ''
     def __init__(self, *args, **kwargs):
         super(EditAnalystDomainForm, self).__init__(*args, **kwargs)
-        
+
     class Meta:
         model = ExtendDomain
         exclude = ['domain']
