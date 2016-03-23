@@ -1,3 +1,4 @@
+"""module to do web scraping into saved urls from search result."""
 from urllib.parse import urlparse
 
 import requests
@@ -5,7 +6,7 @@ from bs4 import BeautifulSoup
 from nltk.tokenize import word_tokenize
 
 
-class PageScraper:
+class PageScraper(object):
     """Default class to scrape for random webpage"""
     def __init__(self):
         self.url = None
@@ -32,8 +33,8 @@ class PageScraper:
             self.soup = BeautifulSoup(self.html, "html5lib")
         else:
             self.soup = BeautifulSoup(html, "html5lib")
-        [x.extract() for x in self.soup.find_all('script')]
-        [x.extract() for x in self.soup.find_all('style')]
+        [script.extract() for script in self.soup.find_all('script')]
+        [style.extract() for style in self.soup.find_all('style')]
         page_text = self.soup.body.get_text()
         lined_page_text = page_text.splitlines()
         line2 = []
@@ -52,7 +53,7 @@ class PageScraper:
         text2 = text.strip()
         text3 = text2.lower()
         return word_tokenize(text3)
-    
+
     def ideal_urls(self, html=None):
         """extract the ideal url inside webpage"""
         if html is not None:
@@ -62,8 +63,8 @@ class PageScraper:
         proper_link = []
         for item in soup.find_all('a'):
             try:
-                e = urlparse(item.get('href'))
-                if (e.scheme == 'http') or (e.scheme == 'https'):
+                url = urlparse(item.get('href'))
+                if (url.scheme == 'http') or (url.scheme == 'https'):
                     proper_link.append(item.get('href'))
                 else:
                     continue
@@ -71,4 +72,3 @@ class PageScraper:
                 continue
         proper_link.sort()
         return proper_link
-
