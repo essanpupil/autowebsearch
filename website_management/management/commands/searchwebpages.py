@@ -14,15 +14,18 @@ class Command(BaseCommand):
     help = "Search webpages with saved queries"
 
     def handle(self, *args, **options):
-        query = Query.objects.all().order_by('times_used')[0]
-        search = GoogleSearch(query.keywords)
-        try:
-            search.start_search()
-            add_list_url_to_webpage(search.search_result)
-            for url in search.search_result:
-                webpage = Webpage.objects.get(url=url)
-                Search.objects.create(webpage=webpage, query=query)
-            query.times_used += 1
-            query.save()
-        except:
-            print("Search failed")
+        query = Query.objects.all().order_by('times_used').first()
+        if query is None:
+            print('Query database is empty, you can not search webpages')
+        else:
+            search = GoogleSearch(query.keywords)
+            try:
+                search.start_search()
+                add_list_url_to_webpage(search.search_result)
+                for url in search.search_result:
+                    webpage = Webpage.objects.get(url=url)
+                    Search.objects.create(webpage=webpage, query=query)
+                query.times_used += 1
+                query.save()
+            except:
+                print("Search failed")
