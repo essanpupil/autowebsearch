@@ -7,9 +7,8 @@ from bs4 import BeautifulSoup
 import requests
 
 
-class GoogleSearch:
+class GoogleSearch(object):
     """class dasar untuk berinteraksi dengan google.com"""
-
     def __init__(self, query):
         self.query = str(query)
         self.query.strip()
@@ -38,16 +37,17 @@ class GoogleSearch:
         """method to download the html text of current page result"""
         start_number = (page - 1) * 10
         self.page_request = requests.get("http://google.com/search",
-                                        params={'query': self.query,
-                                                'start': start_number})
+                                         params={'query': self.query,
+                                                 'start': start_number})
         soup = BeautifulSoup(self.page_request.text, "html5lib")
         results = soup.find_all('a', class_=False)
         href_ls = []
         for target in results:
             if ((target.get('href').find("/url?q") == 0) and not (
-                    target.get('href').find("/url?q=http://webcache.googleusercontent.com") == 0) and not (
-                    target.get('href').find("/url?q=/settings/") == 0)):
-                href_ls.append(target.get('href')[target.get('href').find("http"):target.get('href').find("&sa")])
+                    target.get('href').find("/url?q=http://webcache.googleusercontent.com") == 0) \
+                    and not target.get('href').find("/url?q=/settings/") == 0):
+                href_ls.append(
+                    target.get('href')[target.get('href').find("http"):target.get('href').find("&sa")])
         for href in results:
             if href.get_text() == "repeat the search with the omitted results included":
                 self.is_final_page = True
