@@ -1,14 +1,15 @@
+"""views module to manage website data."""
 import tldextract
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 
-from .models import Webpage, Domain, Homepage, Search, Query
-from .forms import AddWebpageForm, SearchWebpageForm, AddNewKeywordForm
-from .management_lib import add_list_url_to_webpage, add_url_to_webpage
+from models import Webpage, Domain, Homepage, Search, Query
+from forms import AddWebpageForm, SearchWebpageForm, AddNewKeywordForm
+from management_lib import add_list_url_to_webpage, add_url_to_webpage
 from webscraper.pagescraper import PageScraper
-from search_extractor.google_search import GoogleSearch
+from pygoogling.googling import GoogleSearch
 
 from website_analyzer.models import ExtendWebpage
 from website_analyzer.analyzer_lib import fill_text_body
