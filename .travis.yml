@@ -7,3 +7,7 @@ script: python manage.py test
 branches:
     only:
         - master
+before_install:
+  - pip install codecov
+after_success:
+  - codecov
