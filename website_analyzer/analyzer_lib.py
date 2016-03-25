@@ -1,11 +1,12 @@
+"""helper module for website analyzer app."""
 import tldextract
 
 from django.utils import timezone
 from django.db import IntegrityError, transaction
 
 from website_management.models import Homepage, Webpage, Domain
-from .models import ExtendHomepage, StringParameter, StringAnalysist
-from .models import ExtendWebpage, ExtendDomain
+from website_analyzer.models import ExtendHomepage, StringParameter, StringAnalysist, \
+                                    ExtendWebpage, ExtendDomain
 from webscraper.pagescraper import PageScraper
 
 
@@ -23,7 +24,7 @@ def string_analyst(hp_id):
             extw.text_body = page.get_text_body()
             extw.save()
             web.save()
-         
+
         for param in params:
             if param.sentence in web.extendwebpage.text_body:
                 StringAnalysist.objects.create(webpage=web,
