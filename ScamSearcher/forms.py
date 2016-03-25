@@ -1,9 +1,8 @@
-from django.forms import ModelForm, PasswordInput
-from django.contrib.auth.models import User
-from django.utils.translation import ugettext_lazy as _
+"""forms module for main ScamSearcher project."""
 from django import forms
 
 
 class LoginForm(forms.Form):
+    """Generate login forms."""
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
