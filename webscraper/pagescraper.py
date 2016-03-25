@@ -42,7 +42,7 @@ class PageScraper(object):
         line2 = []
         for line in lined_page_text:
             line_b = line.lower()
-            if len(line) != 0:
+            if len(line):
                 line2.append(line_b.encode('ascii', 'ignore'))
         return page_text.lower()
 
