@@ -1,17 +1,18 @@
-from django.forms import ModelForm, URLInput, HiddenInput, PasswordInput
+"""forms module for administrative app."""
+from django.forms import ModelForm, HiddenInput, PasswordInput
 from django.core import validators
 from django import forms
 from django.contrib.auth.models import User
 
-from .models import Client, Website, Event, Operator, ClientKeyword, \
-                    ClientSequence
+from administrative.models import Client, Website, Event, Operator, \
+                                  ClientKeyword, ClientSequence
 
 
 class AddClientForm(ModelForm):
     "input new client"
     class Meta:
         model = Client
-        fields = ('name', 'email', 'phone', 'address') 
+        fields = ('name', 'email', 'phone', 'address')
 
 
 class AddOperatorForm(ModelForm):
@@ -98,7 +99,7 @@ class AddUserForm(ModelForm):
         return form_data
     class Meta:
         model = User
-        fields = ('username', 'password', 'password_again', 'first_name', 
+        fields = ('username', 'password', 'password_again', 'first_name',
                   'last_name', 'email')
         widgets = {'password': PasswordInput(),}
 

@@ -516,8 +516,7 @@ def add_client_keyword(request, client_id):
         form = AddClientKeywordForm(request.POST)
         if form.is_valid():
             if Query.objects.filter(keywords=form.cleaned_data['keywords']).exists():
-                client_keyword = Query.objects.get(
-                    keywords=form.cleaned_data['keywords'])
+                pass
             else:
                 Query.objects.create(keywords=form.cleaned_data['keywords'])
             query = Query.objects.get(keywords=form.cleaned_data['keywords'])
@@ -556,8 +555,7 @@ def add_client_sequence(request, client_id):
         form = AddClientSequenceForm(request.POST)
         if form.is_valid():
             if StringParameter.objects.filter(sentence=form.cleaned_data['sequence']).exists():
-                client_sequence = StringParameter.objects.get(
-                    sentence=form.cleaned_data['sequence'])
+                pass
             else:
                 StringParameter.objects.create(sentence=form.cleaned_data['sequence'])
                 str_prm = StringParameter.objects.get(sentence=form.cleaned_data['sequence'])
