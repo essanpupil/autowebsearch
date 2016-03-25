@@ -1,9 +1,10 @@
+"""views module for ScamSearcher project."""
 from django.contrib.auth import authenticate, login as auth_login, \
                                 logout as auth_logout
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
-from .forms import LoginForm
+from ScamSearcher.forms import LoginForm
 
 @login_required(login_url='login')
 def welcome(request):
@@ -38,12 +39,6 @@ def logout(request):
     "log user out"
     auth_logout(request)
     return redirect('login')
-
-
-@login_required
-def welcome(request):
-    "display welcome page"
-    return render(request, 'welcome.html')
 
 
 @login_required
