@@ -1,18 +1,20 @@
+"""views module for administrative app."""
 from django.utils import timezone
-from django.db import IntegrityError
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator, PageNotAnInteger
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.views.generic.edit import DeleteView, UpdateView
-from django.core.urlresolvers import reverse_lazy, reverse
+from django.core.urlresolvers import reverse_lazy
 
-from .models import Client, Event, Operator, Website, ClientKeyword,\
-                    ClientSequence
-from .form import AddClientForm, AddClientHomepageForm, DeleteClientForm, \
-                  AddEventForm, DeleteEventForm, AddOperatorForm, \
-                  AddUserForm, AddClientKeywordForm, AddClientSequenceForm
-from .administrative_lib import save_client, save_client_homepage
+from administrative.models import Client, Event, Operator, Website, \
+                                  ClientKeyword, ClientSequence
+from administrative.form import AddClientForm, AddClientHomepageForm, \
+                                DeleteClientForm, AddEventForm, \
+                                DeleteEventForm, AddOperatorForm, \
+                                AddUserForm, AddClientKeywordForm, \
+                                AddClientSequenceForm
+from administrative.administrative_lib import save_client
 from website_management.management_lib import add_url_to_webpage
 from website_management.models import Webpage, Query
 from website_analyzer.models import StringParameter
@@ -26,22 +28,17 @@ def admin_dashboard(request):
         clients = Client.objects.all().order_by('date_start')
         operators = Operator.objects.all().order_by('date_start')
         events = Event.objects.all().order_by('time_start')
-        context['clients'] = {'count': clients.count(),
-                              'last_added': [],}
+        context['clients'] = {'count': clients.count(), 'last_added': []}
         for client in clients[:5]:
-            client_data = {'id': client.id,
-                           'name': client.name,}
+            client_data = {'id': client.id, 'name': client.name}
             context['clients']['last_added'].append(client_data)
-        context['operators'] = {'count': operators.count(),
-                                'last_added': [],}
+        context['operators'] = {'count': operators.count(), 'last_added': []}
         for operator in operators[:5]:
             operator_data = {'name': operator.user.get_username(),}
             context['operators']['last_added'].append(operator_data)
-        context['events'] = {'count': events.count(),
-                             'last_added': [],}
+        context['events'] = {'count': events.count(), 'last_added': []}
         for event in events[:5]:
-            event_data = {'id': event.id,
-                          'name': event.name,}
+            event_data = {'id': event.id, 'name': event.name}
             context['events']['last_added'].append(event_data)
         return render(request, 'administrative/dashboard.html', context)
     else:
@@ -63,9 +60,7 @@ def add_client(request):
             return redirect('administrative:view_client')
     else:
         form = AddClientForm()
-    return render(request,
-                  'administrative/add_client.html',
-                  {'form':form})
+    return render(request, 'administrative/add_client.html', {'form':form})
 
 
 @login_required
@@ -93,8 +88,7 @@ def view_client(request):
         context['clients'] = paginator.page(1)
     except EmptyPage:
         context['clients'] = paginator.page(paginator.num_pages)
-    return render(request,
-                  'administrative/view_client.html', context)
+    return render(request, 'administrative/view_client.html', context)
 
 
 @login_required
@@ -119,8 +113,7 @@ def detail_client(request, client_id):
         client_data['websites'].append({'url': website.homepage.name,
                                         'id_homepage': website.homepage.id,
                                         'id_website': website.id})
-    return render(request, 'administrative/detail_client.html',
-                  {'client': client_data})
+    return render(request, 'administrative/detail_client.html', {'client': client_data})
 
 
 @login_required
@@ -139,11 +132,9 @@ def add_homepage(request, client_id):
                 Website.objects.create(client=form.cleaned_data['client'],
                                        homepage=webpage.homepage,
                                        event=form.cleaned_data['event'])
-                return redirect('administrative:detail_client',
-                                client_id=client_id)
+                return redirect('administrative:detail_client', client_id=client_id)
             except:
-                return redirect('administrative:detail_client',
-                                client_id=client_id)
+                return redirect('administrative:detail_client', client_id=client_id)
     else:
         form = AddClientHomepageForm(initial={'client':client, 'event':None})
         form.fields['event'].queryset = Event.objects.filter(client=client)
@@ -204,9 +195,9 @@ def delete_client_process(request):
     return redirect('administrative:detail_client', client.id)
 
 
-
 @login_required
 def add_operator(request, client_id):
+    """Add client's operator."""
     client = Client.objects.get(id=client_id)
     if request.method == 'POST':
         form = AddOperatorForm(request.POST)
@@ -222,16 +213,14 @@ def add_operator(request, client_id):
                                             email=email,
                                             first_name=first_name,
                                             last_name=last_name,)
-            operator = Operator.objects.create(client=client,
-                                               user=user,)
+            Operator.objects.create(client=client, user=user)
             return redirect('administrative:view_operator', client.id)
     else:
         form = AddOperatorForm(initial={'client': client,})
     return render(request,
                   'administrative/add_operator.html',
-                  {'form': form,
-                   'client': {'id': client.id,
-                              'name': client.name}})
+                  {'form': form, 'client': {'id': client.id, 'name': client.name}}
+                 )
 
 
 def view_operator(request, client_id):
@@ -239,8 +228,7 @@ def view_operator(request, client_id):
     client = get_object_or_404(Client, id=client_id)
     operators = Operator.objects.filter(client=client)
     context = {'operators': [],
-               'client': {'id': client.id,
-                          'name': client.name}}
+               'client': {'id': client.id, 'name': client.name}}
     for operator in operators:
         operator_data = {'username': operator.user.get_username(),
                          'id': operator.id,
@@ -253,7 +241,6 @@ def view_operator(request, client_id):
             operator_data['status'] = 'Active'
         else:
             operator_data['status'] = 'Not Active'
-
         context['operators'].append(operator_data)
     paginator = Paginator(context['operators'], 10)
     page = request.GET.get('page')
@@ -271,8 +258,7 @@ def edit_operator(request, operator_id):
     "display edit operator form"
     operator = Operator.objects.get(id=operator_id)
     context = {'operator': {}, 'client': {}}
-    context['client'] = {'id': operator.client.id,
-                         'name': operator.client.name}
+    context['client'] = {'id': operator.client.id, 'name': operator.client.name}
     context['operator'] = {'id': operator.id,
                            'username': operator.user.get_username(),
                            'first_name': operator.user.first_name,
@@ -283,6 +269,7 @@ def edit_operator(request, operator_id):
 
 @login_required
 def edit_operator_process(request):
+    """function to submit the new operator data to database."""
     operator = Operator.objects.get(id=request.POST['operator_id'])
     op_user = operator.user
     op_user.first_name = request.POST['first_name']
@@ -296,8 +283,7 @@ def delete_operator(request, operator_id):
     'display delete operator confirmation'
     operator = Operator.objects.get(id=operator_id)
     context = {'operator': {}, 'client': {}}
-    context['client'] = {'id': operator.client.id,
-                         'name': operator.client.name}
+    context['client'] = {'id': operator.client.id, 'name': operator.client.name}
     context['operator'] = {'id': operator.id,
                            'username': operator.user.get_username(),
                            'date_end': operator.date_end,}
@@ -345,6 +331,7 @@ def add_user(request):
 
 
 class EditUser(UpdateView):
+    """Edit user data."""
     model = User
     fields = ['is_staff', 'is_superuser']
     template_name = 'administrative/user_update_form.html'
@@ -352,6 +339,7 @@ class EditUser(UpdateView):
 
 
 class DeleteUser(UpdateView):
+    """Delete user from database."""
     model = User
     fields = ['is_active']
     template_name = 'administrative/user_update_form.html'
@@ -400,9 +388,8 @@ def add_event(request, client_id):
         form = AddEventForm(request.POST)
         if form.is_valid():
             client = form.cleaned_data['client']
-            event = Event.objects.create(
-                client=client,
-                name=form.cleaned_data['name'],
+            Event.objects.create(
+                client=client, name=form.cleaned_data['name'],
                 time_end=form.cleaned_data['time_end'])
             return redirect('administrative:view_event', client_id=client_id)
     else:
@@ -411,9 +398,7 @@ def add_event(request, client_id):
     return render(request,
                   'administrative/add_event.html',
                   {'form':form,
-                   'client': {'id': client.id,
-                              'name': client.name}
-                  })
+                   'client': {'id': client.id, 'name': client.name}})
 
 
 @login_required
@@ -425,9 +410,7 @@ def delete_event(request, event_id):
                   'administrative/delete_event.html',
                   {'form': form,
                    'event': event,
-                   'client': {'id': event.client.id,
-                              'name': event.client.name}
-                  })
+                   'client': {'id': event.client.id, 'name': event.client.name}})
 
 
 @login_required
@@ -449,9 +432,7 @@ def delete_event_process(request):
 def detail_event(request, event_id):
     "display delete event confirmation"
     event = Event.objects.get(id=event_id)
-    context = {'event': '',
-               'client': {'id': event.client.id,
-                          'name': event.client.name}}
+    context = {'event': '', 'client': {'id': event.client.id, 'name': event.client.name}}
     event_data = {'client': event.client.name,
                   'name': event.name,
                   'time_start': event.time_start,
@@ -474,16 +455,14 @@ def view_event(request, client_id):
     "display all event"
     client = get_object_or_404(Client, id=client_id)
     events = Event.objects.filter(client=client)
-    context = {'events': [],
-               'client': {'id': client.id,
-                          'name': client.name}}
+    context = {'events': [], 'client': {'id': client.id, 'name': client.name}}
     for event in events:
         event_data = {'name': event.name,
                       'id': event.id,
                       'status': '',
                       'time_start': event.time_start,
                       'time_end': event.time_end}
-        if event.time_end == None:
+        if event.time_end is None:
             event_data['status'] = 'Ongoing'
         else:
             event_data['status'] = 'Ended'
@@ -502,7 +481,7 @@ class EditEvent(UpdateView):
     model = Event
     fields = ['name',]
     template_name_suffix = '_edit_form'
-    
+
     def get_context_data(self, **kwargs):
         # call the base implementation first to get a context
         context = super(EditEvent, self).get_context_data(**kwargs)
@@ -522,12 +501,9 @@ def view_client_keyword(request, client_id):
     "display all keyword belong to this client"
     client = get_object_or_404(Client, id=client_id)
     keywords = ClientKeyword.objects.filter(client=client)
-    context = {'keywords': [],
-               'client': {'id': client.id,
-                          'name': client.name}}
+    context = {'keywords': [], 'client': {'id': client.id, 'name': client.name}}
     for keyword in keywords:
-        keyword_data = {'name': keyword.query.keywords,
-                        'id': keyword.id,}
+        keyword_data = {'name': keyword.query.keywords, 'id': keyword.id,}
         context['keywords'].append(keyword_data)
     return render(request, 'administrative/view_client_keyword.html', context)
 
@@ -546,21 +522,15 @@ def add_client_keyword(request, client_id):
                 Query.objects.create(keywords=form.cleaned_data['keywords'])
             query = Query.objects.get(keywords=form.cleaned_data['keywords'])
             try:
-                ClientKeyword.objects.create(client=form.cleaned_data['client'],
-                                             query=query)
-                return redirect('administrative:detail_client',
-                                client_id=client_id)
+                ClientKeyword.objects.create(client=form.cleaned_data['client'], query=query)
+                return redirect('administrative:detail_client', client_id=client_id)
             except:
-                return redirect('administrative:detail_client',
-                                client_id=client_id)
+                return redirect('administrative:detail_client', client_id=client_id)
     else:
         form = AddClientKeywordForm(initial={'client':client,})
     return render(request,
                   'administrative/add_client_keyword.html',
-                  {'form':form,
-                   'client': {'id': client.id,
-                              'name': client.name}
-                  })
+                  {'form':form, 'client': {'id': client.id, 'name': client.name}})
 
 
 @login_required
@@ -568,9 +538,7 @@ def view_client_sequence(request, client_id):
     "display all sequence belong to this client"
     client = get_object_or_404(Client, id=client_id)
     sequences = ClientSequence.objects.filter(client=client)
-    context = {'sequences': [],
-               'client': {'id': client.id,
-                          'name': client.name}}
+    context = {'sequences': [], 'client': {'id': client.id, 'name': client.name}}
     for sequence in sequences:
         sequence_data = {'name': sequence.string_parameter.sentence,
                          'id': sequence.id,
@@ -587,9 +555,9 @@ def add_client_sequence(request, client_id):
     if request.method == 'POST':
         form = AddClientSequenceForm(request.POST)
         if form.is_valid():
-            if StringParameter.objects.filter(
-                   sentence=form.cleaned_data['sequence']).exists():
-                client_sequence = StringParameter.objects.get(sentence=form.cleaned_data['sequence'])
+            if StringParameter.objects.filter(sentence=form.cleaned_data['sequence']).exists():
+                client_sequence = StringParameter.objects.get(
+                    sentence=form.cleaned_data['sequence'])
             else:
                 StringParameter.objects.create(sentence=form.cleaned_data['sequence'])
                 str_prm = StringParameter.objects.get(sentence=form.cleaned_data['sequence'])
@@ -598,17 +566,12 @@ def add_client_sequence(request, client_id):
                     client=form.cleaned_data['client'],
                     event=form.cleaned_data['event'],
                     string_parameter=str_prm)
-                return redirect('administrative:view_client_sequence',
-                            client_id=client_id)
+                return redirect('administrative:view_client_sequence', client_id=client_id)
             except:
-                return redirect('administrative:view_client_sequence',
-                                client_id=client_id)
+                return redirect('administrative:view_client_sequence', client_id=client_id)
     else:
         form = AddClientSequenceForm(initial={'client':client,})
         form.fields['event'].queryset = Event.objects.filter(client=client)
     return render(request,
                   'administrative/add_client_sequence.html',
-                  {'form':form,
-                   'client': {'id': client.id,
-                              'name': client.name}
-                  })
+                  {'form':form, 'client': {'id': client.id, 'name': client.name}})
