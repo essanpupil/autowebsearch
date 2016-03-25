@@ -11,3 +11,4 @@ before_install:
   - pip install codecov
 after_success:
   - codecov
+repo_token: 9p7lic2B1H0hjwIGC1EoSrwvSRpcd8wuw
