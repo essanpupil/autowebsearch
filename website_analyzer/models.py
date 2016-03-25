@@ -15,7 +15,6 @@ class ExtendDomain(models.Model):
                                         choices=WHITELIST_CHOICES,
                                         blank=True,
                                         null=True)
-
     # True if the domain is freely available (blogspot, wordpress, etc).
     free = models.NullBooleanField(null=True, blank=True)
     times_crawled = models.IntegerField(default=0)
@@ -26,34 +25,26 @@ class ExtendHomepage(models.Model):
     SCAM_CHOICES = ((True, 'YES'),
                     (False, 'NO'),
                     (None, 'UNKNOWN'))
-
     WHITELIST_CHOICES = ((True, 'YES'),
                          (False, 'NO'),
                          (None, 'UNKNOWN'))
-
     homepage = models.OneToOneField(Homepage)
     full_crawled = models.IntegerField(default=0)
     times_analyzed = models.IntegerField(default=0)
-
     # value: 'yes', 'no', 'unknown'
     scam = models.NullBooleanField(max_length=7, choices=SCAM_CHOICES,
                                    blank=True, null=True)
-
     # True if he webpage is already inspected, False if not yet inspected.
     inspected = models.BooleanField(default=False)
-
     # 'unreport', 'reported', 'postpone'
     reported = models.BooleanField(default=False)
-
     # True if the website response is 200 (accessible), else it is False
     access = models.BooleanField(default=True)
-
     # True if the web should be whitelist, False if should not, None pending
     whitelist = models.NullBooleanField(max_length=7,
                                         choices=WHITELIST_CHOICES,
                                         blank=True,
                                         null=True)
-
     # method to validate form data input when editing homepage value
     def clean(self):
         "custom clean to make sure scam status whitelist not conflict"
@@ -88,7 +79,6 @@ class ExtendWebpage(models.Model):
 
 
 class Token(models.Model):
-
     """ store tokens used in webpages. tokens used to create keyword search
     and analisis parameter """
     id = models.AutoField(primary_key=True)  # lint:ok
@@ -129,17 +119,13 @@ class StringAnalysist(models.Model):
 
 
 class Sequence(models.Model):
-
     """store sequence token, use as parameter for analyzing website"""
     id = models.AutoField(primary_key=True)  # lint:ok
     token = models.ForeignKey(Token)
-
     # webpages using this sequence
     webpage = models.ForeignKey(Webpage, blank=True, null=True)
-
     # token's number on a certain sequence.
     number = models.IntegerField()
-
     # short description about the sequence.
     description = models.ForeignKey(SequenceDescription)
 
@@ -148,7 +134,6 @@ class Sequence(models.Model):
 
 
 class Searching(models.Model):
-
     """information on each searching activity"""
     id = models.AutoField(primary_key=True)  # lint:ok
     keyword = models.CharField(max_length=255)
