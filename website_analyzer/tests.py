@@ -1,16 +1,17 @@
+"""testing module for website_analyzer app."""
 import datetime
 
 from django.test import TestCase, TransactionTestCase
-from django_webtest import WebTest
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
 
-from .models import ExtendHomepage, ExtendWebpage, ExtendDomain
-from .models import StringParameter
-from .analyzer_lib import string_analyst, add_url_to_webpage
-from .analyzer_lib import add_list_url_to_webpage
-from website_management.models import Homepage, Domain, Webpage
+from django_webtest import WebTest
 
+from website_analyzer.models import ExtendHomepage, ExtendWebpage, ExtendDomain, \
+                                    StringParameter
+from website_analyzer.analyzer_lib import string_analyst, add_url_to_webpage, \
+                                          add_list_url_to_webpage
+from website_management.models import Homepage, Domain, Webpage
 
 TIME_NOW = datetime.datetime.now()
 

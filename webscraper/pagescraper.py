@@ -3,7 +3,6 @@ from urllib.parse import urlparse
 
 import requests
 from bs4 import BeautifulSoup
-from nltk.tokenize import word_tokenize
 
 
 class PageScraper(object):
@@ -45,16 +44,6 @@ class PageScraper(object):
             if len(line):
                 line2.append(line_b.encode('ascii', 'ignore'))
         return page_text.lower()
-
-    def word_tokens(self, html=None):
-        """return word tokens of webpage"""
-        if html is None:
-            text = self.get_text_body()
-        else:
-            text = self.get_text_body(html=html)
-        text2 = text.strip()
-        text3 = text2.lower()
-        return word_tokenize(text3)
 
     def ideal_urls(self, html=None):
         """extract the ideal url inside webpage"""

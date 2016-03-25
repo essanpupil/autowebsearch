@@ -1,31 +1,7 @@
+""""testing module for web scraper package."""
 import unittest
 
-from .pagescraper import PageScraper
-
-
-class TestNoJavascriptWebpage(unittest.TestCase):
-    """perform test for webpage that does not contain javascript"""
-    def setUp(self):
-        self.nojshtml = """
-                   <html>
-                   <head><title>Dummy html</title></head>
-                   <body>
-                       <p>Hello World!</p>
-                       <p>
-                        Together we will make the world feel better.
-                       </p>
-                   </body>
-                   </html>
-                   """
-
-    def test_nojshtml_word_list(self):
-        """get text from html without javacript"""
-        webpage = PageScraper()
-        text = webpage.word_tokens(self.nojshtml)
-        text.sort()
-        self.assertEqual(text, ['!', '.', 'better', 'feel', 'hello',
-                                'make', 'the', 'together', 'we',
-                                'will', 'world', 'world'])
+from webscraper.pagescraper import PageScraper
 
 
 class ExtractUrlTestCase(unittest.TestCase):
@@ -44,6 +20,7 @@ class ExtractUrlTestCase(unittest.TestCase):
                     """
 
     def test_extract_ideal_link(self):
+        "Testing url extractor to get the full path good url, not the relative url."
         pagescraper = PageScraper()
         ideal = ['http://www.pupil.com/profile',
                  'https://www.pupil.com/profile']

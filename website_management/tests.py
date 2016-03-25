@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 
 from django_webtest import WebTest
 
-from .models import Webpage, Homepage, Domain
+from website_management.models import Webpage, Homepage, Domain
 
 
 class WebsiteDashboardViewsTestCase(TestCase):
