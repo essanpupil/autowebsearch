@@ -1,5 +1,6 @@
 bs4==0.0.1
 html5lib==0.9999999
+django-webtest==1.7.8
 Django==1.8.11
 idna==2.0
 nltk==3.1
