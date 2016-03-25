@@ -1,3 +1,4 @@
+"""models module for website_analyzer app."""
 from django.db import models
 from django.core.exceptions import ValidationError
 
@@ -75,7 +76,7 @@ class ExtendHomepage(models.Model):
 class ExtendWebpage(models.Model):
     """ extending the Webpage model for additional info require for analisis"""
     webpage = models.OneToOneField(Webpage)
-    text_body = models.TextField(blank=True, null=True)
+    text_body = models.TextField(blank=True)
 
 
 class Token(models.Model):
