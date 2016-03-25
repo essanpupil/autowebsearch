@@ -3,7 +3,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 
-from views import login, logout, welcome, user_profile, password_changed
+from ScamSearcher.views import login, logout, welcome, user_profile, password_changed
 
 
 urlpatterns = (
