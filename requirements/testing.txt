@@ -2,3 +2,4 @@
 coverage
 nose
 django-nose
+factory_boy
