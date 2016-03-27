@@ -32,8 +32,16 @@ INSTALLED_APPS = (
     'website_management',
     'website_analyzer',
     'administrative',
+    'django_nose',
 )
 
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+NOSE_ARGS = [
+    '--with-coverage',
+    '--cover-package=administrative,webscraper,website_analyzer,website_management',
+    '--cover-inclusive',
+]
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
