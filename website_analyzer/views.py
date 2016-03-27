@@ -1,15 +1,19 @@
+"""views module for website_analyzer app."""
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib.auth.decorators import login_required
 
-from .models import ExtendHomepage, StringParameter, StringAnalysist,\
-                    ExtendDomain
 from website_management.models import Homepage, Webpage, Domain
-from .analyzer_lib import string_analyst, add_list_url_to_webpage, \
-                          add_scam_url_website, string_analysist, crawl_website
+from website_analyzer.models import ExtendHomepage, StringParameter, \
+                                    StringAnalysist, ExtendDomain
+from website_analyzer.analyzer_lib import string_analyst, \
+                                          add_list_url_to_webpage, \
+                                          add_scam_url_website, \
+                                          string_analysist, crawl_website
+from website_analyzer.forms import AddScamWebsiteForm, AddSequenceForm, \
+                                   EditAnalystForm, EditAnalystDomainForm, \
+                                   SearchForm
 from webscraper.pagescraper import PageScraper
-from .forms import AddScamWebsiteForm, AddSequenceForm, EditAnalystForm, \
-                   EditAnalystDomainForm, SearchForm
 
 
 @login_required
@@ -103,7 +107,7 @@ def edit_analyst(request, homepage_id):
     else:
         form = EditAnalystForm()
     context = {'form': form,
-               'homepage': {},}
+               'homepage': {}}
     context['homepage'] = {'id': website.id,
                            'name': website.name,
                            'date_added': website.date_added,
@@ -111,7 +115,7 @@ def edit_analyst(request, homepage_id):
                            'inspected': website.extendhomepage.inspected,
                            'reported': website.extendhomepage.reported,
                            'access': website.extendhomepage.access,
-                           'whitelist': website.extendhomepage.whitelist,}
+                           'whitelist': website.extendhomepage.whitelist}
     return render(request, 'website_analyzer/edit_analyst.html', context)
 
 
@@ -182,7 +186,7 @@ def view_websites(request):
                      'report': exthp.reported,
                      'access': exthp.access,
                      'web_count': homepage.webpage_set.all().count(),
-                     'matched_sequence': {'min': 0, 'max': 0},})
+                     'matched_sequence': {'min': 0, 'max': 0}})
             except ExtendHomepage.DoesNotExist:
                 context['divided_websites'].append(
                     {'id': homepage.id,
@@ -194,7 +198,7 @@ def view_websites(request):
                      'report': 'n/a',
                      'access': 'n/a',
                      'web_count': homepage.webpage_set.all().count(),
-                     'matched_sequence': {'min': 0, 'max': 0},})
+                     'matched_sequence': {'min': 0, 'max': 0}})
     else:
         for homepage in divided_websites:
             try:
@@ -211,7 +215,7 @@ def view_websites(request):
                      'report': exthp.reported,
                      'access': exthp.access,
                      'web_count': homepage.webpage_set.all().count(),
-                     'matched_sequence': {'min': 0, 'max': 0},})
+                     'matched_sequence': {'min': 0, 'max': 0}})
             except ExtendHomepage.DoesNotExist:
                 context['divided_websites'].append(
                     {'id': homepage.id,
@@ -223,7 +227,7 @@ def view_websites(request):
                      'report': 'n/a',
                      'access': 'n/a',
                      'web_count': homepage.webpage_set.all().count(),
-                     'matched_sequence': {'min': 0, 'max': 0},})
+                     'matched_sequence': {'min': 0, 'max': 0}})
     context['form'] = SearchForm()
     return render(request, 'website_analyzer/view_websites.html', context)
 
@@ -330,7 +334,7 @@ def view_analyst_domains(request):
                      'hp_count': dom.homepage_set.all().count(),
                      'whitelist': extdom.whitelist,
                      'free': extdom.free,
-                     'date_added': dom.date_added,})
+                     'date_added': dom.date_added})
             except ExtendDomain.DoesNotExist:
                 context['divided_domains'].append(
                     {'id': dom.id,
@@ -338,7 +342,7 @@ def view_analyst_domains(request):
                      'hp_count': dom.homepage_set.all().count(),
                      'whitelist': 'N/A',
                      'free': 'N/A',
-                     'date_added': dom.date_added,})
+                     'date_added': dom.date_added})
     else:
         for dom in divided_domains:
             try:
@@ -349,7 +353,7 @@ def view_analyst_domains(request):
                      'hp_count': dom.homepage_set.all().count(),
                      'whitelist': extdom.whitelist,
                      'free': extdom.free,
-                     'date_added': dom.date_added,})
+                     'date_added': dom.date_added})
             except ExtendDomain.DoesNotExist:
                 context['divided_domains'].append(
                     {'id': dom.id,
@@ -357,7 +361,7 @@ def view_analyst_domains(request):
                      'hp_count': dom.homepage_set.all().count(),
                      'whitelist': 'N/A',
                      'free': 'N/A',
-                     'date_added': dom.date_added,})
+                     'date_added': dom.date_added})
     context['form'] = SearchForm()
     context['searchbase'] = "Domain"
     return render(request,
@@ -390,11 +394,11 @@ def edit_analyst_domain(request, dom_id):
         form = EditAnalystDomainForm()
     context = {'form': form,
                'id': domain.id,
-               'domain': {},}
+               'domain': {}}
     context['domain'] = {'id': domain.id,
                          'name': domain.name,
                          'free': domain.extenddomain.free,
-                         'whitelist': domain.extenddomain.whitelist,}
+                         'whitelist': domain.extenddomain.whitelist}
     return render(request,
                   'website_analyzer/edit_analyst_domain.html',
                   context)
@@ -411,7 +415,7 @@ def detail_analyst_domain(request, dom_id):
                'date_added': domain.date_added,
                'free': domain.extenddomain.free,
                'whitelist': domain.extenddomain.whitelist,
-               'homepages': [],}
+               'homepages': []}
     for homepage in my_homepages:
         context['homepages'].append({'id': homepage.id, 'name': homepage.name})
     return render(request,
