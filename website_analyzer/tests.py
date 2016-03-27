@@ -30,3 +30,16 @@ class WebsiteAnalyzerDashboardTest(TestCase):
             reverse('website_analyzer:analyst_dashboard'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'website_analyzer/dashboard.html')
+
+    def test_get_dashboard_not_logged_in(self):
+        'get dashboard views without login, should be redirected to login page'
+        user = UserFactory(username='bogus_user', password='another_user')
+        bogus_client = Client()
+        bogus_client.login(username=user.username, password='another_user')
+        response = bogus_client.get(
+            reverse('website_analyzer:analyst_dashboard'))
+        self.assertRedirects(
+            response,
+            '{0}?next={1}'.format(
+                reverse('login'),
+                reverse('website_analyzer:analyst_dashboard')))
