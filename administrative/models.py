@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from website_management.models import Homepage, Query
 from website_analyzer.models import StringParameter
 
+
 class Client(models.Model):
     "Place to save everybody that use this application service"
     name = models.CharField(max_length=255, null=False, blank=False,)
@@ -13,8 +14,10 @@ class Client(models.Model):
     address = models.TextField(null=False, blank=False)
     date_start = models.DateField(auto_now_add=True)
     date_end = models.DateField(null=True, blank=True)
+
     def __str__(self):
         return self.name
+
 
 class Event(models.Model):
     "Place to save events held by clients"
@@ -34,6 +37,7 @@ class Operator(models.Model):
     event = models.ManyToManyField(Event, blank=True)
     date_start = models.DateField(auto_now_add=True)
     date_end = models.DateField(null=True, blank=True)
+
     def __str__(self):
         return self.user.username
 
@@ -43,6 +47,7 @@ class Website(models.Model):
     homepage = models.OneToOneField(Homepage)
     client = models.ForeignKey(Client)
     event = models.ForeignKey(Event, null=True, blank=True)
+
     def __str__(self):
         return self.homepage.name
 
