@@ -17,87 +17,88 @@
         type="text/css" href="{% static 'bootstrap/css/bootstrap.min.css' %}"/>
 </head>
 <body>
-
-<div id="header">
-    <h1>SCAM SEARCHER</h1>
-    <h2>Search for scam website, automatically</h2>
-    <ul>
-    {% block mainmenu %}
-        {% if user.is_authenticated %}
-        <li>
-            <a href="{% url 'website_management:website_dashboard' %}">
-                Website
-            </a>
-        </li>
-        <li>
-            <a href="{% url 'website_analyzer:analyst_dashboard' %}">
-                Analyst
-            </a>
-        </li>
-        <li>
-            <a href="{% url 'administrative:admin_dashboard' %}">
-                Administrative
-            </a>
-        </li>
+<div class="container-fluid" >
+    <div id="header" class="row">
+        <h1>SCAM SEARCHER</h1>
+        <h2>Search for scam website, automatically</h2>
+        <ul>
+        {% block mainmenu %}
+            {% if user.is_authenticated %}
             <li>
-                <a href="{% url 'user_profile' %}">
-                    {{ user.get_username }}
+                <a href="{% url 'website_management:website_dashboard' %}">
+                    Website
                 </a>
             </li>
             <li>
-                <a href="{% url 'logout' %}">
-                    Logout
+                <a href="{% url 'website_analyzer:analyst_dashboard' %}">
+                    Analyst
                 </a>
             </li>
-        {% else %}
             <li>
-                <a href="{% url 'login' %}">
-                    Login
+                <a href="{% url 'administrative:admin_dashboard' %}">
+                    Administrative
                 </a>
             </li>
-        {% endif %}
-    {% endblock %}
-    </ul>
-</div>
-<div class="colmask leftmenu">
-    <div class="colleft">
-        <div class="col1">
-            <!-- Column 1 start -->
-            {% block content %} {% endblock %}
-            <!-- Column 1 end -->
+                <li>
+                    <a href="{% url 'user_profile' %}">
+                        {{ user.get_username }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'logout' %}">
+                        Logout
+                    </a>
+                </li>
+            {% else %}
+                <li>
+                    <a href="{% url 'login' %}">
+                        Login
+                    </a>
+                </li>
+            {% endif %}
+        {% endblock %}
+        </ul>
+    </div>
+    <div class="colmask leftmenu">
+        <div class="colleft">
+            <div class="col1 col-sm-4">
+                <!-- Column 1 start -->
+                {% block content %} {% endblock %}
+                <!-- Column 1 end -->
+            </div>
+            <div class="col2 col-sm-8">
+                <!-- Column 2 start -->
+                {% block navigation %} {% endblock %}
+                {% block subnavigation %} {% endblock %}
+                <!-- Column 2 end -->
+            </div>
         </div>
-        <div class="col2">
-            <!-- Column 2 start -->
-            {% block navigation %} {% endblock %}
-            {% block subnavigation %} {% endblock %}
-            <!-- Column 2 end -->
+    </div>
+    <div id="footer">
+        <div style="float:left;margin:5px;">
+            <a href="https://github.com/essanpupil" target="_blank">
+                github.com/essanpupil
+            </a>
+        </div>
+        <div style="float:left;margin:5px;">
+            <a href="https://www.facebook.com/essanpupil" target="_blank">
+                facebook.com/esssanpupil
+            </a>
+        </div>
+        <div style="float:left;margin:5px;">
+            <a href="https://twitter.com/essanpupil" target="_blank">
+                twitter.com/essanpupil
+            </a>
+        </div>
+        <div style="float:left;margin:5px;">
+            <a href="http://id.linkedin.com/in/essanpupil" target="_blank">
+                linkedin.com/essanpupil
+            </a>
+        </div>
+        <div style="float:left;margin:5px;">
+            Copyright pupil 2015
         </div>
     </div>
-</div>
-<div id="footer">
-    <div style="float:left;margin:5px;">
-        <a href="https://github.com/essanpupil" target="_blank">
-            github.com/essanpupil
-        </a>
-    </div>
-    <div style="float:left;margin:5px;">
-        <a href="https://www.facebook.com/essanpupil" target="_blank">
-            facebook.com/esssanpupil
-        </a>
-    </div>
-    <div style="float:left;margin:5px;">
-        <a href="https://twitter.com/essanpupil" target="_blank">
-            twitter.com/essanpupil
-        </a>
-    </div>
-    <div style="float:left;margin:5px;">
-        <a href="http://id.linkedin.com/in/essanpupil" target="_blank">
-            linkedin.com/essanpupil
-        </a>
-    </div>
-    <div style="float:left;margin:5px;">
-        Copyright pupil 2015
-    </div>
-</div>
+<div>
 </body>
 </html>
