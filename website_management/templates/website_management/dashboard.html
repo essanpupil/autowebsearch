@@ -4,7 +4,7 @@
 {% endblock %}
 {% block content %}
 <h3>Summary information</h3>
-<table>
+<table class="table">
     <tr>
         <th align="left">Total Webpage</th><td>{{ web_count }}</td>
     </tr>
@@ -16,7 +16,7 @@
     </tr>
 </table>
 <br />
-<table>
+<table class="table">
     <tr><th>Latest added webpage</th></tr>
     {% for web in newest_5_web %}
     <tr>
@@ -32,7 +32,7 @@
 </table>
 
 <br />
-<table>
+<table class="table">
     <tr><th>Latest added homepage</th></tr>
     {% for hp in newest_5_hp %}
     <tr>
@@ -48,7 +48,7 @@
 </table>
 
 <br />
-<table>
+<table class="table">
     <tr><th>Latest added domain</th></tr>
     {% for dom in newest_5_dom %}
     <tr>
