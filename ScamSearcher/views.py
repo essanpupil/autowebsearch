@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 
 from ScamSearcher.forms import LoginForm
 
+
 @login_required(login_url='login')
 def welcome(request):
     "display welcome page"
@@ -32,7 +33,7 @@ def login(request):
         form = LoginForm()
     return render(request,
                   'login.html',
-                  {'form':form,})
+                  {'form': form})
 
 
 def logout(request):
