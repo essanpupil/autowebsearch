@@ -3,63 +3,69 @@
 {% include 'website_management/website_nav.html' %}
 {% endblock %}
 {% block content %}
-<h3>Summary information</h3>
-<table class="table">
-    <tr>
-        <th align="left">Total Webpage</th><td>{{ web_count }}</td>
-    </tr>
-    <tr>
-        <th align="left">Total Homepage</th><td>{{ hp_count }}</td>
-    </tr>
-    <tr>
-        <th align="left">Total Domain</th><td>{{ dom_count }}</td>
-    </tr>
-</table>
-<br />
-<table class="table">
-    <tr><th>Latest added webpage</th></tr>
-    {% for web in newest_5_web %}
-    <tr>
-        <td>
-            <a href="{% url 'website_management:webpage_detail' web.id %}">
-                {{ web.url }}
-            </a>
-        </td>
-    </tr>
-    {% empty %}
-    <tr><td>Webpage database empty</td></tr>
-    {% endfor %}
-</table>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        Summary information
+    </div>
+    <div class="panel-body">
+        <table class="table table-bordered">
+            <tr>
+                <th align="left">Total Webpage</th><td>{{ web_count }}</td>
+            </tr>
+            <tr>
+                <th align="left">Total Homepage</th><td>{{ hp_count }}</td>
+            </tr>
+            <tr>
+                <th align="left">Total Domain</th><td>{{ dom_count }}</td>
+            </tr>
+        </table>
+        <br />
+        <table class="table table-bordered">
+            <tr><th>Latest added webpage</th></tr>
+            {% for web in newest_5_web %}
+            <tr>
+                <td>
+                    <a href="{% url 'website_management:webpage_detail' web.id %}">
+                        {{ web.url }}
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td>Webpage database empty</td></tr>
+            {% endfor %}
+        </table>
 
-<br />
-<table class="table">
-    <tr><th>Latest added homepage</th></tr>
-    {% for hp in newest_5_hp %}
-    <tr>
-        <td>
-            <a href="{% url 'website_management:homepage_detail' hp.id %}">
-                {{ hp.name }}
-            </a>
-        </td>
-    </tr>
-    {% empty %}
-    <tr><td>Homepage database empty</td></tr>
-    {% endfor %}
-</table>
+        <br />
+        <table class="table table-bordered">
+            <tr><th>Latest added homepage</th></tr>
+            {% for hp in newest_5_hp %}
+            <tr>
+                <td>
+                    <a href="{% url 'website_management:homepage_detail' hp.id %}">
+                        {{ hp.name }}
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td>Homepage database empty</td></tr>
+            {% endfor %}
+        </table>
 
-<br />
-<table class="table">
-    <tr><th>Latest added domain</th></tr>
-    {% for dom in newest_5_dom %}
-    <tr>
-        <td>
-            <a href="{% url 'website_management:domain_detail' dom.id %}">
-                {{ dom.name }}
-            </a>
-        </td>
-    </tr>
-    {% empty %}
-    <tr><td>Domain database empty</td></tr>
-    {% endfor %}
-</table>
+        <br />
+        <table class="table table-bordered">
+            <tr><th>Latest added domain</th></tr>
+            {% for dom in newest_5_dom %}
+            <tr>
+                <td>
+                    <a href="{% url 'website_management:domain_detail' dom.id %}">
+                        {{ dom.name }}
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td>Domain database empty</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
 {% endblock %}
