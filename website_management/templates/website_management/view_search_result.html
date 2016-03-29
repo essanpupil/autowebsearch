@@ -3,29 +3,33 @@
     {% include 'website_management/website_nav.html' %}
 {% endblock %}
 {% block content %}
-<h3>View search result</h3>
-{{ error_message }}
-<table>
-    <tr>
-        <th>No.</th>
-        <th>Search Time</th>
-        <th>Keywords used</th>
-        <th>Webpage Result</th>
-    </tr>
-    {% for search in search_results %}
-        <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ search.search_time }}</td>
-            <td>{{ search.keywords }}</td>
-            <td>{{ search.webpage }}</td>
-        </tr>
-    {% empty %}
-        <tr>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-        </tr>
-    {% endfor %}
-</table>
+<div class="panel panel-info">
+    <div class="panel-heading">View search result</div>
+    <div class="panel-body">
+        {{ error_message }}
+        <table class="table table-bordered">
+            <tr>
+                <th>No.</th>
+                <th>Search Time</th>
+                <th>Keywords used</th>
+                <th>Webpage Result</th>
+            </tr>
+            {% for search in search_results %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ search.search_time }}</td>
+                    <td>{{ search.keywords }}</td>
+                    <td>{{ search.webpage }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
 {% endblock %}
