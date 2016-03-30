@@ -1,37 +1,41 @@
-<h4>Analyst navigation</h4>
-<ul>
-    <li>
-        <a href="{% url 'website_analyzer:view_websites' %}">
-            View analyst websites
-        </a>
-    </li>
-    <li>
-        <a href="{% url 'website_analyzer:view_analyst_domains' %}">
-            View analyst domains
-        </a>
-    </li>
-{% if user.is_superuser %}
-    <li>
-        <a href="{% url 'website_analyzer:add_scam_website' %}">
-            Add new scam websites
-        </a>
-    </li>
-{% endif %}
-    <li>
-        <a href="{% url 'website_analyzer:view_sequence' %}">
-            View sequence parameter
-        </a>
-    </li>
-{% if user.is_superuser %}
-    <li>
-        <a href="{% url 'website_analyzer:add_sequence' %}">
-            Add sequence parameter
-        </a>
-    </li>
-{% endif %}
-    <li>
-        <a href="{% url 'website_analyzer:view_analyst_result' %}">
-            View analyst result
-        </a>
-    </li>
-</ul>
+<div class="panel panel-primary">
+    <div class="panel-heading">Analyst navigation</div>
+    <div class="panel-body">
+        <ul class="list-group">
+            <li class="list-group-item">
+                <a href="{% url 'website_analyzer:view_websites' %}">
+                    View analyst websites
+                </a>
+            </li>
+            <li class="list-group-item">
+                <a href="{% url 'website_analyzer:view_analyst_domains' %}">
+                    View analyst domains
+                </a>
+            </li>
+        {% if user.is_superuser %}
+            <li class="list-group-item">
+                <a href="{% url 'website_analyzer:add_scam_website' %}">
+                    Add new scam websites
+                </a>
+            </li>
+        {% endif %}
+            <li class="list-group-item">
+                <a href="{% url 'website_analyzer:view_sequence' %}">
+                    View sequence parameter
+                </a>
+            </li>
+        {% if user.is_superuser %}
+            <li class="list-group-item">
+                <a href="{% url 'website_analyzer:add_sequence' %}">
+                    Add sequence parameter
+                </a>
+            </li>
+        {% endif %}
+            <li class="list-group-item">
+                <a href="{% url 'website_analyzer:view_analyst_result' %}">
+                    View analyst result
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
