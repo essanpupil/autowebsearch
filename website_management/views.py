@@ -15,7 +15,6 @@ from website_analyzer.models import ExtendWebpage
 from website_analyzer.analyzer_lib import fill_text_body
 
 
-@login_required
 def website_dashboard(request):
     """display info summary about saved webpages, homepage, & domain"""
     webs = Webpage.objects.all()
@@ -37,7 +36,6 @@ def website_dashboard(request):
     return render(request, 'website_management/dashboard.html', context)
 
 
-@login_required
 def webpage_detail(request, web_id):
     """display detail info of selected webpage"""
     webpage = get_object_or_404(Webpage, id=web_id)
@@ -103,7 +101,6 @@ def get_domain_homepage(request, web_id):
     return redirect('website_management:webpage_detail', web_id=webpage.id)
 
 
-@login_required
 def homepage_detail(request, hp_id):
     "display detail info of selected homepage"
     homepage = get_object_or_404(Homepage, id=hp_id)
@@ -120,7 +117,6 @@ def homepage_detail(request, hp_id):
     return render(request, 'website_management/homepage_detail.html', context)
 
 
-@login_required
 def domain_detail(request, dom_id):
     """display detail info of selected domain"""
     domain = get_object_or_404(Domain, id=dom_id)
@@ -152,7 +148,6 @@ def add_new_webpage(request):
                   {'form': form})
 
 
-@login_required
 def view_all_webpages(request):
     """display all webpage"""
     webs = Webpage.objects.all().order_by('id').reverse()
@@ -176,7 +171,6 @@ def view_all_webpages(request):
                   'website_management/view_all_webpages.html', context)
 
 
-@login_required
 def view_all_homepages(request):
     """display all webpage"""
     homes = Homepage.objects.all().order_by('id').reverse()
@@ -199,7 +193,6 @@ def view_all_homepages(request):
                   'website_management/view_all_homepages.html', context)
 
 
-@login_required
 def view_all_domains(request):
     """display all domain"""
     doms = Domain.objects.all()
@@ -256,7 +249,6 @@ def add_new_keyword(request):
                   {'form': form})
 
 
-@login_required
 def view_all_keywords(request):
     """display all keywords"""
     queries = Query.objects.all().order_by('id').reverse()
@@ -270,7 +262,6 @@ def view_all_keywords(request):
                   'website_management/view_all_keywords.html', context)
 
 
-@login_required
 def view_search_result(request):
     "display all search result, times, & keyword"
     searches = Search.objects.all().order_by('search_time').reverse()
