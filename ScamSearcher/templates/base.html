@@ -35,12 +35,12 @@
         <h2>Search for scam website, automatically</h2>
         <ul class="nav nav-tabs">
         {% block mainmenu %}
-            {% if user.is_authenticated %}
             <li>
                 <a href="{% url 'website_management:website_dashboard' %}">
                     Website
                 </a>
             </li>
+            {% if user.is_authenticated %}
             <li>
                 <a href="{% url 'website_analyzer:analyst_dashboard' %}">
                     Analyst
@@ -82,7 +82,7 @@
             <!-- Column 1 end -->
         </div>
     </div>
-    <div class="row">
+    <div class="row panel panel-footer">
         <div style="float:left;margin:5px;">
             <a href="https://github.com/essanpupil" target="_blank">
                 github.com/essanpupil

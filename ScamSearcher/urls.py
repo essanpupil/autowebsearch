@@ -4,11 +4,13 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 
-from ScamSearcher.views import login, logout, welcome, user_profile, password_changed
+from ScamSearcher.views import login, logout, welcome, user_profile, \
+                               password_changed
+from website_management.views import website_dashboard
 
 
 urlpatterns = (
-    url(r'^$', welcome, name='welcome'),
+    url(r'^$', website_dashboard, name='welcome'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^login$', login, name='login'),
     url(r'^logout$', logout, name='logout'),

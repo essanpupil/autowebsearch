@@ -1,7 +1,7 @@
 from django.forms import ModelForm
 from django import forms
 
-from .models import Webpage, Query
+from website_management.models import Webpage, Query
 
 
 class AddWebpageForm(ModelForm):
