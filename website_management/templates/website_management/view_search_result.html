@@ -1,35 +1,30 @@
-{% extends 'base.html' %}
-{% block navigation %}
-    {% include 'website_management/website_nav.html' %}
+{% extends 'content-wrapper.html' %}
+{% block content-heading %}
+    View search result
 {% endblock %}
-{% block content %}
-<div class="panel panel-info">
-    <div class="panel-heading">View search result</div>
-    <div class="panel-body">
-        {{ error_message }}
-        <table class="table table-bordered">
+{% block content-body %}
+    {{ error_message }}
+    <table class="table table-bordered">
+        <tr>
+            <th>No.</th>
+            <th>Search Time</th>
+            <th>Keywords used</th>
+            <th>Webpage Result</th>
+        </tr>
+        {% for search in search_results %}
             <tr>
-                <th>No.</th>
-                <th>Search Time</th>
-                <th>Keywords used</th>
-                <th>Webpage Result</th>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ search.search_time }}</td>
+                <td>{{ search.keywords }}</td>
+                <td>{{ search.webpage }}</td>
             </tr>
-            {% for search in search_results %}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ search.search_time }}</td>
-                    <td>{{ search.keywords }}</td>
-                    <td>{{ search.webpage }}</td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                </tr>
-            {% endfor %}
-        </table>
-    </div>
-</div>
+        {% empty %}
+            <tr>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}
