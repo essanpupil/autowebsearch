@@ -4,7 +4,7 @@
     </div>
     <div class="panel-body">
         <ul class="list-group">
-            {% if request.user.is_authenticate %}
+            {% if user.is_authenticated %}
                 <li class="list-group-item">
                     <a href="{% url 'website_management:search_webpage' %}">
                         Search webpage
