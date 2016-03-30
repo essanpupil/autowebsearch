@@ -2,57 +2,58 @@
 {% block navigation %}
     {% include 'website_management/website_nav.html' %}
     <h4>Page navigation</h4>
-<div class="pagination">
-    <span class="step-links">
-        {% if webs.has_previous %}
-            <a href="?page={{ webs.previous_page_number }}">previous</a>
-        {% endif %}
+    <div class="pagination">
+        <span class="step-links">
+            {% if webs.has_previous %}
+                <a href="?page={{ webs.previous_page_number }}">previous</a>
+            {% endif %}
 
-        <span class="current">
-            Page {{ webs.number }} of {{ webs.paginator.num_pages }}.
+            <span class="current">
+                Page {{ webs.number }} of {{ webs.paginator.num_pages }}.
+            </span>
+
+            {% if webs.has_next %}
+                <a href="?page={{ webs.next_page_number }}">next</a>
+            {% endif %}
         </span>
-
-        {% if webs.has_next %}
-            <a href="?page={{ webs.next_page_number }}">next</a>
-        {% endif %}
-    </span>
-</div>
+    </div>
 {% endblock %}
 {% block content %}
-<h3>View all webpages</h3>
-{{ error_message }}
-<table>
-    <tr>
-        <th>No.</th>
-        <th>URL</th>
-        <th>Date Added</th>
-        <th>Last Response</th>
-        <th>Last Response Check</th>
-        <th>Action</th>
-    </tr>
-    {% for web in webs %}
-        <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ web.url|truncatechars:50 }}</td>
-            <td>{{ web.date_added }}</td>
-            <td>{{ web.last_response }}</td>
-            <td>{{ web.last_response_check }}</td>
-            <td>
-                <a href="{% url 'website_management:webpage_detail' web.id %}">
-                    Detail
-                </a>
-            </td>
-        </tr>
-    {% empty %}
-        <tr>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-        </tr>
-    {% endfor %}
-</table>
+<div class="panel panel-info">
+    <div class="panel-heading">View all webpages</div>
+    <div class="panel-body">
+        {{ error_message }}
+        <table class="table table-bordered">
+            <tr>
+                <th>No.</th>
+                <th>URL</th>
+                <th>Date Added</th>
+                <th>Last Status Check</th>
+                <th>Action</th>
+            </tr>
+            {% for web in webs %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ web.url|truncatechars:50 }}</td>
+                    <td>{{ web.date_added }}</td>
+                    <td>{{ web.last_response_check }}</td>
+                    <td>
+                        <a href="{% url 'website_management:webpage_detail' web.id %}">
+                            Detail
+                        </a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
 {% endblock %}
