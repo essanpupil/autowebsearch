@@ -35,12 +35,12 @@
         <h2>Search for scam website, automatically</h2>
         <ul class="nav nav-tabs">
         {% block mainmenu %}
-            {% if user.is_authenticated %}
             <li>
                 <a href="{% url 'website_management:website_dashboard' %}">
                     Website
                 </a>
             </li>
+            {% if user.is_authenticated %}
             <li>
                 <a href="{% url 'website_analyzer:analyst_dashboard' %}">
                     Analyst
