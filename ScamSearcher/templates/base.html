@@ -78,7 +78,14 @@
         </div>
         <div class="col-sm-8 panel">
             <!-- Column 1 start -->
-            {% block content %} {% endblock %}
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        {% block content-heading %} {% endblock %}
+                    </div>
+                    <div class="panel-body">
+                        {% block content-body %} {% endblock %}
+                    </div>
+                </div>
             <!-- Column 1 end -->
         </div>
     </div>
