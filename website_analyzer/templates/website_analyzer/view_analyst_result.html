@@ -18,35 +18,35 @@
     </span>
 </div>
 {% endblock %}
-{% block content %}
-<h3>View Analyst Result</h3>
-<table>
-    <tr>
-        <th style="padding:3px;">No</th>
-        <th style="padding:3px;">Webpage</th>
-        <th style="padding:3px;">Analyze Time</th>
-        <th style="padding:3px;">String Parameter</th>
-        <th style="padding:3px;">Find</th>
-        <th style="padding:3px;">Analyze</th>
-    </tr>
-    {% for result in filtered_results %}
-    <tr>
-        <td>{{ forloop.counter }}</td>
-        <td><a href="{% url 'website_management:webpage_detail' result.webpage.id %}">
-                <span title="{{ result.webpage.url }}">
-                    {{ result.webpage.url|truncatechars:60 }}</span></a></td>
-        <td>{{ result.analyze_time|date:"H:i d-m-Y" }}</td>
-        <td>{{ result.string_parameter }}</td>
-        <td>{{ result.find }}</td>
-        <td><a href="{% url 'website_analyzer:analyze_website' result.webpage.homepage_id %}">
-                Analyze</a></td>
-    </tr>
-    {% empty %}
-        <td> - </td>
-        <td> - </td>
-        <td> - </td>
-        <td> - </td>
-        <td> - </td>
-    {% endfor %}
-</table>
+{% block content-heading %}View Analyst Result{% endblock %}
+{% block content-body %}
+    <table class="table table-bordered">
+        <tr>
+            <th>No</th>
+            <th>Webpage</th>
+            <th>Analyze Time</th>
+            <th>String Parameter</th>
+            <th>Find</th>
+            <th>Analyze</th>
+        </tr>
+        {% for result in filtered_results %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td><a href="{% url 'website_management:webpage_detail' result.webpage.id %}">
+                    <span title="{{ result.webpage.url }}">
+                        {{ result.webpage.url|truncatechars:60 }}</span></a></td>
+            <td>{{ result.analyze_time|date:"H:i d-m-Y" }}</td>
+            <td>{{ result.string_parameter }}</td>
+            <td>{{ result.find }}</td>
+            <td><a href="{% url 'website_analyzer:analyze_website' result.webpage.homepage_id %}">
+                    Analyze</a></td>
+        </tr>
+        {% empty %}
+            <td> - </td>
+            <td> - </td>
+            <td> - </td>
+            <td> - </td>
+            <td> - </td>
+        {% endfor %}
+    </table>
 {% endblock %}

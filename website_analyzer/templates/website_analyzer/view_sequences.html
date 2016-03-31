@@ -18,32 +18,37 @@
     </span>
 </div>
 {% endblock %}
-{% block content %}
-<h3>View String parameters</h3>
-<table>
-    <tr>
-        <th>
-           No.
-        </th>
-        <th>
-           String parameter
-        </th>
-        <th>
-           Definitive
-        </th>
-        <th>
-           Date Added
-        </th>
-    </tr>
-    {% for parameter in parameters %}
+{% block content-heading %}View String parameters{% endblock %}
+{% block content-body %}
+    <table class="table table-bordered">
         <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ parameter.sentence }}</td>
-            <td>{{ parameter.definitive }}</td>
-            <td>{{ parameter.date_added }}</td>
+            <th>
+               No.
+            </th>
+            <th>
+               String parameter
+            </th>
+            <th>
+               Definitive
+            </th>
+            <th>
+               Date Added
+            </th>
         </tr>
-    {% empty %}
-        String Parameter database is empty
-    {% endfor %}
-</table>
+        {% for parameter in parameters %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ parameter.sentence }}</td>
+                <td>{{ parameter.definitive }}</td>
+                <td>{{ parameter.date_added }}</td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td> - </td>
+                <td> - </td>
+                <td> - </td>
+                <td> - </td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}
