@@ -1,56 +1,56 @@
 {% extends 'base.html' %}
 {% block navigation %}
-{% include 'website_management/website_nav.html' %}
+    {% include 'website_management/website_nav.html' %}
 {% endblock %}
 {% block subnavigation %}
-{% include 'website_management/web_detail_subnav.html' %}
+    {% include 'website_management/web_detail_subnav.html' %}
 {% endblock %}
-{% block content %}
-<h3>Webpage detail</h3>
-<table>
-    <tr>
-        <th align="left">URL</th>
-        <td>
-            <a href="{{ web.url }}" target="_blank">
-                {{ web.url }}
-            </a>
-        </td>
-    </tr>
-    <tr>
-        <th align="left">Date added</th>
-        <td>{{ web.added }}</td>
-    </tr>
-    <tr>
-        <th align="left">Homepage</th>
-        <td>
-        {% if web.hp != None %}
-            <a href="{% url 'website_management:homepage_detail' web.idhp %}">
-                {{ web.hp }}
-            </a>
-        {% else %}
-            None
-        {% endif %}
-        </td>
-    </tr>
-    <tr>
-        <th align="left">Domain</th>
-        <td>
-        {% if web.hp != None %}
-            <a href="{% url 'website_management:domain_detail' web.iddom %}">
-                {{ web.dom }}
-            </a>
-        {% else %}
-            None
-        {% endif %}
-        </td>
-    </tr>
-    <tr>
-        <th align="left">HTML page</th>
-        <td>{{ web.html_page|yesno:"Downloaded, Empty" }}</td>
-    </tr>
-    <tr>
-        <th align="left" valign="top">Text body</th>
-        <td>{{ web.text_body|default_if_none:"Text body of this webpage is not yet downloaded" }}</td>
-    </tr>
-</table>
+{% block content-heading %}Webpage detail{% endblock %}
+{% block content-body %}
+    <table class="table table-bordered">
+        <tr>
+            <th align="left">URL</th>
+            <td>
+                <a href="{{ web.url }}" target="_blank">
+                    {{ web.url }}
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <th align="left">Date added</th>
+            <td>{{ web.added }}</td>
+        </tr>
+        <tr>
+            <th align="left">Homepage</th>
+            <td>
+            {% if web.hp != None %}
+                <a href="{% url 'website_management:homepage_detail' web.idhp %}">
+                    {{ web.hp }}
+                </a>
+            {% else %}
+                None
+            {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th align="left">Domain</th>
+            <td>
+            {% if web.hp != None %}
+                <a href="{% url 'website_management:domain_detail' web.iddom %}">
+                    {{ web.dom }}
+                </a>
+            {% else %}
+                None
+            {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th align="left">HTML page</th>
+            <td>{{ web.html_page|yesno:"Downloaded, Empty" }}</td>
+        </tr>
+        <tr>
+            <th align="left" valign="top">Text body</th>
+            <td>{{ web.text_body|default_if_none:"Text body of this webpage is not yet downloaded" }}</td>
+        </tr>
+    </table>
 {% endblock %}

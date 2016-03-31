@@ -2,14 +2,16 @@
 {% block navigation %}
     {% include 'website_analyzer/analyst_nav.html' %}
 {% endblock %}
-{% block content %}
-<h3>Add Sequence</h3>
-<form method="post" action="{% url 'website_analyzer:add_sequence' %}">
-{% csrf_token %}
-{{ form.as_p }}
-<br />
-<br />
-<input type="submit" value="Save new sequence" />
-<input type="reset" value="Clear input area" />
-</form>
+{% block content-heading %}Add Sequence{% endblock %}
+{% block content-body %}
+    <form method="post" action="{% url 'website_analyzer:add_sequence' %}">
+    {% csrf_token %}
+        <table class="table table-bordered">
+            {{ form.as_table }}
+            <tr><td colspan="2">
+                <input type="submit" value="Save new sequence" />
+                <input type="reset" value="Clear input area" />
+            </td></tr>
+        </table>
+    </form>
 {% endblock %}

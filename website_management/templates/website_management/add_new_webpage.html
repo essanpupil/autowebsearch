@@ -1,4 +1,7 @@
-{% extends 'content-wrapper.html' %}
+{% extends 'base.html' %}
+{% block navigation %}
+    {% include "website_management/website_nav.html" %}
+{% endblock %}
 {% block pagetitle %}Add new web page manualy | ScamSearcher{% endblock %}
 {% block content-heading %}Add new webpage{% endblock %}
 {% block content-body %}

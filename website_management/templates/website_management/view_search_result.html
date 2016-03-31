@@ -1,7 +1,8 @@
-{% extends 'content-wrapper.html' %}
-{% block content-heading %}
-    View search result
+{% extends 'base.html' %}
+{% block navigation %}
+    {% include 'website_management/website_nav.html' %}
 {% endblock %}
+{% block content-heading %}View search result{% endblock %}
 {% block content-body %}
     {{ error_message }}
     <table class="table table-bordered">
