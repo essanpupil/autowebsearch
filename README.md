@@ -31,10 +31,8 @@ No. | Websites | Scam Status | Site Status | Action
 #### Detail websites
 This subnavigation display detail information of the selected website.  
 
-|                     |                 |
-|      -              |       -         |
-| **URL**             | www.detik.com   |
-| **Date added**      | March 30, 2016  |
-| **Free domain**     | NO              |
-| **Site status**     | active          |
-| **Scam status**     | NO              |
+**URL**             | www.detik.com   
+**Date added**      | March 30, 2016  
+**Free domain**     | NO              
+**Site status**     | active          
+**Scam status**     | NO              
