@@ -18,20 +18,20 @@
 {% block content-heading %}View all homepages{% endblock %}
 {% block content-body %}
     {{ error_message }}
-    <table class="table table-bordered">
+    <table class="table table-bordered table-condensed">
         <tr>
             <th>No.</th>
-            <th>Homepage name</th>
-            <th>Domain name</th>
-            <th>Last Response</th>
+            <th>Websites</th>
+            <th>Scam status</th>
+            <th>Site status</th>
             <th>Action</th>
         </tr>
         {% for hp in homes %}
             <tr>
                 <td>{{ forloop.counter }}</td>
                 <td>{{ hp.name }}</td>
-                <td>{{ hp.domain }}</td>
-                <td>{{ hp.date_added }}</td>
+                <td>{{ hp.scam_status }}</td>
+                <td>{{ hp.site_status }}</td>
                 <td>
                     <a href="{% url 'website_management:homepage_detail' hp.id %}">
                         Detail
