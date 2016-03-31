@@ -7,8 +7,10 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib.auth.decorators import login_required
 
 from website_management.models import Webpage, Domain, Homepage, Search, Query
-from website_management.forms import AddWebpageForm, SearchWebpageForm, AddNewKeywordForm
-from website_management.management_lib import add_list_url_to_webpage, add_url_to_webpage
+from website_management.forms import AddWebpageForm, SearchWebpageForm, \
+                                     AddNewKeywordForm
+from website_management.management_lib import add_list_url_to_webpage, \
+                                              add_url_to_webpage
 from webscraper.pagescraper import PageScraper
 
 from website_analyzer.models import ExtendWebpage
@@ -50,7 +52,7 @@ def webpage_detail(request, web_id):
                 'html_page': bool(webpage.html_page),
                 'text_body': '',
                 'id': webpage.id, }
-    if webpage.html_page != None:
+    if webpage.html_page is None:
         extw, _ = ExtendWebpage.objects.get_or_create(webpage=webpage)
         fill_text_body(extw)
         web_data['text_body'] = extw.text_body
