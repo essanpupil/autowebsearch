@@ -1,9 +1,8 @@
 {% extends 'base.html' %}
 {% block navigation %}
     {% include 'website_management/website_nav.html' %}
-    {% include 'website_management/homepage_detail_nav.html' %}
 {% endblock %}
-{% block content-heading %}Homepage detail{% endblock %}
+{% block content-heading %}Website detail{% endblock %}
 {% block content-body %}
     <table class="table table-bordered">
         <tr>
@@ -13,32 +12,20 @@
             </td>
         </tr>
         <tr>
-            <th align="left">Date added</th>
+            <th align="left">Date Added</th>
             <td>{{ hpadded }}</td>
         </tr>
         <tr>
-            <th align="left">Domain</th>
-            <td>
-            {% if hpdomain != 'None' %}
-                <a href="{% url 'website_management:domain_detail' iddom %}">
-                    {{ hpdomain }}
-                </a>
-            {% else %}
-                None
-            {% endif %}
-            </td>
+            <th align="left">Free Domain</th>
+            <td>{{ is_free_domain }}</td>
         </tr>
         <tr>
-            <th align="left">Webpages</th>
-            <td>
-            {% for web in hpweb %}
-                <a href="{% url 'website_management:webpage_detail' web.id %}">
-                    {{ web.url }}
-                </a>
-            {% empty %}
-                No webpage use this homepage
-            {% endfor %}
-            </td>
+            <th align="left">Site Status</th>
+            <td>{{ site_status }}</td>
+        </tr>
+        <tr>
+            <th align="left">Scam Status</th>
+            <td>{{ scam_status }}</td>
         </tr>
     </table>
 {% endblock %}

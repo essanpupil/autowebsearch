@@ -4,46 +4,14 @@
     </div>
     <div class="panel-body">
         <ul class="list-group">
-            {% if user.is_authenticated %}
-                <li class="list-group-item">
-                    <a href="{% url 'website_management:search_webpage' %}">
-                        Search webpage
-                    </a>
-                </li>
-                <li class="list-group-item">
-                    <a href="{% url 'website_management:add_new_keyword' %}">
-                        Add new keyword
-                    </a>
-                </li>
-                <li class="list-group-item">
-                    <a href="{% url 'website_management:add_new_webpage' %}">
-                        Add new webpage manually
-                    </a>
-                </li>
-            {% endif %}
-            <li class="list-group-item">
-                <a href="{% url 'website_management:view_search_result' %}">
-                    View Search Result
-                </a>
-            </li>
             <li class="list-group-item">
                 <a href="{% url 'website_management:view_all_keywords' %}">
                     View all keywords
                 </a>
             </li>
             <li class="list-group-item">
-                <a href="{% url 'website_management:view_all_webpages' %}">
-                    View all webpages
-                </a>
-            </li>
-            <li class="list-group-item">
                 <a href="{% url 'website_management:view_all_homepages' %}">
-                    View all homepages
-                </a>
-            </li>
-            <li class="list-group-item">
-                <a href="{% url 'website_management:view_all_domains' %}">
-                    View all domain
+                    View all websites
                 </a>
             </li>
         </ul>
