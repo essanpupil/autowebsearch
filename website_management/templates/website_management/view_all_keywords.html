@@ -1,4 +1,7 @@
-{% extends "content-wrapper.html" %}
+{% extends "base.html" %}
+{% block navigation %}
+    {% include "website_management/website_nav.html" %}
+{% endblock %}
 {% block content-heading %}View all keywords{% endblock %}
 {% block content-body %}
     {{ error_message }}
