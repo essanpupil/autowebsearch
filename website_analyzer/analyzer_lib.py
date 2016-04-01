@@ -1,8 +1,14 @@
 """helper module for website analyzer app."""
 import tldextract
+import logging
+import time
+import timeout_decorator
 
 from django.utils import timezone
 from django.db import IntegrityError, transaction
+from django.core.mail import send_mail
+from django.template.loader import get_template
+from django.template import Context
 
 from website_management.models import Homepage, Webpage, Domain
 from website_analyzer.models import ExtendHomepage, StringParameter, StringAnalysist, \
@@ -26,6 +32,8 @@ def string_analyst(hp_id):
             web.save()
 
         for param in params:
+            param.times_used += 1
+            param.save(update_fields=['times_used'])
             if param.sentence in web.extendwebpage.text_body:
                 StringAnalysist.objects.create(webpage=web,
                                                parameter=param,
@@ -43,7 +51,10 @@ def string_analyst(hp_id):
 
 def add_url_to_webpage(url):
     """add url and its component to database"""
-    ext = tldextract.extract(url)
+    logging.basicConfig(level=logging.WARN)
+    extract = tldextract.TLDExtract(
+        cache_file='/home/skripsi/tldextractcache/tldextract.cache')
+    ext = extract(url)
     try:
         with transaction.atomic():
             domain, _ = Domain.objects.get_or_create(
@@ -116,7 +127,7 @@ def string_analysist(homepage):
     """function to doing string analysist on to website/homepage model object.
     required website_management.models.Homepage as argument"""
     hari_ini = timezone.now()
-    parameters = StringParameter.objects.all()
+    parameters = StringParameter.objects.filter(target_analyze='text_body')
     webpages = homepage.webpage_set.all()
     for parameter in parameters:
         for webpage in webpages:
@@ -151,12 +162,36 @@ def string_analysist(homepage):
                                                        find=False)
             continue
         continue
+    string_analysist_result = StringAnalysist.objects.filter(
+            find=True, 
+            webpage__in=homepage.webpage_set.all())
+    if string_analysist_result.filter(parameter__definitive=True).count() > 0:
+        exthp = homepage.extendhomepage
+        exthp.scam=True
+        exthp.save()
 
 
+#@timeout_decorator.timeout(30)
 def crawl_website(homepage):
     """function to fetch html code and url of a website, start from available
     webpages in the database. The only accepted argument in Homepage object."""
+    try:
+        add_url_to_webpage("http://"+homepage.name)
+    except:
+        pass
+    page = PageScraper()
+    page.fetch_webpage("http://"+homepage.name)
+    webpage = Webpage.objects.get(url="http://"+homepage.name)
+    webpage.html_page = page.html
+    extw, created = ExtendWebpage.objects.get_or_create(
+            webpage=webpage)
+    extw.text_body = page.get_text_body()
+    extw.save(update_fields=['text_body'])
+    webpage.save(update_fields=['html_page'])
     keep_crawling = True
+    homepages_nogif = homepage.webpage_set.exclude(url__endswith='.gif')
+    homepages_nojpg = homepages_nogif.exclude(url__iendswith='.jpg')
+    homepages_nopng = homepages_nojpg.exclude(url__endswith='.png')
     while keep_crawling:
         ext_hp = ExtendHomepage.objects.get(homepage=homepage).only('full_crawled')
         ext_hp.full_crawled += 1
@@ -173,3 +208,26 @@ def crawl_website(homepage):
         if not homepage.webpage_set.filter(html_page__isnull=True).exists():
             break
         keep_crawling = False
+
+
+def send_email_website_analyze(homepage, operator_recipients):
+    "Send website analyze to recipient list"
+    subject_mail = "ScamSearcher scam notification"
+    for operator in operator_recipients:
+        params = StringAnalysist.objects.filter(
+                webpage__in=homepage.webpage_set.all(),
+                find=True).distinct('parameter')
+        list_params = []
+        for item in params:
+            list_params.append({'parameter':item.parameter.sentence,})
+        send_mail(subject_mail,
+                  get_template('website_analyzer/send_email_notification.txt'
+                      ).render(
+                          Context({'name': homepage.name,
+                                   'domain': homepage.domain,
+                                   'scam': homepage.extendhomepage.scam,
+                                   'params': list_params,})),
+                  'support@scamsearcher.com',
+                  [operator.user.email,],
+                  fail_silently=False)
+        SentEmail.objects.create(recipient=operator.user, homepage=homepage)

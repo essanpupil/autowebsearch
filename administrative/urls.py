@@ -78,4 +78,7 @@ urlpatterns = [
     # event url section
     url(r'^view-all-event/$',
         views.view_all_event, name='view_all_event'),
+    url(r'^view-sent-mail/$',
+        views.view_sent_mail,
+        name='view_sent_mail'),
     ]

@@ -19,6 +19,7 @@ class ExtendDomain(models.Model):
     # True if the domain is freely available (blogspot, wordpress, etc).
     free = models.NullBooleanField(null=True, blank=True)
     times_crawled = models.IntegerField(default=0)
+    report_feature = models.BooleanField(default=False)
 
 
 class ExtendHomepage(models.Model):
@@ -105,7 +106,9 @@ class StringParameter(models.Model):
     """Store string parameter to be search during analysist"""
     sentence = models.CharField(max_length=255, unique=True)
     definitive = models.BooleanField(default=False)
-    date_added = models.DateField(auto_now=True)
+    date_added = models.DateField(auto_now_add=True)
+    target_analyze = models.CharField(max_length=10, default="text_body")
+    times_used = models.IntegerField(default=0)
 
     def __str__(self):  # lint:ok
         return self.sentence
@@ -115,7 +118,7 @@ class StringAnalysist(models.Model):
     """Store string parameter analysist result of webpage's"""
     webpage = models.ForeignKey(Webpage)
     parameter = models.ForeignKey(StringParameter)
-    time = models.DateTimeField(auto_now=True)
+    time = models.DateTimeField(auto_now=True, db_index=True)
     find = models.BooleanField(default=False)
 
 

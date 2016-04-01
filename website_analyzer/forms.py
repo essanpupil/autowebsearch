@@ -17,7 +17,7 @@ class AddSequenceForm(ModelForm):
     """Add new sequence to database"""
     class Meta:  # lint:ok
         model = StringParameter
-        fields = ['sentence', 'definitive']
+        fields = ['sentence', 'definitive','target_analyze']
 
 
 class EditAnalystForm(ModelForm):

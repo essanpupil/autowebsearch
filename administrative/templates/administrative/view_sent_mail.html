@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block pagetitle %}View sent mail| ScamSearcher{% endblock %}
+{% block navigation %}
+    {% include 'administrative/admin_nav.html' %}
+    <h4>Page navigation</h4>
+    <div class="pagination">
+        <span class="step-links">
+            {% if sent_mail_data.has_previous %}
+                <a href="?page={{ sent_mail_data.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ sent_mail_data.number }} of {{ sent_mail_data.paginator.num_pages }}.
+            </span>
+
+            {% if sent_mail_data.has_next %}
+                <a href="?page={{ sent_mail_data.next_page_number }}">next</a>
+            {% endif %}
+        </span>
+    </div>
+{% endblock %}
+{% block content %}
+<h3>View sent mail</h3>
+{{ error_message }}
+<table>
+    <tr>
+        <th>No.</th>
+        <th>Sent time</th>
+        <th>Recipient</th>
+        <th>Homepage</th>
+    </tr>
+    {% for mail in sent_mail_data %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ mail.sent_time}}</td>
+            <td>{{ mail.recipient }}</td>
+            <td>{{ mail.website }}</td>
+        </tr>
+    {% empty %}
+        <tr>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}

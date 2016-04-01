@@ -60,6 +60,7 @@ class AddClientKeywordForm(ModelForm):
 class AddClientSequenceForm(ModelForm):
     "input client's sequence"
     sequence =  forms.CharField()
+    target_analyze = forms.CharField()
     class Meta:
         model = ClientSequence
         fields = ['sequence', 'client', 'event']
