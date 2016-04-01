@@ -8,3 +8,5 @@ requests==2.9.1
 six==1.10.0
 tldextract==1.7.5
 wheel==0.26.0
+django-filter
+timeout-decorator
