@@ -3,7 +3,7 @@ python:
     - 3.4.3
 install:
     - pip install -r requirements/testing.txt
-script: python manage.py test --settings ScamSearcher.test_settings --exclude-dir=functional_tests
+script: python manage.py test --settings ScamSearcher.test_settings --exclude-dir=functional_tests --cover-xml-file=coverage.xml
 branches:
     only:
         - master
