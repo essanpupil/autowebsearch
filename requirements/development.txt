@@ -1,0 +1,4 @@
+-r common.txt
+pylint
+pylint_django
+flake8

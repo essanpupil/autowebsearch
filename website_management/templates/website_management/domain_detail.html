@@ -2,28 +2,28 @@
 {% block navigation %}
 {% include 'website_management/website_nav.html' %}
 {% endblock %}
-{% block content %}
-<h3>Domain detail</h3>
-<table>
-    <tr>
-        <th align="left">Domain Name</th>
-        <td>{{ domname }}</td>
-    </tr>
-    <tr>
-        <th align="left">Date added</th>
-        <td>{{ domadded }}</td>
-    </tr>
-    <tr>
-        <th align="left">Webpages</th>
-        <td>
-        {% for hp in domhp %}
-            <a href="{% url 'website_management:homepage_detail' hp.id %}">
-                {{ hp.name }}
-            </a>
-        {% empty %}
-            No homepage use this domain
-        {% endfor %}
-        </td>
-    </tr>
-</table>
+{% block content-heading %}Domain detail{% endblock %}
+{% block content-body %}
+    <table class="table table-bordered">
+        <tr>
+            <th align="left">Domain Name</th>
+            <td>{{ domname }}</td>
+        </tr>
+        <tr>
+            <th align="left">Date added</th>
+            <td>{{ domadded }}</td>
+        </tr>
+        <tr>
+            <th align="left">Webpages</th>
+            <td>
+            {% for hp in domhp %}
+                <a href="{% url 'website_management:homepage_detail' hp.id %}">
+                    {{ hp.name }}
+                </a>
+            {% empty %}
+                No homepage use this domain
+            {% endfor %}
+            </td>
+        </tr>
+    </table>
 {% endblock %}

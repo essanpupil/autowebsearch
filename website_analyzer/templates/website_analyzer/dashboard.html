@@ -1,39 +1,16 @@
 {% extends 'base.html' %}
-{% block navigation %}
-{% include 'website_analyzer/analyst_nav.html' %}
-{% endblock %}
-{% block content %}
-<h3>Analyst summary information</h3>
-<table>
-    <tr>
-        <th align="left">Total scam websites</th><td>{{ scam_count }}</td>
-    </tr>
-    <tr>
-        <th align="left">Total whitelist websites</th><td>{{ whitelist_count }}</td>
-    </tr>
-    <tr>
-        <th align="left">Total Websites</th><td>{{ hp_count }}</td>
-    </tr>
-</table>
-{% comment %}
-<br />
-<table>
-    <tr><th>Latest added scam website</th></tr>
-    {% for hp in newest_5_scam %}
-        <tr><td><a href="{% url 'website_management:homepage_detail' hp.id %}">{{ web.url }}</a></td></tr>
-    {% empty %}
-        <tr><td>Scam website database empty</td></tr>
-    {% endfor %}
-</table>
-
-<br />
-<table>
-    <tr><th>Latest added whitelist websites</th></tr>
-    {% for hp in newest_5_whitelist %}
-        <tr><td><a href="{% url 'website_management:homepage_detail' hp.id %}">{{ web.url }}</a></td></tr>
-    {% empty %}
-        <tr><td>Whitelist database empty</td></tr>
-    {% endfor %}
-</table>
-{% endcomment %}
+{% block navigation %}{% include "website_analyzer/analyst_nav.html" %}{% endblock %}
+{% block content-heading %}Analyst summary information{% endblock %}
+{% block content-body %}
+    <table class="table table-bordered">
+        <tr>
+            <th align="left">Total scam websites</th><td>{{ scam_count }}</td>
+        </tr>
+        <tr>
+            <th align="left">Total whitelist websites</th><td>{{ whitelist_count }}</td>
+        </tr>
+        <tr>
+            <th align="left">Total Websites</th><td>{{ hp_count }}</td>
+        </tr>
+    </table>
 {% endblock %}

@@ -1,3 +1,4 @@
+"""helper module for website analyzer app."""
 import tldextract
 import logging
 import time
@@ -10,20 +11,18 @@ from django.template.loader import get_template
 from django.template import Context
 
 from website_management.models import Homepage, Webpage, Domain
-from .models import ExtendHomepage, StringParameter, StringAnalysist
-from .models import ExtendWebpage, ExtendDomain
-from administrative.models import SentEmail
-
+from website_analyzer.models import ExtendHomepage, StringParameter, StringAnalysist, \
+                                    ExtendWebpage, ExtendDomain
 from webscraper.pagescraper import PageScraper
 
 
 def string_analyst(hp_id):
     """function to do string analyst to homepage"""
-    hp = Homepage.objects.get(id=hp_id)
-    exthp, created = ExtendHomepage.objects.get_or_create(homepage=hp)
-    params = StringParameter.objects.filter(target_analyze='text_body')
-    for web in hp.webpage_set.all():
-        if web.extendwebpage.text_body == None:
+    homepage = Homepage.objects.get(id=hp_id)
+    exthp, _ = ExtendHomepage.objects.get_or_create(homepage=homepage)
+    params = StringParameter.objects.all()
+    for web in homepage.webpage_set.all():
+        if web.extendwebpage.text_body is None:
             page = PageScraper()
             page.fetch_webpage(web.url)
             web.html_page = page.html
@@ -31,7 +30,7 @@ def string_analyst(hp_id):
             extw.text_body = page.get_text_body()
             extw.save()
             web.save()
-            
+
         for param in params:
             param.times_used += 1
             param.save(update_fields=['times_used'])
@@ -58,31 +57,32 @@ def add_url_to_webpage(url):
     ext = extract(url)
     try:
         with transaction.atomic():
-            dom, crtd = Domain.objects.get_or_create(name=ext.registered_domain)
-            ExtendDomain.objects.create(domain=dom)
+            domain, _ = Domain.objects.get_or_create(
+                name=ext.registered_domain)
+            ExtendDomain.objects.create(domain=domain)
     except:
         pass
     try:
         with transaction.atomic():
-            hp, crtd2 = Homepage.objects.get_or_create(name='.'.join(ext),
-                                                       domain=dom)
-            ExtendHomepage.objects.create(homepage=hp)
+            homepage, _ = Homepage.objects.get_or_create(name='.'.join(ext),
+                                                         domain=domain)
+            ExtendHomepage.objects.create(homepage=homepage)
     except:
-            hp, crtd2 = Homepage.objects.get_or_create(name='.'.join(ext),
-                                                       domain=dom)
+        homepage, _ = Homepage.objects.get_or_create(name='.'.join(ext),
+                                                     domain=domain)
     try:
         with transaction.atomic():
             if len(url) > 255:
                 truncate_url = url[0:255]
-                web = Webpage.objects.create(url=truncate_url,
-                                             full_url=url,
-                                             homepage=hp)
-                ExtendWebpage.objects.create(webpage=web)
+                webpage = Webpage.objects.create(url=truncate_url,
+                                                 full_url=url,
+                                                 homepage=homepage)
+                ExtendWebpage.objects.create(webpage=webpage)
             else:
-                web = Webpage.objects.create(url=url,
-                                             full_url=url,
-                                             homepage=hp)
-                ExtendWebpage.objects.create(webpage=web)
+                webpage = Webpage.objects.create(url=url,
+                                                 full_url=url,
+                                                 homepage=homepage)
+                ExtendWebpage.objects.create(webpage=webpage)
     except IntegrityError:
         raise IntegrityError
 
@@ -90,16 +90,16 @@ def add_url_to_webpage(url):
 def add_scam_url_website(url):
     """add url and its component to database"""
     ext = tldextract.extract(url)
-    dom, crtd = Domain.objects.get_or_create(name=ext.registered_domain)
-    ExtendDomain.objects.create(domain=dom)
-    hp, crtd2 = Homepage.objects.get_or_create(name='.'.join(ext),
-                                               domain=dom)
-    ExtendHomepage.objects.create(homepage=hp)
+    domain, _ = Domain.objects.get_or_create(name=ext.registered_domain)
+    ExtendDomain.objects.create(domain=domain)
+    homepage, _ = Homepage.objects.get_or_create(name='.'.join(ext),
+                                                 domain=domain)
+    ExtendHomepage.objects.create(homepage=homepage)
     try:
         with transaction.atomic():
-            web = Webpage.objects.create(url=url, homepage=hp)
-            ExtendWebpage.objects.create(webpage=web)
-            exthp = ExtendHomepage.objects.get(homepage=hp)
+            webpage = Webpage.objects.create(url=url, homepage=homepage)
+            ExtendWebpage.objects.create(webpage=webpage)
+            exthp = ExtendHomepage.objects.get(homepage=homepage)
             exthp.scam = True
             exthp.save()
     except IntegrityError:
@@ -113,6 +113,7 @@ def add_list_url_to_webpage(urls):
             add_url_to_webpage(url)
         except IntegrityError:
             continue
+
 
 def fill_text_body(extw):
     "Function to fill text_body of an ExtendWebpage object"
@@ -131,35 +132,34 @@ def string_analysist(homepage):
     for parameter in parameters:
         for webpage in webpages:
             newest_string_analysist = StringAnalysist.objects.filter(
-                    webpage=webpage,
-                    parameter=parameter).order_by('time').reverse()
+                webpage=webpage,
+                parameter=parameter).order_by('time').reverse()
             if newest_string_analysist.count() == 0:
-                extw, created = ExtendWebpage.objects.get_or_create(
-                        webpage=webpage)
-                if extw.text_body == None:
+                extw, _ = ExtendWebpage.objects.get_or_create(webpage=webpage)
+                if extw.text_body is None:
                     continue
                 if parameter.sentence in extw.text_body:
                     StringAnalysist.objects.create(webpage=webpage,
-                            parameter=parameter,
-                            find=True)
+                                                   parameter=parameter,
+                                                   find=True)
                 else:
                     StringAnalysist.objects.create(webpage=webpage,
-                            parameter=parameter,
-                            find=False)
+                                                   parameter=parameter,
+                                                   find=False)
             else:
                 if (hari_ini - newest_string_analysist[0].time).days == 0:
                     continue
                 else:
-                    extw, created = ExtendWebpage.objects.get_or_create(
-                            webpage=webpage)
+                    extw, _ = ExtendWebpage.objects.get_or_create(
+                        webpage=webpage)
                     if parameter.sentence in extw.text_body:
                         StringAnalysist.objects.create(webpage=webpage,
-                                parameter=parameter,
-                                find=True)
+                                                       parameter=parameter,
+                                                       find=True)
                     else:
                         StringAnalysist.objects.create(webpage=webpage,
-                                parameter=parameter,
-                                find=False)
+                                                       parameter=parameter,
+                                                       find=False)
             continue
         continue
     string_analysist_result = StringAnalysist.objects.filter(
@@ -193,12 +193,14 @@ def crawl_website(homepage):
     homepages_nojpg = homepages_nogif.exclude(url__iendswith='.jpg')
     homepages_nopng = homepages_nojpg.exclude(url__endswith='.png')
     while keep_crawling:
-        for webpage in homepages_nopng:
+        ext_hp = ExtendHomepage.objects.get(homepage=homepage).only('full_crawled')
+        ext_hp.full_crawled += 1
+        ext_hp.save(update_fields=['full_crawled'])
+        for webpage in homepage.webpage_set.all():
             page = PageScraper()
             page.fetch_webpage(webpage.url)
             webpage.html_page = page.html
-            extw, created = ExtendWebpage.objects.get_or_create(
-                    webpage=webpage)
+            extw, _ = ExtendWebpage.objects.get_or_create(webpage=webpage)
             extw.text_body = page.get_text_body()
             extw.save(update_fields=['text_body'])
             webpage.save(update_fields=['html_page'])

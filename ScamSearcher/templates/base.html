@@ -1,7 +1,21 @@
 {% load staticfiles %}
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-GB">
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
     <title>{% block pagetitle %}Scam Searcher{% endblock %}</title>
     <meta http-equiv="Content-Type"
         content="application/xhtml+xml; charset=utf-8" />
@@ -12,90 +26,94 @@
     <meta name="robots" content="index, follow" />
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet"
-        type="text/css" href="{% static 'screen.css' %}" media="screen" />
+        type="text/css" href="{% static 'bootstrap/css/bootstrap.min.css' %}"/>
 </head>
 <body>
-
-<div id="header">
-    <h1>SCAM SEARCHER</h1>
-    <h2>Search for scam website, automatically</h2>
-    <ul>
-    {% block mainmenu %}
-        {% if user.is_authenticated %}
-        <li>
-            <a href="{% url 'website_management:website_dashboard' %}">
-                Website
-            </a>
-        </li>
-        <li>
-            <a href="{% url 'website_analyzer:analyst_dashboard' %}">
-                Analyst
-            </a>
-        </li>
-        <li>
-            <a href="{% url 'administrative:admin_dashboard' %}">
-                Administrative
-            </a>
-        </li>
+<div class="container" >
+    <div class="row page-header">
+        <h1>SCAM SEARCHER</h1>
+        <h2>Search for scam website, automatically</h2>
+        <ul class="nav nav-tabs">
+        {% block mainmenu %}
             <li>
-                <a href="{% url 'user_profile' %}">
-                    {{ user.get_username }}
+                <a href="{% url 'website_management:website_dashboard' %}">
+                    Website
+                </a>
+            </li>
+            {% if user.is_authenticated %}
+            <li>
+                <a href="{% url 'website_analyzer:analyst_dashboard' %}">
+                    Analyst
                 </a>
             </li>
             <li>
-                <a href="{% url 'logout' %}">
-                    Logout
+                <a href="{% url 'administrative:admin_dashboard' %}">
+                    Administrative
                 </a>
             </li>
-        {% else %}
-            <li>
-                <a href="{% url 'login' %}">
-                    Login
-                </a>
-            </li>
-        {% endif %}
-    {% endblock %}
-    </ul>
-</div>
-<div class="colmask leftmenu">
-    <div class="colleft">
-        <div class="col1">
-            <!-- Column 1 start -->
-            {% block content %} {% endblock %}
-            <!-- Column 1 end -->
-        </div>
-        <div class="col2">
-            <!-- Column 2 start -->
+                <li>
+                    <a href="{% url 'user_profile' %}">
+                        {{ user.get_username }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'logout' %}">
+                        Logout
+                    </a>
+                </li>
+            {% else %}
+                <li>
+                    <a href="{% url 'login' %}">
+                        Login
+                    </a>
+                </li>
+            {% endif %}
+        {% endblock %}
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col-sm-4 panel">
             {% block navigation %} {% endblock %}
             {% block subnavigation %} {% endblock %}
-            <!-- Column 2 end -->
+        </div>
+        <div class="col-sm-8 panel">
+            <!-- Column 1 start -->
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        {% block content-heading %} {% endblock %}
+                    </div>
+                    <div class="panel-body">
+                        {% block content-body %} {% endblock %}
+                    </div>
+                </div>
+            <!-- Column 1 end -->
         </div>
     </div>
-</div>
-<div id="footer">
-    <div style="float:left;margin:5px;">
-        <a href="https://github.com/essanpupil" target="_blank">
-            github.com/essanpupil
-        </a>
+    <div class="row panel panel-footer">
+        <div style="float:left;margin:5px;">
+            <a href="https://github.com/essanpupil" target="_blank">
+                github.com/essanpupil
+            </a>
+        </div>
+        <div style="float:left;margin:5px;">
+            <a href="https://www.facebook.com/essanpupil" target="_blank">
+                facebook.com/esssanpupil
+            </a>
+        </div>
+        <div style="float:left;margin:5px;">
+            <a href="https://twitter.com/essanpupil" target="_blank">
+                twitter.com/essanpupil
+            </a>
+        </div>
+        <div style="float:left;margin:5px;">
+            <a href="http://id.linkedin.com/in/essanpupil" target="_blank">
+                linkedin.com/essanpupil
+            </a>
+        </div>
+        <div style="float:left;margin:5px;">
+            Copyright pupil 2015
+        </div>
     </div>
-    <div style="float:left;margin:5px;">
-        <a href="https://www.facebook.com/essanpupil" target="_blank">
-            facebook.com/esssanpupil
-        </a>
-    </div>
-    <div style="float:left;margin:5px;">
-        <a href="https://twitter.com/essanpupil" target="_blank">
-            twitter.com/essanpupil
-        </a>
-    </div>
-    <div style="float:left;margin:5px;">
-        <a href="http://id.linkedin.com/in/essanpupil" target="_blank">
-            linkedin.com/essanpupil
-        </a>
-    </div>
-    <div style="float:left;margin:5px;">
-        Copyright pupil 2015
-    </div>
-</div>
+<div>
 </body>
 </html>

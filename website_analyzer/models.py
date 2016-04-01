@@ -1,3 +1,4 @@
+"""models module for website_analyzer app."""
 from django.db import models
 from django.core.exceptions import ValidationError
 
@@ -7,13 +8,14 @@ from website_management.models import Webpage, Homepage, Domain
 class ExtendDomain(models.Model):
     """extend model Domain to add more information"""
     WHITELIST_CHOICES = ((True, 'YES'),
-                         (False,  'NO'),
+                         (False, 'NO'),
                          (None, 'UNKNOWN'))
     domain = models.OneToOneField(Domain)
     # True if the web should be whitelist, False if should not, None pending
-    whitelist = models.NullBooleanField(max_length=7, choices=WHITELIST_CHOICES,
-                                 blank=True, null=True)
-
+    whitelist = models.NullBooleanField(max_length=7,
+                                        choices=WHITELIST_CHOICES,
+                                        blank=True,
+                                        null=True)
     # True if the domain is freely available (blogspot, wordpress, etc).
     free = models.NullBooleanField(null=True, blank=True)
     times_crawled = models.IntegerField(default=0)
@@ -23,34 +25,28 @@ class ExtendDomain(models.Model):
 class ExtendHomepage(models.Model):
     """extending homepage model to add more field"""
     SCAM_CHOICES = ((True, 'YES'),
-                    (False,  'NO'),
+                    (False, 'NO'),
                     (None, 'UNKNOWN'))
-
     WHITELIST_CHOICES = ((True, 'YES'),
-                         (False,  'NO'),
+                         (False, 'NO'),
                          (None, 'UNKNOWN'))
-
     homepage = models.OneToOneField(Homepage)
     full_crawled = models.IntegerField(default=0)
     times_analyzed = models.IntegerField(default=0)
-
     # value: 'yes', 'no', 'unknown'
     scam = models.NullBooleanField(max_length=7, choices=SCAM_CHOICES,
                                    blank=True, null=True)
-
     # True if he webpage is already inspected, False if not yet inspected.
     inspected = models.BooleanField(default=False)
-
     # 'unreport', 'reported', 'postpone'
     reported = models.BooleanField(default=False)
-
     # True if the website response is 200 (accessible), else it is False
     access = models.BooleanField(default=True)
-
     # True if the web should be whitelist, False if should not, None pending
-    whitelist = models.NullBooleanField(max_length=7, choices=WHITELIST_CHOICES,
-                                 blank=True, null=True)
-
+    whitelist = models.NullBooleanField(max_length=7,
+                                        choices=WHITELIST_CHOICES,
+                                        blank=True,
+                                        null=True)
     # method to validate form data input when editing homepage value
     def clean(self):
         "custom clean to make sure scam status whitelist not conflict"
@@ -81,17 +77,16 @@ class ExtendHomepage(models.Model):
 class ExtendWebpage(models.Model):
     """ extending the Webpage model for additional info require for analisis"""
     webpage = models.OneToOneField(Webpage)
-    text_body = models.TextField(blank=True, null=True)
+    text_body = models.TextField(blank=True)
 
 
 class Token(models.Model):
-
     """ store tokens used in webpages. tokens used to create keyword search
     and analisis parameter """
     id = models.AutoField(primary_key=True)  # lint:ok
     name = models.CharField(max_length=20, unique=True)
 
-    def __unicode__(self):  # lint:ok
+    def __str__(self):  # lint:ok
         return self.name
 
 
@@ -115,7 +110,7 @@ class StringParameter(models.Model):
     target_analyze = models.CharField(max_length=10, default="text_body")
     times_used = models.IntegerField(default=0)
 
-    def __unicode__(self):  # lint:ok
+    def __str__(self):  # lint:ok
         return self.sentence
 
 
@@ -128,31 +123,26 @@ class StringAnalysist(models.Model):
 
 
 class Sequence(models.Model):
-
     """store sequence token, use as parameter for analyzing website"""
     id = models.AutoField(primary_key=True)  # lint:ok
     token = models.ForeignKey(Token)
-
     # webpages using this sequence
     webpage = models.ForeignKey(Webpage, blank=True, null=True)
-
     # token's number on a certain sequence.
     number = models.IntegerField()
-
     # short description about the sequence.
     description = models.ForeignKey(SequenceDescription)
 
-    def __unicode__(self):  # lint:ok
+    def __str__(self):  # lint:ok
         return self.description
 
 
 class Searching(models.Model):
-
     """information on each searching activity"""
     id = models.AutoField(primary_key=True)  # lint:ok
     keyword = models.CharField(max_length=255)
     webpages = models.ForeignKey(Webpage)
     date = models.DateField(auto_now=True)
 
-    def __unicode__(self):  # lint:ok
+    def __str__(self):  # lint:ok
         return self.date

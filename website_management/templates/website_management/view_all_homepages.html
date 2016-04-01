@@ -1,53 +1,51 @@
 {% extends 'base.html' %}
 {% block navigation %}
     {% include 'website_management/website_nav.html' %}
-<div class="pagination">
-    <span class="step-links">
-        {% if websites.has_previous %}
-            <a href="?page={{ homes.previous_page_number }}">previous</a>
-        {% endif %}
-
-        <span class="current">
-            Page {{ homes.number }} of {{ homes.paginator.num_pages }}.
+    <div class="pagination">
+        <span class="step-links">
+            {% if websites.has_previous %}
+                <a href="?page={{ homes.previous_page_number }}">previous</a>
+            {% endif %}
+            <span class="current">
+                Page {{ homes.number }} of {{ homes.paginator.num_pages }}.
+            </span>
+            {% if homes.has_next %}
+                <a href="?page={{ homes.next_page_number }}">next</a>
+            {% endif %}
         </span>
-
-        {% if homes.has_next %}
-            <a href="?page={{ homes.next_page_number }}">next</a>
-        {% endif %}
-    </span>
 </div>
 {% endblock %}
-{% block content %}
-<h3>View all homepages</h3>
-{{ error_message }}
-<table>
-    <tr>
-        <th>No.</th>
-        <th>Homepage name</th>
-        <th>Domain name</th>
-        <th>Last Response</th>
-        <th>Action</th>
-    </tr>
-    {% for hp in homes %}
+{% block content-heading %}View all homepages{% endblock %}
+{% block content-body %}
+    {{ error_message }}
+    <table class="table table-bordered table-condensed">
         <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ hp.name }}</td>
-            <td>{{ hp.domain }}</td>
-            <td>{{ hp.date_added }}</td>
-            <td>
-                <a href="{% url 'website_management:homepage_detail' hp.id %}">
-                    Detail
-                </a>
-            </td>
+            <th>No.</th>
+            <th>Websites</th>
+            <th>Scam status</th>
+            <th>Site status</th>
+            <th>Action</th>
         </tr>
-    {% empty %}
-        <tr>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-        </tr>
-    {% endfor %}
-</table>
+        {% for hp in homes %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ hp.name }}</td>
+                <td>{{ hp.scam_status }}</td>
+                <td>{{ hp.site_status }}</td>
+                <td>
+                    <a href="{% url 'website_management:homepage_detail' hp.id %}">
+                        Detail
+                    </a>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}

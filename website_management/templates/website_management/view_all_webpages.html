@@ -1,70 +1,55 @@
 {% extends 'base.html' %}
 {% block navigation %}
     {% include 'website_management/website_nav.html' %}
-    <form action"" method="get">
-        {{ filter.form.as_p }}
-        <br />
-        <input type="submit" value="submit filter" />
-    </form>
-<h4>Page Navigation</h4>
-<div class="pagination">
-<span class="step-links">
-{% if webs.has_previous %}
-    {% if "url" in request.get_full_path %}
-    <a href="?url={{ request.GET.url }}&page={{ webs.previous_page_number }}">
-        previous</a>
-        {% else %}
-            <a href="?page={{ webs.previous_page_number }}">previous</a>
-        {% endif %}
-    {% endif %}
-    <span class="current">
-        Page {{ webs.number }} of {{ webs.paginator.num_pages }}.
-    </span>
-    {% if webs.has_next %}
-        {% if "url" in request.get_full_path %}
-        <a href="?url={{ request.GET.url }}&page={{ webs.next_page_number }}">next</a>
-        {% else %}
-            <a href="?page={{ webs.next_page_number }}">next</a>
-        {% endif %}
-    {% endif %}
-</span>
-</div>
+    <h4>Page navigation</h4>
+    <div class="pagination">
+        <span class="step-links">
+            {% if webs.has_previous %}
+                <a href="?page={{ webs.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ webs.number }} of {{ webs.paginator.num_pages }}.
+            </span>
+
+            {% if webs.has_next %}
+                <a href="?page={{ webs.next_page_number }}">next</a>
+            {% endif %}
+        </span>
+    </div>
 {% endblock %}
-{% block content %}
-<h3>View all webpages</h3>
-{{ error_message }}
-<table>
-    <tr>
-        <th>No.</th>
-        <th>URL</th>
-        <th>Date Added</th>
-        <th>Last Response</th>
-        <th>Last Response Check</th>
-        <th>Action</th>
-    </tr>
-    {% for web in webs %}
+{% block content-heading %}View all webpages{% endblock %}
+{% block content-body %}
+    {{ error_message }}
+    <table class="table table-bordered">
         <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ web.url|truncatechars:50 }}</td>
-            <td>{{ web.date_added }}</td>
-            <td>{{ web.last_response }}</td>
-            <td>{{ web.last_response_check }}</td>
-            <td>
-                <a href="{% url 'website_management:webpage_detail' web.id %}">
-                    Detail
-                </a>
-            </td>
+            <th>No.</th>
+            <th>URL</th>
+            <th>Date Added</th>
+            <th>Last Status Check</th>
+            <th>Action</th>
         </tr>
-    {% empty %}
-        <tr>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-        </tr>
-    {% endfor %}
-</table>
+        {% for web in webs %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ web.url|truncatechars:50 }}</td>
+                <td>{{ web.date_added }}</td>
+                <td>{{ web.last_response_check }}</td>
+                <td>
+                    <a href="{% url 'website_management:webpage_detail' web.id %}">
+                        Detail
+                    </a>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}

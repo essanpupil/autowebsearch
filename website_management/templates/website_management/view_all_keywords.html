@@ -1,31 +1,31 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% block navigation %}
-    {% include 'website_management/website_nav.html' %}
+    {% include "website_management/website_nav.html" %}
 {% endblock %}
-{% block content %}
-<h3>View all keywords</h3>
-{{ error_message }}
-<table>
-    <tr>
-        <th>No.</th>
-        <th>Keyword</th>
-        <th>Times Used</th>
-        <th>Date Added</th>
-    </tr>
-    {% for query in queries %}
+{% block content-heading %}View all keywords{% endblock %}
+{% block content-body %}
+    {{ error_message }}
+    <table class="table table-bordered table-condensed">
         <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ query.keyword }}</td>
-            <td>{{ query.times_used }}</td>
-            <td>{{ query.date_added }}</td>
+            <th>No.</th>
+            <th>Keyword</th>
+            <th>Times Used</th>
+            <th>Date Added</th>
         </tr>
-    {% empty %}
-        <tr>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-        </tr>
-    {% endfor %}
-</table>
+        {% for query in queries %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ query.keyword }}</td>
+                <td>{{ query.times_used }}</td>
+                <td>{{ query.date_added }}</td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}

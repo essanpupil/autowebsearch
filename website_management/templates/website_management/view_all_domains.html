@@ -1,35 +1,35 @@
 {% extends 'base.html' %}
 {% block navigation %}
-    {% include 'website_management/website_nav.html' %}
+    {% include "website_management/website_nav.html" %}
 {% endblock %}
-{% block content %}
-<h3>View all domains</h3>
-{{ error_message }}
-<table>
-    <tr>
-        <th>No.</th>
-        <th>Domain name</th>
-        <th>date Added</th>
-        <th>Action</th>
-    </tr>
-    {% for dom in doms %}
+{% block content-heading %}View all domains{% endblock %}
+{% block content-body %}
+    {{ error_message }}
+    <table class="table table-bordered">
         <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ dom.name }}</td>
-            <td>{{ dom.date_added }}</td>
-            <td>
-                <a href="{% url 'website_management:domain_detail' dom.id %}">
-                    Detail
-                </a>
-            </td>
+            <th>No.</th>
+            <th>Domain name</th>
+            <th>date Added</th>
+            <th>Action</th>
         </tr>
-    {% empty %}
-        <tr>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-        </tr>
-    {% endfor %}
-</table>
+        {% for dom in doms %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ dom.name }}</td>
+                <td>{{ dom.date_added }}</td>
+                <td>
+                    <a href="{% url 'website_management:domain_detail' dom.id %}">
+                        Detail
+                    </a>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}

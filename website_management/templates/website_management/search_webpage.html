@@ -1,17 +1,18 @@
 {% extends 'base.html' %}
 {% block navigation %}
-{% include 'website_management/website_nav.html' %}
+    {% include 'website_management/website_nav.html' %}
 {% endblock %}
-{% block content %}
-<h3>Search webpage manually</h3>
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-<form action="{% url 'website_management:search_webpage' %}" method="post">
-{% csrf_token %}
-<table>
-{{ form }}
-</table>
-<br />
-<input type="submit" value="Start search webpages" />
-<input type="reset" value="Clear input area" />
+{% block content-heading %}Search webpage manually{% endblock %}
+{% block content-body %}
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+        <form action="{% url 'website_management:search_webpage' %}" method="post">
+        {% csrf_token %}
+        <table class="table table-bordered">
+        {{ form }}
+        </table>
+        <input type="submit" value="Start search webpages" />
+        <input type="reset" value="Clear input area" />
+        </form>
+    </div>
+</div>
 {% endblock %}
-</form>

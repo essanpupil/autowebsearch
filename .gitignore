@@ -53,5 +53,6 @@ docs/_build/
 # PyBuilder
 target/
 
-# local setings
-settings_local.py
+# sqlite
+*.sqlite3
+/.project

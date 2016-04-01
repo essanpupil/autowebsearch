@@ -1,0 +1,8 @@
+-r common.txt
+coverage
+django_coverage_plugin
+nose
+django-nose
+factory_boy
+selenium
+nose-exclude
