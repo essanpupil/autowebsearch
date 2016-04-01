@@ -5,3 +5,4 @@ nose
 django-nose
 factory_boy
 selenium
+nose-exclude
