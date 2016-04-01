@@ -8,9 +8,11 @@ from django.core.urlresolvers import reverse
 class FunctionalTest(StaticLiveServerTestCase):
     "testing wesite from browser point of view."
     def setUp(self):
+        "setup browser selenium"
         self.browser = webdriver.Chrome()
 
     def tearDown(self):
+        "closing browser after test."
         self.browser.refresh()
         self.browser.quit()
 
