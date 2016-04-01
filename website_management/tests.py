@@ -24,3 +24,5 @@ class HomePageResponseTest(TestCase):
         response = self.client.get(reverse('welcome'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'website_management/dashboard.html')
+        self.assertIn('homepage_count', response.context)
+        self.assertIn('newest_5_homepage', response.context)

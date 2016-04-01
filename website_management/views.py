@@ -8,10 +8,10 @@ from website_management.models import Homepage, Query
 def website_dashboard(request):
     """display info summary about saved webpages, homepage, & domain"""
     homepages = Homepage.objects.all()
-    context = {'hp_count': homepages.count(),
-               'newest_5_hp': []}
+    context = {'homepage_count': homepages.count(),
+               'newest_5_homepage': []}
     for homepage in homepages.order_by('id').reverse()[0:5]:
-        context['newest_5_hp'].append(
+        context['newest_5_homepage'].append(
             {'name': homepage.name, 'id': homepage.id})
     return render(request, 'website_management/dashboard.html', context)
 
