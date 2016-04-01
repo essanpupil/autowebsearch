@@ -2,27 +2,17 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
-from website_management.models import Webpage, Domain, Homepage, Query
+from website_management.models import Homepage, Query
 
 
 def website_dashboard(request):
     """display info summary about saved webpages, homepage, & domain"""
-    webs = Webpage.objects.all()
     homepages = Homepage.objects.all()
-    domains = Domain.objects.all()
-    context = {'web_count': webs.count(),
-               'hp_count': homepages.count(),
-               'dom_count': domains.count(),
-               'newest_5_web': [],
-               'newest_5_dom': [],
+    context = {'hp_count': homepages.count(),
                'newest_5_hp': []}
-    for webage in webs.order_by('id').reverse()[0:5]:
-        context['newest_5_web'].append({'url': webage.url, 'id': webage.id})
     for homepage in homepages.order_by('id').reverse()[0:5]:
         context['newest_5_hp'].append(
             {'name': homepage.name, 'id': homepage.id})
-    for domain in domains.order_by('id').reverse()[0:5]:
-        context['newest_5_dom'].append({'name': domain.name, 'id': domain.id})
     return render(request, 'website_management/dashboard.html', context)
 
 

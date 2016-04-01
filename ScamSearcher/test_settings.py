@@ -1,5 +1,5 @@
 """This is additional settings config for testing only."""
-from ScamSearcher.settings import *
+from ScamSearcher.settings import *  # pylint: disable=w0401,w0614
 
 
 INSTALLED_APPS = (
