@@ -14,4 +14,5 @@ def save_client_homepage(client, url, event=None):
     """Save homepage for this specific client."""
     add_url_to_webpage(url)
     webpage = Webpage.objects.get(url=url)
-    Website.objects.create(homepage=webpage.homepage, client=client, event=event)
+    Website.objects.create(
+        homepage=webpage.homepage, client=client, event=event)
