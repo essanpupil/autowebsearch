@@ -18,7 +18,7 @@ class FunctionalTest(StaticLiveServerTestCase):
 
     def test_homepage(self):
         "this the homepage for first visitor."
-        self.browser.get('http://localhost:8000')
+        self.browser.get(self.live_server_url)
         self.assertIn('Welcome to ScamSearcher Project', self.browser.title)
         header_text = self.browser.find_element_by_tag_name('h1').text
         self.assertIn('SCAM SEARCHER', header_text)
