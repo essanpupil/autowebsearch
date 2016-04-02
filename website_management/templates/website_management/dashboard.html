@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
-{% block pagetitle %}Welcome to ScamSearcher Project{% endblock %}
+{% block pagetitle %}
+Welcome to ScamSearcher Project {% if user.is_authenticated %}{{ user.username }}{% endif %}
+{% endblock %}
 {% block navigation %}
     {% include 'website_management/website_nav.html' %}
 {% endblock %}

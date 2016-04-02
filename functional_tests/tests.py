@@ -3,6 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from django.contrib.auth.models import User
 
 
 class FunctionalTest(StaticLiveServerTestCase):
@@ -60,3 +61,20 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.browser.get(self.live_server_url)
         self.browser.find_element(By.LINK_TEXT, 'Login').click()
         self.assertIn('Please login', self.browser.title)
+
+    def test_login_user(self):
+        "test user login"
+        user = User(username='anderson')
+        user.set_password('thejourneybegins')
+        user.save()
+        self.browser.get(self.live_server_url)
+        self.browser.find_element(By.LINK_TEXT, 'Login').click()
+        username = self.browser.find_element_by_name('username')
+        password = self.browser.find_element_by_name('password')
+        username.send_keys(user.username)
+        password.send_keys("thejourneybegins")
+        self.browser.find_element_by_tag_name('form').submit()
+        # If this assertion fail, the login submition is failed
+        self.assertIn(
+            "Welcome to ScamSearcher Project {0}".format(user.username),
+            self.browser.title)
