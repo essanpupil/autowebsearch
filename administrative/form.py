@@ -23,6 +23,7 @@ class AddOperatorForm(ModelForm):
     first_name = forms.CharField()
     last_name = forms.CharField()
     email = forms.CharField(widget=forms.EmailInput)
+
     class Meta:
         model = Operator
         fields = ('username',
@@ -32,12 +33,13 @@ class AddOperatorForm(ModelForm):
                   'last_name',
                   'email',
                   'client',)
-        widgets = {'client': HiddenInput(),}
+        widgets = {'client': HiddenInput()}
 
 
 class AddClientHomepageForm(ModelForm):
     "input client's homepage"
-    url =  forms.URLField(validators=[validators.URLValidator])
+    url = forms.URLField(validators=[validators.URLValidator])
+
     class Meta:
         model = Website
         fields = ['url', 'event', 'client']
@@ -48,7 +50,8 @@ class AddClientHomepageForm(ModelForm):
 
 class AddClientKeywordForm(ModelForm):
     "input client's keyword"
-    keywords =  forms.CharField()
+    keywords = forms.CharField()
+
     class Meta:
         model = ClientKeyword
         fields = ['keywords', 'client']
@@ -59,8 +62,9 @@ class AddClientKeywordForm(ModelForm):
 
 class AddClientSequenceForm(ModelForm):
     "input client's sequence"
-    sequence =  forms.CharField()
+    sequence = forms.CharField()
     target_analyze = forms.CharField()
+
     class Meta:
         model = ClientSequence
         fields = ['sequence', 'client', 'event']
@@ -84,7 +88,7 @@ class AddEventForm(ModelForm):
     class Meta:
         model = Event
         fields = '__all__'
-        widgets = {'client': HiddenInput(),}
+        widgets = {'client': HiddenInput()}
 
 
 class AddUserForm(ModelForm):
@@ -98,11 +102,9 @@ class AddUserForm(ModelForm):
             self._errors['password'] = ["Password do not match"]
             del form_data['password']
         return form_data
+
     class Meta:
         model = User
         fields = ('username', 'password', 'password_again', 'first_name',
                   'last_name', 'email')
-        widgets = {'password': PasswordInput(),}
-
-
-#class EditUserForm(ModelForm):
+        widgets = {'password': PasswordInput()}
