@@ -28,7 +28,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.browser.get(self.live_server_url)
         self.browser.find_element(By.LINK_TEXT, 'View all websites').click()
         self.assertIn('View all websites', self.browser.title)
-        header_text = self.browser.find_element_by_tag_name('h4').text
+        header_text = self.browser.find_element_by_tag_name('h3').text
         self.assertIn('View all websites', header_text)
 
     def test_table_websites_content(self):
