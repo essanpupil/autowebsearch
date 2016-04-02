@@ -1,9 +1,8 @@
+"helper module for website_management app."
 from django.db import IntegrityError, transaction
 import tldextract
-import logging
 
-from .models import Webpage, Homepage, Domain
-
+from website_management.models import Webpage, Homepage, Domain
 
 
 def add_url_to_webpage(url):
