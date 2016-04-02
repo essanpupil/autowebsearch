@@ -3,7 +3,8 @@ from django.forms import ModelForm
 from django import forms
 
 from website_management.models import Webpage
-from website_analyzer.models import StringParameter, ExtendHomepage, ExtendDomain
+from website_analyzer.models import StringParameter, ExtendHomepage, \
+                                    ExtendDomain
 
 
 class AddScamWebsiteForm(ModelForm):
@@ -17,12 +18,13 @@ class AddSequenceForm(ModelForm):
     """Add new sequence to database"""
     class Meta:  # lint:ok
         model = StringParameter
-        fields = ['sentence', 'definitive','target_analyze']
+        fields = ['sentence', 'definitive', 'target_analyze']
 
 
 class EditAnalystForm(ModelForm):
     "Form to edit analyst data of website"
     date_added = ''
+
     def __init__(self, *args, **kwargs):
         super(EditAnalystForm, self).__init__(*args, **kwargs)
 
@@ -34,6 +36,7 @@ class EditAnalystForm(ModelForm):
 class EditAnalystDomainForm(ModelForm):
     "Form to edit analyst data of website"
     date_added = ''
+
     def __init__(self, *args, **kwargs):
         super(EditAnalystDomainForm, self).__init__(*args, **kwargs)
 
