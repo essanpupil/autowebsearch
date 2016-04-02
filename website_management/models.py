@@ -40,23 +40,3 @@ class Webpage(models.Model):
 
     def __str__(self):
         return self.url
-
-
-class Query(models.Model):
-    "Store keyword used to search in google"
-    keywords = models.CharField(max_length=255)
-    date_added = models.DateTimeField(auto_now=True)
-    times_used = models.IntegerField(default=0)
-
-    def __str__(self):
-        return self.keywords
-
-
-class Search(models.Model):
-    "Save search result"
-    query = models.ForeignKey(Query, blank=False, null=False)
-    webpage = models.ForeignKey(Webpage, blank=False, null=False)
-    search_time = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.search_time
