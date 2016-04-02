@@ -30,3 +30,11 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.assertIn('View all websites', self.browser.title)
         header_text = self.browser.find_element_by_tag_name('h4').text
         self.assertIn('View all websites', header_text)
+
+    def test_table_websites_content(self):
+        "does the websites data table loaded?"
+        self.browser.get(self.live_server_url)
+        self.browser.find_element(By.LINK_TEXT, 'View all websites').click()
+        self.assertIn('View all websites', self.browser.title)
+        table_websites = self.browser.find_element(By.ID, 'table_websites')
+        self.assertTrue(table_websites)
