@@ -23,8 +23,10 @@ class FunctionalTest(StaticLiveServerTestCase):
         header_text = self.browser.find_element_by_tag_name('h1').text
         self.assertIn('SCAM SEARCHER', header_text)
 
-    def test__view_all_websites(self):
+    def test_view_all_websites(self):
         "click link to view all websites"
         self.browser.get(self.live_server_url)
         self.browser.find_element(By.LINK_TEXT, 'View all websites').click()
         self.assertIn('View all websites', self.browser.title)
+        header_text = self.browser.find_element_by_tag_name('h4').text
+        self.assertIn('View all websites', header_text)
