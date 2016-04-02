@@ -1,3 +1,4 @@
+"Custom admin command to analyze homepage."
 from django.core.management.base import BaseCommand
 
 from website_analyzer.models import ExtendHomepage

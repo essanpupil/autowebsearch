@@ -1,3 +1,4 @@
+"custom admin command to update data in model ExtendDomain."
 from django.core.management.base import BaseCommand
 
 from website_analyzer.models import ExtendHomepage, ExtendDomain
