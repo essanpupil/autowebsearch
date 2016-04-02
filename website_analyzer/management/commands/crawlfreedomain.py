@@ -12,7 +12,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """Execute custom admin command."""
-        ext_doms = ExtendDomain.objects.only('times_crawled', 'domain', 'free').filter(free=True)
+        ext_doms = ExtendDomain.objects.only(
+            'times_crawled', 'domain', 'free').filter(free=True)
         ext_dom = ext_doms.order_by('times_crawled')
         if ext_dom:
             ext_dom[0].times_crawled += 1
