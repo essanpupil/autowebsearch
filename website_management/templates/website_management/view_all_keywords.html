@@ -1,11 +1,12 @@
 {% extends "base.html" %}
+{% block pagetitle %}View all keywords{% endblock %}
 {% block navigation %}
     {% include "website_management/website_nav.html" %}
 {% endblock %}
-{% block content-heading %}View all keywords{% endblock %}
+{% block content-heading %}<h3>View all keywords</h3>{% endblock %}
 {% block content-body %}
     {{ error_message }}
-    <table class="table table-bordered table-condensed">
+    <table id="table_keywords" class="table table-bordered table-condensed">
         <tr>
             <th>No.</th>
             <th>Keyword</th>

@@ -38,3 +38,19 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.assertIn('View all websites', self.browser.title)
         table_websites = self.browser.find_element(By.ID, 'table_websites')
         self.assertTrue(table_websites)
+
+    def test_view_all_keywords(self):
+        "click link to view all keywords"
+        self.browser.get(self.live_server_url)
+        self.browser.find_element(By.LINK_TEXT, 'View all keywords').click()
+        self.assertIn('View all keywords', self.browser.title)
+        header_text = self.browser.find_element_by_tag_name('h3').text
+        self.assertIn('View all keywords', header_text)
+
+    def test_table_keywords_content(self):
+        "does the keywords data table loaded?"
+        self.browser.get(self.live_server_url)
+        self.browser.find_element(By.LINK_TEXT, 'View all keywords').click()
+        self.assertIn('View all keywords', self.browser.title)
+        table_websites = self.browser.find_element(By.ID, 'table_keywords')
+        self.assertTrue(table_websites)
