@@ -54,3 +54,9 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.assertIn('View all keywords', self.browser.title)
         table_websites = self.browser.find_element(By.ID, 'table_keywords')
         self.assertTrue(table_websites)
+
+    def test_click_login(self):
+        "does the login page works?"
+        self.browser.get(self.live_server_url)
+        self.browser.find_element(By.LINK_TEXT, 'Login').click()
+        self.assertIn('Please login', self.browser.title)
