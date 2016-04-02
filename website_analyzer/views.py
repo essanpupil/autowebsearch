@@ -2,7 +2,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib.auth.decorators import login_required
-from django.views.generic.edit import UpdateView
 
 from website_management.models import Homepage, Webpage, Domain
 from website_analyzer.models import ExtendHomepage, StringParameter, \
@@ -15,6 +14,7 @@ from website_analyzer.forms import AddScamWebsiteForm, AddSequenceForm, \
                                    EditAnalystForm, EditAnalystDomainForm, \
                                    SearchForm
 from webscraper.pagescraper import PageScraper
+from administrative.models import ClientSequence
 
 
 @login_required
@@ -28,7 +28,7 @@ def add_sequence(request):
                 target_analyze = form.cleaned_data['targer_analyze'].lower()
                 definitive = form.cleaned_data['definitive']
                 StringParameter.objects.create(sentence=sentence.strip(),
-                                               target_analyze=trget_analyze,
+                                               target_analyze=target_analyze,
                                                definitive=definitive)
                 return redirect('website_analyzer:view_sequence')
         else:
@@ -242,12 +242,12 @@ def view_sequence(request):
     context = {'parameters': []}
     for parameter in parameters.reverse():
         parameter_data = {'sentence': parameter.sentence,
-                     'id': parameter.id,
-                     'times_used': parameter.times_used,
-                     'target_analyze': parameter.target_analyze,
-                     'date_added': parameter.date_added,
-                     'clients': [],
-                     'definitive': parameter.definitive}
+                          'id': parameter.id,
+                          'times_used': parameter.times_used,
+                          'target_analyze': parameter.target_analyze,
+                          'date_added': parameter.date_added,
+                          'clients': [],
+                          'definitive': parameter.definitive}
         try:
             cs = ClientSequence.objects.filter(string_parameter=parameter)
             for item in cs:
@@ -282,11 +282,10 @@ def start_sequence_analysist(request, homepage_id):
     homepage = get_object_or_404(Homepage, id=homepage_id)
     string_analysist(homepage)
     string_analysist_result = StringAnalysist.objects.filter(
-            find=True, 
-            webpage__in=homepage.webpage_set.all())
+        find=True, webpage__in=homepage.webpage_set.all())
     if string_analysist_result.filter(parameter__definitive=True).count() > 0:
         exthp = homepage.extendhomepage
-        exthp.scam=True
+        exthp.scam = True
         exthp.save()
     return redirect('website_analyzer:analyze_website', hp_id=homepage.id)
 
