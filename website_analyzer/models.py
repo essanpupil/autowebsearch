@@ -47,6 +47,7 @@ class ExtendHomepage(models.Model):
                                         choices=WHITELIST_CHOICES,
                                         blank=True,
                                         null=True)
+
     # method to validate form data input when editing homepage value
     def clean(self):
         "custom clean to make sure scam status whitelist not conflict"
