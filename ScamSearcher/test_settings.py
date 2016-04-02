@@ -2,16 +2,7 @@
 from ScamSearcher.settings import *  # pylint: disable=w0401,w0614
 
 
-INSTALLED_APPS = (
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'website_management',
-    'website_analyzer',
-    'administrative',
+INSTALLED_APPS += (
     'django_nose',
 )
 
