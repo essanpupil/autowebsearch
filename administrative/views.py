@@ -16,8 +16,8 @@ from administrative.form import AddClientForm, AddClientHomepageForm, \
                                 AddClientSequenceForm
 from administrative.administrative_lib import save_client
 from website_management.management_lib import add_url_to_webpage
-from website_management.models import Webpage, Query
-from website_analyzer.models import StringParameter
+from website_management.models import Webpage
+from website_analyzer.models import StringParameter, SearchKeywords
 
 
 @login_required
@@ -522,12 +522,12 @@ def add_client_keyword(request, client_id):
     if request.method == 'POST':
         form = AddClientKeywordForm(request.POST)
         if form.is_valid():
-            if Query.objects.filter(
+            if SearchKeywords.objects.filter(
                     keywords=form.cleaned_data['keywords']).exists():
                 pass
             else:
-                Query.objects.create(keywords=form.cleaned_data['keywords'])
-            query = Query.objects.get(keywords=form.cleaned_data['keywords'])
+                SearchKeywords.objects.create(keywords=form.cleaned_data['keywords'])
+            query = SearchKeywords.objects.get(keywords=form.cleaned_data['keywords'])
             try:
                 ClientKeyword.objects.create(
                     client=form.cleaned_data['client'], query=query)

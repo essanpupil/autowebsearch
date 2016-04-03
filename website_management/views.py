@@ -2,7 +2,8 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
-from website_management.models import Homepage, Query
+from website_management.models import Homepage
+from website_analyzer.models import SearchKeywords
 
 
 def website_dashboard(request):
@@ -56,7 +57,7 @@ def view_all_homepages(request):
 
 def view_all_keywords(request):
     """display all keywords"""
-    queries = Query.objects.all().order_by('id').reverse()
+    queries = SearchKeywords.objects.all().order_by('id').reverse()
     context = {'queries': []}
     for item in queries:
         context['queries'].append({'keyword': item.keywords,

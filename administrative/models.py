@@ -2,8 +2,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from website_management.models import Homepage, Query
-from website_analyzer.models import StringParameter
+from website_management.models import Homepage
+from website_analyzer.models import StringParameter, SearchKeywords
 
 
 class Client(models.Model):
@@ -54,7 +54,7 @@ class Website(models.Model):
 
 class ClientKeyword(models.Model):
     "save keyword for specific client"
-    query = models.OneToOneField(Query)
+    query = models.OneToOneField(SearchKeywords)
     client = models.ForeignKey(Client)
 
     def __str__(self):

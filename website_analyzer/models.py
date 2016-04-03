@@ -138,10 +138,19 @@ class Sequence(models.Model):
         return self.description
 
 
+class SearchKeywords(models.Model):
+    "Store keyword used to search in google"
+    keywords = models.CharField(max_length=255)
+    date_added = models.DateTimeField(auto_now=True)
+    times_used = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.keywords
+
+
 class Searching(models.Model):
     """information on each searching activity"""
-    id = models.AutoField(primary_key=True)  # lint:ok
-    keyword = models.CharField(max_length=255)
+    keyword = models.ForeignKey(SearchKeywords)
     webpages = models.ForeignKey(Webpage)
     date = models.DateField(auto_now=True)
 
