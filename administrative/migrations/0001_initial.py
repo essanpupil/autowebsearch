@@ -8,16 +8,16 @@ from django.conf import settings
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('website_management', '__first__'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('website_analyzer', '__first__'),
+        ('website_management', '0002_auto_20160327_1557'),
+        ('website_analyzer', '0002_auto_20160327_1557'),
     ]
 
     operations = [
         migrations.CreateModel(
             name='Client',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, verbose_name='ID', serialize=False)),
+                ('id', models.AutoField(serialize=False, verbose_name='ID', primary_key=True, auto_created=True)),
                 ('name', models.CharField(max_length=255)),
                 ('email', models.EmailField(max_length=254)),
                 ('phone', models.CharField(max_length=15)),
@@ -29,22 +29,22 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ClientKeyword',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, verbose_name='ID', serialize=False)),
+                ('id', models.AutoField(serialize=False, verbose_name='ID', primary_key=True, auto_created=True)),
                 ('client', models.ForeignKey(to='administrative.Client')),
-                ('query', models.OneToOneField(to='website_management.Query')),
+                ('query', models.OneToOneField(to='website_analyzer.SearchKeywords')),
             ],
         ),
         migrations.CreateModel(
             name='ClientSequence',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, verbose_name='ID', serialize=False)),
+                ('id', models.AutoField(serialize=False, verbose_name='ID', primary_key=True, auto_created=True)),
                 ('client', models.ForeignKey(to='administrative.Client')),
             ],
         ),
         migrations.CreateModel(
             name='Event',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, verbose_name='ID', serialize=False)),
+                ('id', models.AutoField(serialize=False, verbose_name='ID', primary_key=True, auto_created=True)),
                 ('name', models.CharField(max_length=255)),
                 ('time_start', models.DateField(auto_now_add=True)),
                 ('time_end', models.DateField(blank=True, null=True)),
@@ -54,7 +54,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Operator',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, verbose_name='ID', serialize=False)),
+                ('id', models.AutoField(serialize=False, verbose_name='ID', primary_key=True, auto_created=True)),
                 ('date_start', models.DateField(auto_now_add=True)),
                 ('date_end', models.DateField(blank=True, null=True)),
                 ('client', models.ForeignKey(to='administrative.Client')),
@@ -65,7 +65,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Website',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, verbose_name='ID', serialize=False)),
+                ('id', models.AutoField(serialize=False, verbose_name='ID', primary_key=True, auto_created=True)),
                 ('client', models.ForeignKey(to='administrative.Client')),
                 ('event', models.ForeignKey(blank=True, to='administrative.Event', null=True)),
                 ('homepage', models.OneToOneField(to='website_management.Homepage')),

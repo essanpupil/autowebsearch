@@ -1,8 +1,8 @@
 from django.forms import ModelForm
 from django import forms
 
-from website_management.models import Webpage, Query
-
+from website_management.models import Webpage
+from website_analyzer.models import SearchKeywords
 
 class AddWebpageForm(ModelForm):
     """input new webpage url"""
@@ -20,5 +20,5 @@ class SearchWebpageForm(forms.Form):
 class AddNewKeywordForm(ModelForm):
     "Form to add new search keyword, which is saved in model Query"
     class Meta:
-        model = Query
+        model = SearchKeywords
         fields = ['keywords']
