@@ -7,14 +7,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('website_management', '0002_auto_20160327_1557'),
+        ('website_management', '0001_initial'),
     ]
 
     operations = [
         migrations.CreateModel(
             name='ExtendDomain',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True, serialize=False)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('whitelist', models.NullBooleanField(max_length=7, choices=[(True, 'YES'), (False, 'NO'), (None, 'UNKNOWN')])),
                 ('free', models.NullBooleanField()),
                 ('times_crawled', models.IntegerField(default=0)),
@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ExtendHomepage',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True, serialize=False)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('full_crawled', models.IntegerField(default=0)),
                 ('times_analyzed', models.IntegerField(default=0)),
                 ('scam', models.NullBooleanField(max_length=7, choices=[(True, 'YES'), (False, 'NO'), (None, 'UNKNOWN')])),
@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ExtendWebpage',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True, serialize=False)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('text_body', models.TextField(blank=True)),
                 ('webpage', models.OneToOneField(to='website_management.Webpage')),
             ],
@@ -47,21 +47,21 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Pieces',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True, serialize=False)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('number', models.IntegerField()),
             ],
         ),
         migrations.CreateModel(
             name='Searching',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True, serialize=False)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('date', models.DateField(auto_now=True)),
             ],
         ),
         migrations.CreateModel(
             name='SearchKeywords',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True, serialize=False)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('keywords', models.CharField(max_length=255)),
                 ('date_added', models.DateTimeField(auto_now=True)),
                 ('times_used', models.IntegerField(default=0)),
@@ -77,22 +77,22 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='SequenceDescription',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True, serialize=False)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('name', models.CharField(max_length=255, unique=True)),
             ],
         ),
         migrations.CreateModel(
             name='StringAnalysist',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True, serialize=False)),
-                ('time', models.DateTimeField(auto_now=True, db_index=True)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
+                ('time', models.DateTimeField(db_index=True, auto_now=True)),
                 ('find', models.BooleanField(default=False)),
             ],
         ),
         migrations.CreateModel(
             name='StringParameter',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True, serialize=False)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('sentence', models.CharField(max_length=255, unique=True)),
                 ('definitive', models.BooleanField(default=False)),
                 ('date_added', models.DateField(auto_now_add=True)),
@@ -130,7 +130,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='sequence',
             name='webpage',
-            field=models.ForeignKey(to='website_management.Webpage', blank=True, null=True),
+            field=models.ForeignKey(blank=True, to='website_management.Webpage', null=True),
         ),
         migrations.AddField(
             model_name='searching',
