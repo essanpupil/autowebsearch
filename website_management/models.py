@@ -4,7 +4,6 @@ from django.db import models
 
 class Domain(models.Model):
     """Store webpages domain"""
-    id = models.AutoField(primary_key=True)
     name = models.CharField(unique=True, max_length=75)
     date_added = models.DateField(auto_now=True)
 
@@ -14,7 +13,6 @@ class Domain(models.Model):
 
 class Homepage(models.Model):
     """Store homepages of webpages"""
-    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100, unique=True)
     domain = models.ForeignKey(Domain, blank=True, null=True)
     date_added = models.DateField(auto_now=True)
@@ -27,7 +25,6 @@ class Homepage(models.Model):
 
 class Webpage(models.Model):
     """Store webpages"""
-    id = models.AutoField(primary_key=True)
     url = models.URLField(max_length=255, unique=True)
     full_url = models.TextField(blank=True, default="")
     homepage = models.ForeignKey(Homepage, blank=True, null=True)
