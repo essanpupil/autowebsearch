@@ -1,23 +1,11 @@
 "functional tes module"
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from django.contrib.auth.models import User
+from functional_tests.base import BaseFunctionalTest
 
 
-class FunctionalTest(StaticLiveServerTestCase):
-    "testing wesite from browser point of view."
-    def setUp(self):
-        "setup browser selenium"
-        self.browser = webdriver.Chrome()
-        self.browser.get(self.live_server_url)
-
-    def tearDown(self):
-        "closing browser after test."
-        self.browser.refresh()
-        self.browser.quit()
-
+class AnonymouseUserTest(BaseFunctionalTest):
+    "testing wesite from browser point of view for anonymouse user"
     def test_homepage(self):
         "this the homepage for first visitor."
         self.assertIn('Welcome to ScamSearcher Project', self.browser.title)
@@ -56,19 +44,3 @@ class FunctionalTest(StaticLiveServerTestCase):
         "does the login page works?"
         self.browser.find_element(By.LINK_TEXT, 'Login').click()
         self.assertIn('Please login', self.browser.title)
-
-    def test_login_user(self):
-        "test user login"
-        user = User(username='anderson')
-        user.set_password('thejourneybegins')
-        user.save()
-        self.browser.find_element(By.LINK_TEXT, 'Login').click()
-        username = self.browser.find_element_by_name('username')
-        password = self.browser.find_element_by_name('password')
-        username.send_keys(user.username)
-        password.send_keys("thejourneybegins")
-        self.browser.find_element_by_tag_name('form').submit()
-        # If this assertion fail, the login submition is failed
-        self.assertIn(
-            "Welcome to ScamSearcher Project {0}".format(user.username),
-            self.browser.title)
