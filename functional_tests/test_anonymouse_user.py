@@ -2,6 +2,7 @@
 from selenium.webdriver.common.by import By
 
 from functional_tests.base import BaseFunctionalTest
+from website_analyzer.models import SearchKeywords
 
 
 class AnonymouseUserTest(BaseFunctionalTest):
@@ -35,10 +36,18 @@ class AnonymouseUserTest(BaseFunctionalTest):
 
     def test_table_keywords_content(self):
         "does the keywords data table loaded?"
+        SearchKeywords.objects.bulk_create([
+            SearchKeywords(keywords='Pemenang undian palsu'),
+            SearchKeywords(keywords='Hubungi nomor ini'),
+            SearchKeywords(keywords='Ikuti petunjuk kami'),
+        ])
         self.browser.find_element(By.LINK_TEXT, 'View all keywords').click()
         self.assertIn('View all keywords', self.browser.title)
         table_websites = self.browser.find_element(By.ID, 'table_keywords')
         self.assertTrue(table_websites)
+        self.check_for_cell_in_table('table_keywords', 'Pemenang undian palsu')
+        self.check_for_cell_in_table('table_keywords', 'Hubungi nomor ini')
+        self.check_for_cell_in_table('table_keywords', 'Ikuti petunjuk kami')
 
     def test_click_login(self):
         "does the login page works?"

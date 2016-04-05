@@ -15,3 +15,8 @@ class BaseFunctionalTest(StaticLiveServerTestCase):
         "closing browser after test."
         self.browser.refresh()
         self.browser.quit()
+
+    def check_for_cell_in_table(self, id_table, row_text):
+        table = self.browser.find_element_by_id(id_table)
+        cells = table.find_elements_by_tag_name('td')
+        self.assertIn(row_text, [cell.text for cell in cells])
