@@ -2,13 +2,13 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
-from website_management.models import Homepage
+from website_management.models import Website
 from website_analyzer.models import SearchKeywords
 
 
 def website_dashboard(request):
     """display info summary about saved webpages, homepage, & domain"""
-    homepages = Homepage.objects.all()
+    homepages = Website.objects.all()
     context = {'homepage_count': homepages.count(),
                'newest_5_homepage': []}
     for homepage in homepages.order_by('id').reverse()[0:5]:
@@ -19,7 +19,7 @@ def website_dashboard(request):
 
 def homepage_detail(request, hp_id):
     "display detail info of selected homepage"
-    homepage = get_object_or_404(Homepage, id=hp_id)
+    homepage = get_object_or_404(Website, id=hp_id)
     context = {
         'hpname': homepage.name,
         'hpid': homepage.id,
@@ -35,7 +35,7 @@ def homepage_detail(request, hp_id):
 
 def view_all_homepages(request):
     """display all webpage"""
-    homes = Homepage.objects.all().order_by('id').reverse()
+    homes = Website.objects.all().order_by('id').reverse()
     context = {'homes': []}
     for item in homes:
         context['homes'].append({

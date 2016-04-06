@@ -3,8 +3,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib.auth.decorators import login_required
 
-from website_management.models import Homepage, Webpage, Domain
-from website_analyzer.models import ExtendHomepage, StringParameter, \
+from website_management.models import Website, Webpage, Domain
+from website_analyzer.models import ExtendWebsite, StringParameter, \
                                     StringAnalysist, ExtendDomain
 from website_analyzer.analyzer_lib import string_analyst, \
                                           add_list_url_to_webpage, \
@@ -43,9 +43,9 @@ def add_sequence(request):
 def analyze_website(request, hp_id):
     """Display page to analyze website,
     the last analysist result is displayed"""
-    homepage = get_object_or_404(Homepage, id=hp_id)
+    homepage = get_object_or_404(Website, id=hp_id)
     my_webpage = homepage.webpage_set.all()
-    ExtendHomepage.objects.get_or_create(homepage=homepage)
+    ExtendWebsite.objects.get_or_create(homepage=homepage)
     context = {'name': homepage.name,
                'id': homepage.id,
                'domain': homepage.domain.name,
@@ -83,18 +83,18 @@ def start_analyze(request, hp_id):
 @login_required
 def analyst_dashboard(request):
     """Display summary info of analyzed website."""
-    exthp = ExtendHomepage.objects.all()
+    exthp = ExtendWebsite.objects.all()
     context = {'scam_count': exthp.filter(scam=True).count(),
                'whitelist_count': exthp.filter(whitelist=True).count(),
-               'hp_count': Homepage.objects.all().count()}
+               'hp_count': Website.objects.all().count()}
     return render(request, 'website_analyzer/dashboard.html', context)
 
 
 @login_required
 def edit_analyst(request, homepage_id):
     """Display edit form of analyst data for current homepage"""
-    website = get_object_or_404(Homepage, id=homepage_id)
-    exth = ExtendHomepage.objects.get(homepage=website)
+    website = get_object_or_404(Website, id=homepage_id)
+    exth = ExtendWebsite.objects.get(homepage=website)
     if request.method == 'POST':
         form = EditAnalystForm(request.POST)
     if form.is_valid():
@@ -154,11 +154,11 @@ def view_websites(request):
     """display scam website"""
     form = SearchForm(request.GET)
     if form.is_valid():
-        websites = Homepage.objects.filter(
+        websites = Website.objects.filter(
             name__contains=form.cleaned_data['search']).values_list(
                 'id', flat=True).order_by('id').reverse()
     else:
-        websites = Homepage.objects.only(
+        websites = Website.objects.only(
             'id').all().values_list('id', flat=True).order_by('id').reverse()
     context = {'websites': websites, 'divided_websites': []}
     paginator = Paginator(context['websites'], 20)
@@ -169,14 +169,14 @@ def view_websites(request):
         context['pagebase'] = paginator.page(1)
     except EmptyPage:
         context['pagebase'] = paginator.page(paginator.num_pages)
-    divided_websites = Homepage.objects.filter(
+    divided_websites = Website.objects.filter(
         id__in=context['pagebase'].object_list)
     context['searchbase'] = "Website name"
     if form.is_valid():
         for homepage in divided_websites.filter(
                 name__contains=form.cleaned_data['search']):
             try:
-                exthp = ExtendHomepage.objects.get(homepage=homepage)
+                exthp = ExtendWebsite.objects.get(homepage=homepage)
                 context['divided_websites'].append(
                     {'id': homepage.id,
                      'name': homepage.name,
@@ -190,7 +190,7 @@ def view_websites(request):
                      'access': exthp.access,
                      'web_count': homepage.webpage_set.all().count(),
                      'matched_sequence': {'min': 0, 'max': 0}})
-            except ExtendHomepage.DoesNotExist:
+            except ExtendWebsite.DoesNotExist:
                 context['divided_websites'].append(
                     {'id': homepage.id,
                      'name': homepage.name,
@@ -205,7 +205,7 @@ def view_websites(request):
     else:
         for homepage in divided_websites:
             try:
-                exthp = ExtendHomepage.objects.get(homepage=homepage)
+                exthp = ExtendWebsite.objects.get(homepage=homepage)
                 context['divided_websites'].append(
                     {'id': homepage.id,
                      'name': homepage.name,
@@ -219,7 +219,7 @@ def view_websites(request):
                      'access': exthp.access,
                      'web_count': homepage.webpage_set.all().count(),
                      'matched_sequence': {'min': 0, 'max': 0}})
-            except ExtendHomepage.DoesNotExist:
+            except ExtendWebsite.DoesNotExist:
                 context['divided_websites'].append(
                     {'id': homepage.id,
                      'name': homepage.name,
@@ -270,7 +270,7 @@ def view_sequence(request):
 @login_required
 def crawl_homepage(request, homepage_id):
     "View to extract all links inside a website"
-    website = get_object_or_404(Homepage, id=homepage_id)
+    website = get_object_or_404(Website, id=homepage_id)
     crawl_website(website)
     return redirect('website_analyzer:analyze_website', hp_id=website.id)
 
@@ -279,7 +279,7 @@ def crawl_homepage(request, homepage_id):
 def start_sequence_analysist(request, homepage_id):
     """start executing string parameter analysist on to homepage and then save
     result to StringAnalysist model"""
-    homepage = get_object_or_404(Homepage, id=homepage_id)
+    homepage = get_object_or_404(Website, id=homepage_id)
     string_analysist(homepage)
     string_analysist_result = StringAnalysist.objects.filter(
         find=True, webpage__in=homepage.webpage_set.all())
@@ -405,7 +405,7 @@ def edit_analyst_domain(request, dom_id):
         my_homepages = domain_origin.homepage_set.all()
         if extdom.whitelist is True:
             for my_hp in my_homepages:
-                ext_hp = ExtendHomepage.objects.get(homepage=my_hp)
+                ext_hp = ExtendWebsite.objects.get(homepage=my_hp)
                 ext_hp.whitelist = True
                 ext_hp.save()
         domain.save()

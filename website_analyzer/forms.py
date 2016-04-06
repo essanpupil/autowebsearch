@@ -3,7 +3,7 @@ from django.forms import ModelForm
 from django import forms
 
 from website_management.models import Webpage
-from website_analyzer.models import StringParameter, ExtendHomepage, \
+from website_analyzer.models import StringParameter, ExtendWebsite, \
                                     ExtendDomain
 
 
@@ -29,8 +29,8 @@ class EditAnalystForm(ModelForm):
         super(EditAnalystForm, self).__init__(*args, **kwargs)
 
     class Meta:
-        model = ExtendHomepage
-        exclude = ['homepage']
+        model = ExtendWebsite
+        exclude = ['website']
 
 
 class EditAnalystDomainForm(ModelForm):
