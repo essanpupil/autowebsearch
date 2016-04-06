@@ -2,7 +2,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from website_management.models import Homepage
+from website_management.models import Website
 from website_analyzer.models import StringParameter, SearchKeywords
 
 
@@ -42,14 +42,14 @@ class Operator(models.Model):
         return self.user.username
 
 
-class Website(models.Model):
+class ClientWebsite(models.Model):
     "Save websites used by event and clients"
-    homepage = models.OneToOneField(Homepage)
+    website = models.OneToOneField(Website)
     client = models.ForeignKey(Client)
     event = models.ForeignKey(Event, null=True, blank=True)
 
     def __str__(self):
-        return self.homepage.name
+        return self.website.name
 
 
 class ClientKeyword(models.Model):
