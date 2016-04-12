@@ -41,7 +41,7 @@ def view_all_homepages(request):
         context['homes'].append({
             'name': item.name,
             'date_added': item.date_added,
-            'domain': item.domain.name,
+            'domain': item.domain,
             'id': item.id})
     paginator = Paginator(context['homes'], 10)
     page = request.GET.get('page')

@@ -9,6 +9,7 @@ class BaseFunctionalTest(StaticLiveServerTestCase):
     def setUp(self):
         "setup browser selenium"
         self.browser = webdriver.Chrome()
+        self.browser.implicitly_wait(3)
         self.browser.get(self.live_server_url)
 
     def tearDown(self):

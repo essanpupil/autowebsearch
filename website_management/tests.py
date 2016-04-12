@@ -3,6 +3,7 @@ from django.core.urlresolvers import resolve, reverse
 from django.test import TestCase, Client
 
 from website_management.views import website_dashboard
+from website_management.models import Website
 
 
 class HomePageTest(TestCase):
@@ -26,3 +27,29 @@ class HomePageResponseTest(TestCase):
         self.assertTemplateUsed(response, 'website_management/dashboard.html')
         self.assertIn('homepage_count', response.context)
         self.assertIn('newest_5_homepage', response.context)
+
+    def test_request_view_all_websites_empty_data(self):
+        "Check response for view all websites"
+        response = self.client.get(
+            reverse('website_management:view_all_homepages'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(
+            response, 'website_management/view_all_homepages.html')
+
+    def test_request_view_all_websites_filled_data(self):
+        "Check response for view all websites"
+        Website.objects.create(name='undianmkios.blogspot.com')
+        response = self.client.get(
+            reverse('website_management:view_all_homepages'))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('homes', response.context)
+        self.assertTemplateUsed(
+            response, 'website_management/view_all_homepages.html')
+
+    def test_request_view_all_keywords(self):
+        "Check response for view all keywords"
+        response = self.client.get(
+            reverse('website_management:view_all_keywords'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(
+            response, 'website_management/view_all_keywords.html')
