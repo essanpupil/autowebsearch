@@ -48,6 +48,9 @@ class ExtendWebsite(models.Model):
                                         blank=True,
                                         null=True)
 
+    def __str__(self):
+        return self.website.name
+
     # method to validate form data input when editing homepage value
     def clean(self):
         "custom clean to make sure scam status whitelist not conflict"
