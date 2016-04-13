@@ -2,7 +2,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 
-from website_management.models import Webpage, Homepage, Domain
+from website_management.models import Webpage, Website, Domain
 
 
 class ExtendDomain(models.Model):
@@ -22,7 +22,7 @@ class ExtendDomain(models.Model):
     report_feature = models.BooleanField(default=False)
 
 
-class ExtendHomepage(models.Model):
+class ExtendWebsite(models.Model):
     """extending homepage model to add more field"""
     SCAM_CHOICES = ((True, 'YES'),
                     (False, 'NO'),
@@ -30,7 +30,7 @@ class ExtendHomepage(models.Model):
     WHITELIST_CHOICES = ((True, 'YES'),
                          (False, 'NO'),
                          (None, 'UNKNOWN'))
-    homepage = models.OneToOneField(Homepage)
+    website = models.OneToOneField(Website)
     full_crawled = models.IntegerField(default=0)
     times_analyzed = models.IntegerField(default=0)
     # value: 'yes', 'no', 'unknown'
@@ -47,6 +47,9 @@ class ExtendHomepage(models.Model):
                                         choices=WHITELIST_CHOICES,
                                         blank=True,
                                         null=True)
+
+    def __str__(self):
+        return self.website.name
 
     # method to validate form data input when editing homepage value
     def clean(self):
@@ -67,12 +70,12 @@ class ExtendHomepage(models.Model):
         "override save() to make sure scam & wwhitelist not conflict"
         if self.scam is False:
             self.whitelist = True
-            super(ExtendHomepage, self).save(*args, **kwargs)
+            super(ExtendWebsite, self).save(*args, **kwargs)
         elif self.scam is True:
             self.whitelist = False
-            super(ExtendHomepage, self).save(*args, **kwargs)
+            super(ExtendWebsite, self).save(*args, **kwargs)
         else:
-            super(ExtendHomepage, self).save(*args, **kwargs)
+            super(ExtendWebsite, self).save(*args, **kwargs)
 
 
 class ExtendWebpage(models.Model):

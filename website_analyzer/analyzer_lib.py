@@ -6,8 +6,8 @@ import tldextract
 from django.utils import timezone
 from django.db import IntegrityError, transaction
 
-from website_management.models import Homepage, Webpage, Domain
-from website_analyzer.models import ExtendHomepage, StringParameter, \
+from website_management.models import Website, Webpage, Domain
+from website_analyzer.models import ExtendWebsite, StringParameter, \
                                     StringAnalysist, ExtendWebpage, \
                                     ExtendDomain
 from webscraper.pagescraper import PageScraper
@@ -15,10 +15,10 @@ from webscraper.pagescraper import PageScraper
 
 def string_analyst(hp_id):
     """function to do string analyst to homepage"""
-    homepage = Homepage.objects.get(id=hp_id)
-    exthp, _ = ExtendHomepage.objects.get_or_create(homepage=homepage)
+    website = Website.objects.get(id=hp_id)
+    exthp, _ = ExtendWebsite.objects.get_or_create(homepage=website)
     params = StringParameter.objects.all()
-    for web in homepage.webpage_set.all():
+    for web in website.webpage_set.all():
         if web.extendwebpage.text_body is None:
             page = PageScraper()
             page.fetch_webpage(web.url)
@@ -61,24 +61,24 @@ def add_url_to_webpage(url):
         pass
     try:
         with transaction.atomic():
-            homepage, _ = Homepage.objects.get_or_create(name='.'.join(ext),
-                                                         domain=domain)
-            ExtendHomepage.objects.create(homepage=homepage)
+            website, _ = Website.objects.get_or_create(name='.'.join(ext),
+                                                       domain=domain)
+            ExtendWebsite.objects.create(homepage=website)
     except:
-        homepage, _ = Homepage.objects.get_or_create(name='.'.join(ext),
-                                                     domain=domain)
+        website, _ = Website.objects.get_or_create(name='.'.join(ext),
+                                                   domain=domain)
     try:
         with transaction.atomic():
             if len(url) > 255:
                 truncate_url = url[0:255]
                 webpage = Webpage.objects.create(url=truncate_url,
                                                  full_url=url,
-                                                 homepage=homepage)
+                                                 homepage=website)
                 ExtendWebpage.objects.create(webpage=webpage)
             else:
                 webpage = Webpage.objects.create(url=url,
                                                  full_url=url,
-                                                 homepage=homepage)
+                                                 homepage=website)
                 ExtendWebpage.objects.create(webpage=webpage)
     except IntegrityError:
         raise IntegrityError
@@ -89,14 +89,14 @@ def add_scam_url_website(url):
     ext = tldextract.extract(url)
     domain, _ = Domain.objects.get_or_create(name=ext.registered_domain)
     ExtendDomain.objects.create(domain=domain)
-    homepage, _ = Homepage.objects.get_or_create(name='.'.join(ext),
-                                                 domain=domain)
-    ExtendHomepage.objects.create(homepage=homepage)
+    website, _ = Website.objects.get_or_create(name='.'.join(ext),
+                                               domain=domain)
+    ExtendWebsite.objects.create(homepage=website)
     try:
         with transaction.atomic():
-            webpage = Webpage.objects.create(url=url, homepage=homepage)
+            webpage = Webpage.objects.create(url=url, homepage=website)
             ExtendWebpage.objects.create(webpage=webpage)
-            exthp = ExtendHomepage.objects.get(homepage=homepage)
+            exthp = ExtendWebsite.objects.get(homepage=website)
             exthp.scam = True
             exthp.save()
     except IntegrityError:
@@ -185,7 +185,7 @@ def crawl_website(homepage):
     webpage.save(update_fields=['html_page'])
     keep_crawling = True
     while keep_crawling:
-        ext_hp = ExtendHomepage.objects.get(
+        ext_hp = ExtendWebsite.objects.get(
             homepage=homepage).only('full_crawled')
         ext_hp.full_crawled += 1
         ext_hp.save(update_fields=['full_crawled'])

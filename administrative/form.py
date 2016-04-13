@@ -4,7 +4,7 @@ from django.core import validators
 from django import forms
 from django.contrib.auth.models import User
 
-from administrative.models import Client, Website, Event, Operator, \
+from administrative.models import Client, ClientWebsite, Event, Operator, \
                                   ClientKeyword, ClientSequence
 
 
@@ -41,7 +41,7 @@ class AddClientHomepageForm(ModelForm):
     url = forms.URLField(validators=[validators.URLValidator])
 
     class Meta:
-        model = Website
+        model = ClientWebsite
         fields = ['url', 'event', 'client']
         widgets = {
             'client': HiddenInput(),

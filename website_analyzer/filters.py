@@ -1,7 +1,7 @@
 "filter module for views in website_analyzer app."
 import django_filters
 
-from website_management.models import Domain, Homepage
+from website_management.models import Domain, Website
 
 
 class ExtendDomainFilter(django_filters.FilterSet):
@@ -18,7 +18,7 @@ class ExtendHomepageFilter(django_filters.FilterSet):
     name = django_filters.CharFilter(lookup_type='icontains')
 
     class Meta:
-        model = Homepage
+        model = Website
         fields = ['name',
-                  'extendhomepage__scam',
-                  'extendhomepage__whitelist']
+                  'extendwebsite__scam',
+                  'extendwebsite__whitelist']

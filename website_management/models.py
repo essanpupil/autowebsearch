@@ -11,7 +11,7 @@ class Domain(models.Model):
         return self.name
 
 
-class Homepage(models.Model):
+class Website(models.Model):
     """Store homepages of webpages"""
     name = models.CharField(max_length=100, unique=True)
     domain = models.ForeignKey(Domain, blank=True, null=True)
@@ -27,7 +27,7 @@ class Webpage(models.Model):
     """Store webpages"""
     url = models.URLField(max_length=255, unique=True)
     full_url = models.TextField(blank=True, default="")
-    homepage = models.ForeignKey(Homepage, blank=True, null=True)
+    homepage = models.ForeignKey(Website, blank=True, null=True)
     html_page = models.TextField(blank=True)
     date_added = models.DateField(auto_now=True)
     last_response = models.CharField(max_length=3, blank=True)

@@ -3,6 +3,7 @@ from selenium.webdriver.common.by import By
 
 from functional_tests.base import BaseFunctionalTest
 from website_analyzer.models import SearchKeywords
+from website_management.models import Website, Domain
 
 
 class AnonymouseUserTest(BaseFunctionalTest):
@@ -22,10 +23,21 @@ class AnonymouseUserTest(BaseFunctionalTest):
 
     def test_table_websites_content(self):
         "does the websites data table loaded?"
+        blogspot = Domain.objects.create(name='blogspot.com')
+        wordpress = Domain.objects.create(name='wordpress.com')
+        jigdo = Domain.objects.create(name='jigdo.com')
+        Website.objects.bulk_create([
+            Website(name="undianbri.blogspot.com", domain=blogspot),
+            Website(name="undiantelkomsel.wordpress.com", domain=wordpress),
+            Website(name="undianindosat.jigdo.com", domain=jigdo)
+        ])
         self.browser.find_element(By.LINK_TEXT, 'View all websites').click()
-        self.assertIn('View all websites', self.browser.title)
-        table_websites = self.browser.find_element(By.ID, 'table_websites')
-        self.assertTrue(table_websites)
+        self.check_for_cell_in_table('table_websites',
+                                     'undianbri.blogspot.com')
+        self.check_for_cell_in_table('table_websites',
+                                     'undiantelkomsel.wordpress.com')
+        self.check_for_cell_in_table('table_websites',
+                                     'undianindosat.jigdo.com')
 
     def test_view_all_keywords(self):
         "click link to view all keywords"
@@ -42,9 +54,6 @@ class AnonymouseUserTest(BaseFunctionalTest):
             SearchKeywords(keywords='Ikuti petunjuk kami'),
         ])
         self.browser.find_element(By.LINK_TEXT, 'View all keywords').click()
-        self.assertIn('View all keywords', self.browser.title)
-        table_websites = self.browser.find_element(By.ID, 'table_keywords')
-        self.assertTrue(table_websites)
         self.check_for_cell_in_table('table_keywords', 'Pemenang undian palsu')
         self.check_for_cell_in_table('table_keywords', 'Hubungi nomor ini')
         self.check_for_cell_in_table('table_keywords', 'Ikuti petunjuk kami')
